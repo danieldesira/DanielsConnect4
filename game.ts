@@ -15,7 +15,7 @@ export class Game {
 
     private canvas: any;
     private context: any;
-    private board: Array<Array<Tile>> = new Array(Game.rows);
+    private board: Array<Array<Tile>> = new Array(Game.columns);
 
     private turn: Tile = Tile.RED;
 
@@ -30,10 +30,10 @@ export class Game {
         this.context = this.canvas.getContext('2d');
 
         // Initialise board with empty tiles
-        for (let row = 0; row < Game.rows; row++){
-            this.board[row] = new Array(Game.columns);
-            for (let col = 0; col < Game.columns; col++){
-                this.board[row][col] = Tile.EMPTY;
+        for (let col = 0; col < Game.columns; col++){
+            this.board[col] = new Array(Game.rows);
+            for (let row = 0; row < Game.rows; row++){
+                this.board[col][row] = Tile.EMPTY;
             }
         }
     }
@@ -114,12 +114,12 @@ export class Game {
         let column = Math.round((position.x - 50) / 110);
         let row: number;
 
-        if (this.board[0][column] === 0) {
+        if (this.board[column][0] === 0) {
 
             // Places the circle at the buttom of the column
             for (var r = Game.rows - 1; r > -1; r--) {
-                if (this.board[r][column] === 0) {
-                    this.board[r][column] = this.turn;
+                if (this.board[column][r] === 0) {
+                    this.board[column][r] = this.turn;
                     row = r;
                     break;
                 }
@@ -134,7 +134,7 @@ export class Game {
             
             // Draws the circle at the appropriate position
             this.context.beginPath();
-            this.context.arc(50+column*110, 150+r*110, 30, 0, Math.PI*2);
+            this.context.arc(50 + column * 110, 150 + r * 110, 30, 0, Math.PI * 2);
             this.context.closePath();
             this.context.fill();
             
@@ -178,7 +178,7 @@ export class Game {
         let dotCount: number = 0;
 
         // Vertical check
-        while (dotCount < 4 && count < Game.rows && this.board[count][column] === this.turn) {
+        while (dotCount < 4 && count < Game.rows && this.board[column][count] === this.turn) {
             dotCount++;
             count++;
         }
@@ -188,12 +188,12 @@ export class Game {
             // Horizontal check
             dotCount = 0;
             count = column;
-            while (count < Game.columns && this.board[row][count] === this.turn) {
+            while (count < Game.columns && this.board[count][row] === this.turn) {
                 dotCount++;
                 count++;
             }
             count = column - 1;
-            while (count > -1 && this.board[row][count] === this.turn) {
+            while (count > -1 && this.board[count][row] === this.turn) {
                 dotCount++;
                 count--;
             }
@@ -203,14 +203,14 @@ export class Game {
                 dotCount = 0;
                 let rowCount: number = row - 1;
                 let colCount: number = column + 1;
-                while (dotCount < 4 && rowCount > -1 &&  colCount < Game.columns && this.board[rowCount][colCount] === this.turn) {
+                while (dotCount < 4 && rowCount > -1 &&  colCount < Game.columns && this.board[colCount][rowCount] === this.turn) {
                     dotCount++;
                     colCount++; //right columns
                     rowCount--; //upper rows
                 }
                 colCount = column;
                 rowCount = row;
-                while (dotCount < 4 && rowCount < Game.rows && colCount > -1 && this.board[rowCount][colCount] === this.turn) {
+                while (dotCount < 4 && rowCount < Game.rows && colCount > -1 && this.board[colCount][rowCount] === this.turn) {
                     dotCount++;
                     colCount--; // left columns
                     rowCount++; // lower rows
@@ -220,14 +220,14 @@ export class Game {
                     dotCount = 0;
                     rowCount = row - 1;
                     colCount = column - 1;
-                    while (dotCount < 4 && rowCount > -1 && colCount > -1 && this.board[rowCount][colCount] === this.turn) {
+                    while (dotCount < 4 && rowCount > -1 && colCount > -1 && this.board[colCount][rowCount] === this.turn) {
                         dotCount++;
                         colCount--; // left columns
                         rowCount--; // upper rows
                     }
                     colCount = column;
                     rowCount = row;
-                    while (dotCount < 4 && rowCount < Game.rows && colCount < Game.columns && this.board[rowCount][colCount] === this.turn) {
+                    while (dotCount < 4 && rowCount < Game.rows && colCount < Game.columns && this.board[colCount][rowCount] === this.turn) {
                         dotCount++;
                         colCount++; // right columns
                         rowCount++; // lower rows

@@ -14,7 +14,7 @@ var GameMode;
 var Game = /** @class */ (function () {
     function Game(canvasId) {
         var _this = this;
-        this.board = new Array(Game.rows);
+        this.board = new Array(Game.columns);
         this.turn = Tile.RED;
         this.moveDot = function (event) {
             _this.clearUpper();
@@ -35,11 +35,11 @@ var Game = /** @class */ (function () {
             var position = _this.getCursorPosition(event);
             var column = Math.round((position.x - 50) / 110);
             var row;
-            if (_this.board[0][column] === 0) {
+            if (_this.board[column][0] === 0) {
                 // Places the circle at the buttom of the column
                 for (var r = Game.rows - 1; r > -1; r--) {
-                    if (_this.board[r][column] === 0) {
-                        _this.board[r][column] = _this.turn;
+                    if (_this.board[column][r] === 0) {
+                        _this.board[column][r] = _this.turn;
                         row = r;
                         break;
                     }
@@ -84,10 +84,10 @@ var Game = /** @class */ (function () {
         this.canvas = document.getElementById(canvasId);
         this.context = this.canvas.getContext('2d');
         // Initialise board with empty tiles
-        for (var row = 0; row < Game.rows; row++) {
-            this.board[row] = new Array(Game.columns);
-            for (var col = 0; col < Game.columns; col++) {
-                this.board[row][col] = Tile.EMPTY;
+        for (var col = 0; col < Game.columns; col++) {
+            this.board[col] = new Array(Game.rows);
+            for (var row = 0; row < Game.rows; row++) {
+                this.board[col][row] = Tile.EMPTY;
             }
         }
     }
@@ -144,7 +144,7 @@ var Game = /** @class */ (function () {
         var count = row;
         var dotCount = 0;
         // Vertical check
-        while (dotCount < 4 && count < Game.rows && this.board[count][column] === this.turn) {
+        while (dotCount < 4 && count < Game.rows && this.board[column][count] === this.turn) {
             dotCount++;
             count++;
         }
@@ -152,12 +152,12 @@ var Game = /** @class */ (function () {
             // Horizontal check
             dotCount = 0;
             count = column;
-            while (count < Game.columns && this.board[row][count] === this.turn) {
+            while (count < Game.columns && this.board[count][row] === this.turn) {
                 dotCount++;
                 count++;
             }
             count = column - 1;
-            while (count > -1 && this.board[row][count] === this.turn) {
+            while (count > -1 && this.board[count][row] === this.turn) {
                 dotCount++;
                 count--;
             }
@@ -166,14 +166,14 @@ var Game = /** @class */ (function () {
                 dotCount = 0;
                 var rowCount = row - 1;
                 var colCount = column + 1;
-                while (dotCount < 4 && rowCount > -1 && colCount < Game.columns && this.board[rowCount][colCount] === this.turn) {
+                while (dotCount < 4 && rowCount > -1 && colCount < Game.columns && this.board[colCount][rowCount] === this.turn) {
                     dotCount++;
                     colCount++; //right columns
                     rowCount--; //upper rows
                 }
                 colCount = column;
                 rowCount = row;
-                while (dotCount < 4 && rowCount < Game.rows && colCount > -1 && this.board[rowCount][colCount] === this.turn) {
+                while (dotCount < 4 && rowCount < Game.rows && colCount > -1 && this.board[colCount][rowCount] === this.turn) {
                     dotCount++;
                     colCount--; // left columns
                     rowCount++; // lower rows
@@ -182,14 +182,14 @@ var Game = /** @class */ (function () {
                     dotCount = 0;
                     rowCount = row - 1;
                     colCount = column - 1;
-                    while (dotCount < 4 && rowCount > -1 && colCount > -1 && this.board[rowCount][colCount] === this.turn) {
+                    while (dotCount < 4 && rowCount > -1 && colCount > -1 && this.board[colCount][rowCount] === this.turn) {
                         dotCount++;
                         colCount--; // left columns
                         rowCount--; // upper rows
                     }
                     colCount = column;
                     rowCount = row;
-                    while (dotCount < 4 && rowCount < Game.rows && colCount < Game.columns && this.board[rowCount][colCount] === this.turn) {
+                    while (dotCount < 4 && rowCount < Game.rows && colCount < Game.columns && this.board[colCount][rowCount] === this.turn) {
                         dotCount++;
                         colCount++; // right columns
                         rowCount++; // lower rows
