@@ -66,6 +66,8 @@ var Game = /** @class */ (function () {
                         winner = _this.playerGreen + ' (Green)';
                     }
                     alert(winner + ' wins!');
+                    // Clear game data
+                    localStorage.clear();
                     _this.cleanUpEvents();
                     // Run delegate function to return to main menu, in case it is defined
                     if (_this.onGameEnd !== undefined && _this.onGameEnd !== null) {
@@ -92,14 +94,32 @@ var Game = /** @class */ (function () {
         }
     }
     Game.prototype.start = function () {
+        this.checkGameData();
         this.setUpPlayerNames();
         this.paintBoard();
         this.setUserInput();
     };
+    Game.prototype.checkGameData = function () {
+        if (this.mode === GameMode.SAME_PC) {
+            var board = localStorage.getItem('board');
+            var nextTurn = localStorage.getItem('nextTurn');
+            if (board && nextTurn) {
+                var restore = confirm('Do you want to continue playing the previous game? OK/Cancel');
+                if (restore) {
+                    this.restoreLastGame();
+                }
+                else {
+                    localStorage.clear();
+                }
+            }
+        }
+    };
     Game.prototype.setUpPlayerNames = function () {
         if (this.mode === GameMode.SAME_PC) {
-            this.playerRed = prompt('Please enter name for Red Player!');
-            this.playerGreen = prompt('Please enter name for Green Player!');
+            if (!localStorage.getItem('playerRed') || !localStorage.getItem('playerGreen')) {
+                this.playerRed = prompt('Please enter name for Red Player!');
+                this.playerGreen = prompt('Please enter name for Green Player!');
+            }
         }
     };
     Game.prototype.paintBoard = function () {
@@ -108,9 +128,17 @@ var Game = /** @class */ (function () {
         boardGradient.addColorStop(1, 'aqua');
         this.context.fillStyle = boardGradient;
         this.context.fillRect(0, 70, this.canvas.width, this.canvas.height);
-        this.context.fillStyle = 'black';
         for (var col = 0; col < Game.columns; col++) {
             for (var row = 0; row < Game.rows; row++) {
+                if (this.board[col][row] === Tile.RED) {
+                    this.context.fillStyle = 'red';
+                }
+                else if (this.board[col][row] === Tile.GREEN) {
+                    this.context.fillStyle = 'greenyellow';
+                }
+                else {
+                    this.context.fillStyle = 'black';
+                }
                 this.context.beginPath();
                 this.context.arc(50 + col * 110, 150 + row * 110, 30, 0, 2 * Math.PI);
                 this.context.closePath();
@@ -202,6 +230,30 @@ var Game = /** @class */ (function () {
     Game.prototype.cleanUpEvents = function () {
         this.canvas.removeEventListener('mousemove', this.moveDot, false);
         this.canvas.removeEventListener('click', this.landDot, false);
+    };
+    Game.prototype.saveGame = function () {
+        localStorage.setItem('nextTurn', this.turn.toString());
+        localStorage.setItem('board', this.board.toString());
+        localStorage.setItem('playerRed', this.playerRed);
+        localStorage.setItem('playerGreen', this.playerGreen);
+    };
+    Game.prototype.restoreLastGame = function () {
+        var _this = this;
+        this.turn = parseInt(localStorage.getItem('nextTurn'));
+        this.playerRed = localStorage.getItem('playerRed');
+        this.playerGreen = localStorage.getItem('playerGreen');
+        // Restore board variables
+        var tiles = localStorage.getItem('board').split(',');
+        tiles.forEach(function (value, index) {
+            var col = Math.floor(index / Game.columns);
+            var row = index % Game.columns;
+            _this.board[col][row] = parseInt(value);
+        });
+    };
+    Game.prototype.exit = function () {
+        this.cleanUpEvents();
+        this.saveGame();
+        this.onGameEnd();
     };
     Game.columns = 9;
     Game.rows = 8;

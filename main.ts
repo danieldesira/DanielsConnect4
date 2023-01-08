@@ -1,10 +1,14 @@
+let connect4: Game;
+
 let menu = document.getElementById('menu');
 let samePCBtn = document.getElementById('samePC');
+
+let exitBtn = document.getElementById('exitBtn');
 
 let canvas = document.getElementById('board');
 
 samePCBtn.addEventListener('click', () => {
-    let connect4: Game = new Game('board');
+    connect4 = new Game('board');
     connect4.mode = GameMode.SAME_PC;
     connect4.onGameEnd = () => {
         menu.style.display = 'block';
@@ -15,3 +19,7 @@ samePCBtn.addEventListener('click', () => {
     menu.style.display = 'none';
     canvas.style.display = 'block';
 }, false);
+
+exitBtn.addEventListener('click', () => {
+    connect4.exit();
+})

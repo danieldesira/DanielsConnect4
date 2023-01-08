@@ -39,15 +39,35 @@ export class Game {
     }
 
     public start(){
+        this.checkGameData();
         this.setUpPlayerNames();
         this.paintBoard();
         this.setUserInput();
     }
 
-    private setUpPlayerNames(){
+    private checkGameData(){
         if (this.mode === GameMode.SAME_PC){
-            this.playerRed = prompt('Please enter name for Red Player!');
-            this.playerGreen = prompt('Please enter name for Green Player!');
+            let board = localStorage.getItem('board');
+            let nextTurn = localStorage.getItem('nextTurn');
+            
+            if (board && nextTurn) {
+                let restore = confirm('Do you want to continue playing the previous game? OK/Cancel');
+                if (restore) {
+                    this.restoreLastGame();
+                }
+                else {
+                    localStorage.clear();
+                }
+            }
+        }
+    }
+
+    private setUpPlayerNames(){
+        if (this.mode === GameMode.SAME_PC) {
+            if (!localStorage.getItem('playerRed') || !localStorage.getItem('playerGreen')) {
+                this.playerRed = prompt('Please enter name for Red Player!');
+                this.playerGreen = prompt('Please enter name for Green Player!');
+            }
         }
     }
 
@@ -58,9 +78,16 @@ export class Game {
         this.context.fillStyle = boardGradient;
         this.context.fillRect(0, 70, this.canvas.width, this.canvas.height);
 
-        this.context.fillStyle = 'black';
         for (let col = 0; col < Game.columns; col++) {
             for (let row = 0; row < Game.rows; row++) {
+                if (this.board[col][row] === Tile.RED) {
+                    this.context.fillStyle = 'red';
+                } else if (this.board[col][row] === Tile.GREEN) {
+                    this.context.fillStyle = 'greenyellow';
+                } else {
+                    this.context.fillStyle = 'black';
+                }
+
                 this.context.beginPath();
                 this.context.arc(50 + col * 110, 150 + row * 110, 30, 0, 2 * Math.PI);
                 this.context.closePath();
@@ -150,6 +177,9 @@ export class Game {
                 }
 
                 alert(winner + ' wins!');
+
+                // Clear game data
+                localStorage.clear();
 
                 this.cleanUpEvents();
 
@@ -242,6 +272,33 @@ export class Game {
     private cleanUpEvents(){
         this.canvas.removeEventListener('mousemove', this.moveDot, false);
         this.canvas.removeEventListener('click', this.landDot, false);
+    }
+
+    private saveGame(){
+        localStorage.setItem('nextTurn', this.turn.toString());
+	    localStorage.setItem('board', this.board.toString());
+        localStorage.setItem('playerRed', this.playerRed);
+        localStorage.setItem('playerGreen', this.playerGreen);
+    }
+
+    private restoreLastGame(){
+        this.turn = parseInt(localStorage.getItem('nextTurn'));
+        this.playerRed = localStorage.getItem('playerRed');
+        this.playerGreen = localStorage.getItem('playerGreen');
+
+        // Restore board variables
+        let tiles = localStorage.getItem('board').split(',');
+        tiles.forEach((value, index) => {
+            let col: number = Math.floor(index / Game.columns);
+            let row: number = index % Game.columns;
+            this.board[col][row] = parseInt(value);
+        });
+    }
+
+    public exit(){
+        this.cleanUpEvents();
+        this.saveGame();
+        this.onGameEnd();
     }
 
 }
