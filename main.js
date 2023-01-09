@@ -14,7 +14,7 @@ samePCBtn.addEventListener('click', function () {
     connect4.start();
     menu.style.display = 'none';
     canvas.style.display = 'block';
-    exitBtn.style.display = 'block';
+    exitBtn.style.display = 'inline';
 }, false);
 exitBtn.addEventListener('click', function () {
     connect4.exit();

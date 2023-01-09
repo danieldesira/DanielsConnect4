@@ -86,6 +86,12 @@ var Game = /** @class */ (function () {
         this.beforeUnload = function () {
             _this.saveGame();
         };
+        this.fullScreenChange = function () {
+            debugger;
+            if (document.fullscreenElement) {
+                _this.canvas.requestFullscreen();
+            }
+        };
         this.canvas = document.getElementById(canvasId);
         this.context = this.canvas.getContext('2d');
         // Initialise board with empty tiles
@@ -168,6 +174,7 @@ var Game = /** @class */ (function () {
         this.canvas.addEventListener('mousemove', this.moveDot, false);
         this.canvas.addEventListener('click', this.landDot, false);
         window.addEventListener('beforeunload', this.beforeUnload);
+        document.addEventListener('fullscreenchange', this.fullScreenChange);
     };
     Game.prototype.clearUpper = function () {
         this.context.clearRect(0, 0, this.canvas.width, 70);
@@ -235,6 +242,7 @@ var Game = /** @class */ (function () {
         this.canvas.removeEventListener('mousemove', this.moveDot, false);
         this.canvas.removeEventListener('click', this.landDot, false);
         window.removeEventListener('beforeunload', this.beforeUnload);
+        document.addEventListener('fullscreenchange', this.fullScreenChange);
     };
     Game.prototype.saveGame = function () {
         localStorage.setItem('nextTurn', this.turn.toString());

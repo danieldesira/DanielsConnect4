@@ -116,6 +116,7 @@ export class Game {
         this.canvas.addEventListener('mousemove', this.moveDot, false);
         this.canvas.addEventListener('click', this.landDot, false);
         window.addEventListener('beforeunload', this.beforeUnload);
+        document.addEventListener('fullscreenchange', this.fullScreenChange);
     }
 
     private moveDot = (event) => {
@@ -202,6 +203,12 @@ export class Game {
         this.saveGame();
     };
 
+    private fullScreenChange = () => {debugger;
+        if (document.fullscreenElement) {
+            this.canvas.requestFullscreen();
+        }
+    };
+
     private clearUpper(){
         this.context.clearRect(0, 0, this.canvas.width, 70);
     }
@@ -276,6 +283,7 @@ export class Game {
         this.canvas.removeEventListener('mousemove', this.moveDot, false);
         this.canvas.removeEventListener('click', this.landDot, false);
         window.removeEventListener('beforeunload', this.beforeUnload);
+        document.addEventListener('fullscreenchange', this.fullScreenChange);
     }
 
     private saveGame(){

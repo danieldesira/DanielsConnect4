@@ -19,7 +19,7 @@ samePCBtn.addEventListener('click', () => {
 
     menu.style.display = 'none';
     canvas.style.display = 'block';
-    exitBtn.style.display = 'block';
+    exitBtn.style.display = 'inline';
 }, false);
 
 exitBtn.addEventListener('click', () => {
