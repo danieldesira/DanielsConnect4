@@ -1,5 +1,15 @@
+.btn {
+    background-color: darkred;
+    color: whitesmoke;
+}
+
 .center-text {
     text-align: center;
+}
+
+.exit-btn {
+    height: 20px;
+    margin-left: 100px;
 }
 
 .menu {
@@ -12,6 +22,4 @@
 .menu-btn {
     width: 200px;
     height: 40px;
-    background-color: darkred;
-    color: whitesmoke;
 }

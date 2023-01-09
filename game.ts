@@ -42,7 +42,7 @@ export class Game {
         this.checkGameData();
         this.setUpPlayerNames();
         this.paintBoard();
-        this.setUserInput();
+        this.setGameEvents();
     }
 
     private checkGameData(){
@@ -78,8 +78,8 @@ export class Game {
         this.context.fillStyle = boardGradient;
         this.context.fillRect(0, 70, this.canvas.width, this.canvas.height);
 
-        for (let col = 0; col < Game.columns; col++) {
-            for (let row = 0; row < Game.rows; row++) {
+        for (let col = Game.columns - 1; col >= 0; col--) {
+            for (let row = Game.rows - 1; row >= 0; row--) {
                 if (this.board[col][row] === Tile.RED) {
                     this.context.fillStyle = 'red';
                 } else if (this.board[col][row] === Tile.GREEN) {
@@ -112,9 +112,10 @@ export class Game {
         return new Position(x, y);
     }
 
-    private setUserInput(){
+    private setGameEvents() {
         this.canvas.addEventListener('mousemove', this.moveDot, false);
         this.canvas.addEventListener('click', this.landDot, false);
+        window.addEventListener('beforeunload', this.beforeUnload);
     }
 
     private moveDot = (event) => {
@@ -123,10 +124,9 @@ export class Game {
         let position: Position = this.getCursorPosition(event);
         let column = Math.round(position.x - 50) / 110;
         
-        if (this.turn == Tile.RED){
+        if (this.turn == Tile.RED) {
             this.context.fillStyle = 'red';
-        }
-        else if (this.turn == Tile.GREEN){
+        } else if (this.turn == Tile.GREEN) {
             this.context.fillStyle = 'greenyellow';
         }
 
@@ -152,10 +152,9 @@ export class Game {
                 }
             }
             
-            if (this.turn === Tile.RED){
+            if (this.turn === Tile.RED) {
                 this.context.fillStyle = 'red';
-            }
-            else if (this.turn === Tile.GREEN){
+            } else if (this.turn === Tile.GREEN) {
                 this.context.fillStyle = 'greenyellow';
             }
             
@@ -198,6 +197,10 @@ export class Game {
 
         }
     }
+
+    private beforeUnload = () => {
+        this.saveGame();
+    };
 
     private clearUpper(){
         this.context.clearRect(0, 0, this.canvas.width, 70);
@@ -272,11 +275,12 @@ export class Game {
     private cleanUpEvents(){
         this.canvas.removeEventListener('mousemove', this.moveDot, false);
         this.canvas.removeEventListener('click', this.landDot, false);
+        window.removeEventListener('beforeunload', this.beforeUnload);
     }
 
     private saveGame(){
         localStorage.setItem('nextTurn', this.turn.toString());
-	    localStorage.setItem('board', this.board.toString());
+	    localStorage.setItem('board', JSON.stringify(this.board));
         localStorage.setItem('playerRed', this.playerRed);
         localStorage.setItem('playerGreen', this.playerGreen);
     }
@@ -285,14 +289,7 @@ export class Game {
         this.turn = parseInt(localStorage.getItem('nextTurn'));
         this.playerRed = localStorage.getItem('playerRed');
         this.playerGreen = localStorage.getItem('playerGreen');
-
-        // Restore board variables
-        let tiles = localStorage.getItem('board').split(',');
-        tiles.forEach((value, index) => {
-            let col: number = Math.floor(index / Game.columns);
-            let row: number = index % Game.columns;
-            this.board[col][row] = parseInt(value);
-        });
+        this.board = JSON.parse(localStorage.getItem('board'));
     }
 
     public exit(){

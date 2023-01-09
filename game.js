@@ -83,6 +83,9 @@ var Game = /** @class */ (function () {
                 }
             }
         };
+        this.beforeUnload = function () {
+            _this.saveGame();
+        };
         this.canvas = document.getElementById(canvasId);
         this.context = this.canvas.getContext('2d');
         // Initialise board with empty tiles
@@ -97,7 +100,7 @@ var Game = /** @class */ (function () {
         this.checkGameData();
         this.setUpPlayerNames();
         this.paintBoard();
-        this.setUserInput();
+        this.setGameEvents();
     };
     Game.prototype.checkGameData = function () {
         if (this.mode === GameMode.SAME_PC) {
@@ -128,8 +131,8 @@ var Game = /** @class */ (function () {
         boardGradient.addColorStop(1, 'aqua');
         this.context.fillStyle = boardGradient;
         this.context.fillRect(0, 70, this.canvas.width, this.canvas.height);
-        for (var col = 0; col < Game.columns; col++) {
-            for (var row = 0; row < Game.rows; row++) {
+        for (var col = Game.columns - 1; col >= 0; col--) {
+            for (var row = Game.rows - 1; row >= 0; row--) {
                 if (this.board[col][row] === Tile.RED) {
                     this.context.fillStyle = 'red';
                 }
@@ -161,9 +164,10 @@ var Game = /** @class */ (function () {
         y -= this.canvas.offsetTop;
         return new Position(x, y);
     };
-    Game.prototype.setUserInput = function () {
+    Game.prototype.setGameEvents = function () {
         this.canvas.addEventListener('mousemove', this.moveDot, false);
         this.canvas.addEventListener('click', this.landDot, false);
+        window.addEventListener('beforeunload', this.beforeUnload);
     };
     Game.prototype.clearUpper = function () {
         this.context.clearRect(0, 0, this.canvas.width, 70);
@@ -230,25 +234,19 @@ var Game = /** @class */ (function () {
     Game.prototype.cleanUpEvents = function () {
         this.canvas.removeEventListener('mousemove', this.moveDot, false);
         this.canvas.removeEventListener('click', this.landDot, false);
+        window.removeEventListener('beforeunload', this.beforeUnload);
     };
     Game.prototype.saveGame = function () {
         localStorage.setItem('nextTurn', this.turn.toString());
-        localStorage.setItem('board', this.board.toString());
+        localStorage.setItem('board', JSON.stringify(this.board));
         localStorage.setItem('playerRed', this.playerRed);
         localStorage.setItem('playerGreen', this.playerGreen);
     };
     Game.prototype.restoreLastGame = function () {
-        var _this = this;
         this.turn = parseInt(localStorage.getItem('nextTurn'));
         this.playerRed = localStorage.getItem('playerRed');
         this.playerGreen = localStorage.getItem('playerGreen');
-        // Restore board variables
-        var tiles = localStorage.getItem('board').split(',');
-        tiles.forEach(function (value, index) {
-            var col = Math.floor(index / Game.columns);
-            var row = index % Game.columns;
-            _this.board[col][row] = parseInt(value);
-        });
+        this.board = JSON.parse(localStorage.getItem('board'));
     };
     Game.prototype.exit = function () {
         this.cleanUpEvents();
