@@ -12,6 +12,10 @@
     margin-left: 100px;
 }
 
+.heading {
+    display: inline;
+}
+
 .hide {
     display: none;
 }
