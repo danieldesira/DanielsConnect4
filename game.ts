@@ -19,6 +19,8 @@ export class Game {
 
     private exitBtn: any;
     private timerSpan: any;
+    private playerRedSpan: any;
+    private playerGreenSpan: any;
 
     private turn: Tile = Tile.RED;
 
@@ -31,29 +33,41 @@ export class Game {
     private secondsRunning: number;
     private timerInterval: any;
 
-    constructor(canvasId: string, exitBtnId: string = null, timerId: string = null) {
+    constructor(canvasId: string,
+                exitBtnId: string = null,
+                timerId: string = null,
+                playerRedId: string = null,
+                playerGreenId: string = null) {
         this.canvas = document.getElementById(canvasId);
         this.context = this.canvas.getContext('2d');
 
         // Initialise board with empty tiles
-        for (let col = 0; col < Game.columns; col++){
+        for (let col = 0; col < Game.columns; col++) {
             this.board[col] = new Array(Game.rows);
             for (let row = 0; row < Game.rows; row++){
                 this.board[col][row] = Tile.EMPTY;
             }
         }
 
-        if (exitBtnId !== null){
+        if (exitBtnId !== null) {
             this.exitBtn = document.getElementById(exitBtnId);
         }
 
-        if (timerId !== null){
+        if (timerId !== null) {
             this.timerSpan = document.getElementById(timerId);
             this.secondsRunning = 0;
         }
+
+        if (playerRedId !== null) {
+            this.playerRedSpan = document.getElementById(playerRedId);
+        }
+
+        if (playerGreenId !== null) {
+            this.playerGreenSpan = document.getElementById(playerGreenId);
+        }
     }
 
-    public start(){
+    public start() {
         this.checkGameData();
         this.setUpPlayerNames();
         this.paintBoard();
@@ -62,7 +76,7 @@ export class Game {
     }
 
     private checkGameData(){
-        if (this.mode === GameMode.SAME_PC){
+        if (this.mode === GameMode.SAME_PC) {
             let board = localStorage.getItem('board');
             let nextTurn = localStorage.getItem('nextTurn');
             
@@ -77,12 +91,20 @@ export class Game {
         }
     }
 
-    private setUpPlayerNames(){
+    private setUpPlayerNames() {
         if (this.mode === GameMode.SAME_PC) {
             if (!localStorage.getItem('playerRed') || !localStorage.getItem('playerGreen')) {
                 this.playerRed = prompt('Please enter name for Red Player!');
                 this.playerGreen = prompt('Please enter name for Green Player!');
             }
+        }
+
+        // Print player names on screen
+        if (this.playerGreenSpan) {
+            this.playerGreenSpan.innerText = this.playerGreen;
+        }
+        if (this.playerRedSpan) {
+            this.playerRedSpan.innerText = this.playerRed;
         }
     }
 
@@ -205,6 +227,7 @@ export class Game {
 
                 this.cleanUpEvents();
                 this.stopTimer();
+                this.clearPlayerNames();
 
                 // Run delegate function to return to main menu, in case it is defined
                 if (this.onGameEnd !== undefined && this.onGameEnd !== null){
@@ -330,6 +353,7 @@ export class Game {
         this.saveGame();
         this.onGameEnd();
         this.stopTimer();
+        this.clearPlayerNames();
     }
 
     private setTimer() {
@@ -344,6 +368,15 @@ export class Game {
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
             this.timerSpan.classList.add('hide');
+        }
+    }
+
+    private clearPlayerNames() {
+        if (this.playerGreenSpan) {
+            this.playerGreenSpan.innerText = '';
+        }
+        if (this.playerRedSpan) {
+            this.playerRedSpan.innerText = '';
         }
     }
 

@@ -12,9 +12,11 @@ var GameMode;
     GameMode[GameMode["SAME_PC"] = 1] = "SAME_PC";
 })(GameMode = exports.GameMode || (exports.GameMode = {}));
 var Game = /** @class */ (function () {
-    function Game(canvasId, exitBtnId, timerId) {
+    function Game(canvasId, exitBtnId, timerId, playerRedId, playerGreenId) {
         if (exitBtnId === void 0) { exitBtnId = null; }
         if (timerId === void 0) { timerId = null; }
+        if (playerRedId === void 0) { playerRedId = null; }
+        if (playerGreenId === void 0) { playerGreenId = null; }
         var _this = this;
         this.board = new Array(Game.columns);
         this.turn = Tile.RED;
@@ -79,6 +81,7 @@ var Game = /** @class */ (function () {
                     localStorage.clear();
                     _this.cleanUpEvents();
                     _this.stopTimer();
+                    _this.clearPlayerNames();
                     // Run delegate function to return to main menu, in case it is defined
                     if (_this.onGameEnd !== undefined && _this.onGameEnd !== null) {
                         setTimeout(_this.onGameEnd, 3000);
@@ -118,6 +121,12 @@ var Game = /** @class */ (function () {
             this.timerSpan = document.getElementById(timerId);
             this.secondsRunning = 0;
         }
+        if (playerRedId !== null) {
+            this.playerRedSpan = document.getElementById(playerRedId);
+        }
+        if (playerGreenId !== null) {
+            this.playerGreenSpan = document.getElementById(playerGreenId);
+        }
     }
     Game.prototype.start = function () {
         this.checkGameData();
@@ -147,6 +156,13 @@ var Game = /** @class */ (function () {
                 this.playerRed = prompt('Please enter name for Red Player!');
                 this.playerGreen = prompt('Please enter name for Green Player!');
             }
+        }
+        // Print player names on screen
+        if (this.playerGreenSpan) {
+            this.playerGreenSpan.innerText = this.playerGreen;
+        }
+        if (this.playerRedSpan) {
+            this.playerRedSpan.innerText = this.playerRed;
         }
     };
     Game.prototype.paintBoard = function () {
@@ -279,6 +295,7 @@ var Game = /** @class */ (function () {
         this.saveGame();
         this.onGameEnd();
         this.stopTimer();
+        this.clearPlayerNames();
     };
     Game.prototype.setTimer = function () {
         if (this.timerSpan) {
@@ -291,6 +308,14 @@ var Game = /** @class */ (function () {
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
             this.timerSpan.classList.add('hide');
+        }
+    };
+    Game.prototype.clearPlayerNames = function () {
+        if (this.playerGreenSpan) {
+            this.playerGreenSpan.innerText = '';
+        }
+        if (this.playerRedSpan) {
+            this.playerRedSpan.innerText = '';
         }
     };
     Game.columns = 9;

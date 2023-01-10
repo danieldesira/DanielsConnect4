@@ -4,7 +4,7 @@ var samePCBtn = document.getElementById('samePC');
 var exitBtn = document.getElementById('exitBtn');
 var canvas = document.getElementById('board');
 samePCBtn.addEventListener('click', function () {
-    connect4 = new Game('board', 'exitBtn', 'timer');
+    connect4 = new Game('board', 'exitBtn', 'timer', 'playerRed', 'playerGreen');
     connect4.mode = GameMode.SAME_PC;
     connect4.onGameEnd = function () {
         menu.classList.remove('hide');

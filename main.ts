@@ -8,7 +8,7 @@ let exitBtn = document.getElementById('exitBtn');
 let canvas = document.getElementById('board');
 
 samePCBtn.addEventListener('click', () => {
-    connect4 = new Game('board', 'exitBtn', 'timer');
+    connect4 = new Game('board', 'exitBtn', 'timer', 'playerRed', 'playerGreen');
     connect4.mode = GameMode.SAME_PC;
     connect4.onGameEnd = () => {
         menu.classList.remove('hide');
