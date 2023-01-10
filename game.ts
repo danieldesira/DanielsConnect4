@@ -17,6 +17,9 @@ export class Game {
     private context: any;
     private board: Array<Array<Tile>> = new Array(Game.columns);
 
+    private exitBtn: any;
+    private timerSpan: any;
+
     private turn: Tile = Tile.RED;
 
     private playerRed: string;
@@ -25,7 +28,10 @@ export class Game {
     public mode: GameMode;
     public onGameEnd: Function;
 
-    constructor(canvasId: string) {
+    private secondsRunning: number;
+    private timerInterval: any;
+
+    constructor(canvasId: string, exitBtnId: string = null, timerId: string = null) {
         this.canvas = document.getElementById(canvasId);
         this.context = this.canvas.getContext('2d');
 
@@ -36,6 +42,15 @@ export class Game {
                 this.board[col][row] = Tile.EMPTY;
             }
         }
+
+        if (exitBtnId !== null){
+            this.exitBtn = document.getElementById(exitBtnId);
+        }
+
+        if (timerId !== null){
+            this.timerSpan = document.getElementById(timerId);
+            this.secondsRunning = 0;
+        }
     }
 
     public start(){
@@ -43,6 +58,7 @@ export class Game {
         this.setUpPlayerNames();
         this.paintBoard();
         this.setGameEvents();
+        this.setTimer();
     }
 
     private checkGameData(){
@@ -54,8 +70,7 @@ export class Game {
                 let restore = confirm('Do you want to continue playing the previous game? OK/Cancel');
                 if (restore) {
                     this.restoreLastGame();
-                }
-                else {
+                } else {
                     localStorage.clear();
                 }
             }
@@ -116,7 +131,6 @@ export class Game {
         this.canvas.addEventListener('mousemove', this.moveDot, false);
         this.canvas.addEventListener('click', this.landDot, false);
         window.addEventListener('beforeunload', this.beforeUnload);
-        document.addEventListener('fullscreenchange', this.fullScreenChange);
     }
 
     private moveDot = (event) => {
@@ -170,18 +184,27 @@ export class Game {
             // Announce winner in case any player completes 4 tiles
             if (dotCount > 3) {
                 let winner: string = '';
-                if (this.turn === Tile.RED){
+                if (this.turn === Tile.RED) {
                     winner = this.playerRed + ' (Red)';
-                } else if (this.turn === Tile.GREEN){
+                } else if (this.turn === Tile.GREEN) {
                     winner = this.playerGreen + ' (Green)';
                 }
 
-                alert(winner + ' wins!');
+                if (this.exitBtn) {
+                    this.exitBtn.classList.add('hide');
+                }
+
+                let winMsg: string = winner + ' wins!';
+                if (this.timerSpan) {
+                    winMsg += '\nTime taken: ' + this.timerSpan.innerText;
+                }
+                alert(winMsg);
 
                 // Clear game data
                 localStorage.clear();
 
                 this.cleanUpEvents();
+                this.stopTimer();
 
                 // Run delegate function to return to main menu, in case it is defined
                 if (this.onGameEnd !== undefined && this.onGameEnd !== null){
@@ -203,17 +226,18 @@ export class Game {
         this.saveGame();
     };
 
-    private fullScreenChange = () => {debugger;
-        if (document.fullscreenElement) {
-            this.canvas.requestFullscreen();
-        }
+    private timerCallback = () => {
+        this.secondsRunning++;
+        let minutes: number = Math.floor(this.secondsRunning / 60);
+        let seconds: number = this.secondsRunning % 60;
+        this.timerSpan.innerText = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
     };
 
-    private clearUpper(){
+    private clearUpper() {
         this.context.clearRect(0, 0, this.canvas.width, 70);
     }
 
-    private checkTileCount(column: number, row: number): number{
+    private checkTileCount(column: number, row: number): number {
         let count: number = row;
         let dotCount: number = 0;
 
@@ -279,31 +303,48 @@ export class Game {
         return dotCount;
     }
 
-    private cleanUpEvents(){
+    private cleanUpEvents() {
         this.canvas.removeEventListener('mousemove', this.moveDot, false);
         this.canvas.removeEventListener('click', this.landDot, false);
         window.removeEventListener('beforeunload', this.beforeUnload);
-        document.addEventListener('fullscreenchange', this.fullScreenChange);
     }
 
-    private saveGame(){
+    private saveGame() {
         localStorage.setItem('nextTurn', this.turn.toString());
 	    localStorage.setItem('board', JSON.stringify(this.board));
         localStorage.setItem('playerRed', this.playerRed);
         localStorage.setItem('playerGreen', this.playerGreen);
+        localStorage.setItem('secondsRunning', this.secondsRunning.toString());
     }
 
-    private restoreLastGame(){
+    private restoreLastGame() {
         this.turn = parseInt(localStorage.getItem('nextTurn'));
         this.playerRed = localStorage.getItem('playerRed');
         this.playerGreen = localStorage.getItem('playerGreen');
         this.board = JSON.parse(localStorage.getItem('board'));
+        this.secondsRunning = parseInt(localStorage.getItem('secondsRunning'));
     }
 
-    public exit(){
+    public exit() {
         this.cleanUpEvents();
         this.saveGame();
         this.onGameEnd();
+        this.stopTimer();
+    }
+
+    private setTimer() {
+        if (this.timerSpan) {
+            this.timerCallback();
+            this.timerInterval = setInterval(this.timerCallback, 1000);
+            this.timerSpan.classList.remove('hide');
+        }
+    }
+
+    private stopTimer() {
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerSpan.classList.add('hide');
+        }
     }
 
 }

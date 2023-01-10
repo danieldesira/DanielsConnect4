@@ -12,6 +12,10 @@
     margin-left: 100px;
 }
 
+.hide {
+    display: none;
+}
+
 .menu {
     width: 200px;
     margin-left: auto;
@@ -22,4 +26,8 @@
 .menu-btn {
     width: 200px;
     height: 40px;
+}
+
+.timer {
+    font-weight: bolder;
 }

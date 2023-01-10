@@ -12,7 +12,9 @@ var GameMode;
     GameMode[GameMode["SAME_PC"] = 1] = "SAME_PC";
 })(GameMode = exports.GameMode || (exports.GameMode = {}));
 var Game = /** @class */ (function () {
-    function Game(canvasId) {
+    function Game(canvasId, exitBtnId, timerId) {
+        if (exitBtnId === void 0) { exitBtnId = null; }
+        if (timerId === void 0) { timerId = null; }
         var _this = this;
         this.board = new Array(Game.columns);
         this.turn = Tile.RED;
@@ -65,10 +67,18 @@ var Game = /** @class */ (function () {
                     else if (_this.turn === Tile.GREEN) {
                         winner = _this.playerGreen + ' (Green)';
                     }
-                    alert(winner + ' wins!');
+                    if (_this.exitBtn) {
+                        _this.exitBtn.classList.add('hide');
+                    }
+                    var winMsg = winner + ' wins!';
+                    if (_this.timerSpan) {
+                        winMsg += '\nTime taken: ' + _this.timerSpan.innerText;
+                    }
+                    alert(winMsg);
                     // Clear game data
                     localStorage.clear();
                     _this.cleanUpEvents();
+                    _this.stopTimer();
                     // Run delegate function to return to main menu, in case it is defined
                     if (_this.onGameEnd !== undefined && _this.onGameEnd !== null) {
                         setTimeout(_this.onGameEnd, 3000);
@@ -86,11 +96,11 @@ var Game = /** @class */ (function () {
         this.beforeUnload = function () {
             _this.saveGame();
         };
-        this.fullScreenChange = function () {
-            debugger;
-            if (document.fullscreenElement) {
-                _this.canvas.requestFullscreen();
-            }
+        this.timerCallback = function () {
+            _this.secondsRunning++;
+            var minutes = Math.floor(_this.secondsRunning / 60);
+            var seconds = _this.secondsRunning % 60;
+            _this.timerSpan.innerText = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
         };
         this.canvas = document.getElementById(canvasId);
         this.context = this.canvas.getContext('2d');
@@ -101,12 +111,20 @@ var Game = /** @class */ (function () {
                 this.board[col][row] = Tile.EMPTY;
             }
         }
+        if (exitBtnId !== null) {
+            this.exitBtn = document.getElementById(exitBtnId);
+        }
+        if (timerId !== null) {
+            this.timerSpan = document.getElementById(timerId);
+            this.secondsRunning = 0;
+        }
     }
     Game.prototype.start = function () {
         this.checkGameData();
         this.setUpPlayerNames();
         this.paintBoard();
         this.setGameEvents();
+        this.setTimer();
     };
     Game.prototype.checkGameData = function () {
         if (this.mode === GameMode.SAME_PC) {
@@ -174,7 +192,6 @@ var Game = /** @class */ (function () {
         this.canvas.addEventListener('mousemove', this.moveDot, false);
         this.canvas.addEventListener('click', this.landDot, false);
         window.addEventListener('beforeunload', this.beforeUnload);
-        document.addEventListener('fullscreenchange', this.fullScreenChange);
     };
     Game.prototype.clearUpper = function () {
         this.context.clearRect(0, 0, this.canvas.width, 70);
@@ -242,24 +259,39 @@ var Game = /** @class */ (function () {
         this.canvas.removeEventListener('mousemove', this.moveDot, false);
         this.canvas.removeEventListener('click', this.landDot, false);
         window.removeEventListener('beforeunload', this.beforeUnload);
-        document.addEventListener('fullscreenchange', this.fullScreenChange);
     };
     Game.prototype.saveGame = function () {
         localStorage.setItem('nextTurn', this.turn.toString());
         localStorage.setItem('board', JSON.stringify(this.board));
         localStorage.setItem('playerRed', this.playerRed);
         localStorage.setItem('playerGreen', this.playerGreen);
+        localStorage.setItem('secondsRunning', this.secondsRunning.toString());
     };
     Game.prototype.restoreLastGame = function () {
         this.turn = parseInt(localStorage.getItem('nextTurn'));
         this.playerRed = localStorage.getItem('playerRed');
         this.playerGreen = localStorage.getItem('playerGreen');
         this.board = JSON.parse(localStorage.getItem('board'));
+        this.secondsRunning = parseInt(localStorage.getItem('secondsRunning'));
     };
     Game.prototype.exit = function () {
         this.cleanUpEvents();
         this.saveGame();
         this.onGameEnd();
+        this.stopTimer();
+    };
+    Game.prototype.setTimer = function () {
+        if (this.timerSpan) {
+            this.timerCallback();
+            this.timerInterval = setInterval(this.timerCallback, 1000);
+            this.timerSpan.classList.remove('hide');
+        }
+    };
+    Game.prototype.stopTimer = function () {
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerSpan.classList.add('hide');
+        }
     };
     Game.columns = 9;
     Game.rows = 8;

@@ -8,23 +8,20 @@ let exitBtn = document.getElementById('exitBtn');
 let canvas = document.getElementById('board');
 
 samePCBtn.addEventListener('click', () => {
-    connect4 = new Game('board');
+    connect4 = new Game('board', 'exitBtn', 'timer');
     connect4.mode = GameMode.SAME_PC;
     connect4.onGameEnd = () => {
-        menu.style.display = 'block';
-        canvas.style.display = 'none';
-        exitBtn.style.display = 'none';
+        menu.classList.remove('hide');
+        canvas.classList.add('hide');
+        exitBtn.classList.add('hide');
     };
     connect4.start();
 
-    menu.style.display = 'none';
-    canvas.style.display = 'block';
-    exitBtn.style.display = 'inline';
+    menu.classList.add('hide');
+    canvas.classList.remove('hide');
+    exitBtn.classList.remove('hide');
 }, false);
 
 exitBtn.addEventListener('click', () => {
     connect4.exit();
 }, false);
-
-// Hide Exit button by default
-exitBtn.style.display = 'none';
