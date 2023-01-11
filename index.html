@@ -8,7 +8,7 @@
     <body>
         <div class="center-text">
             <h1 class="heading">Daniel's Connect 4</h1>
-            Version 0.1.2 (Alpha release) <a href="changelog.html" title="Release Notes" target="_blank">View release notes</a>
+            Version 0.1.3 (Alpha release) <a href="changelog.html" title="Release Notes" target="_blank">View release notes</a>
             <button type="button" id="exitBtn" class="btn exit-btn hide">Exit to Main Menu</button>
             <strong id="timer"></strong>
             <strong id="playerRed" class="red-text"></strong>
@@ -18,8 +18,6 @@
             <button type="button" id="samePC" class="btn menu-btn">1 vs 1 (Same PC)</button>
         </div>
         <canvas id="board" height="1000" width="1000"></canvas>
-        <script>var exports = {};</script>
-        <script src="game.js"></script>
-        <script src="main.js"></script>
+        <script src="dist/bundle.js"></script>
     </body>
 </html>

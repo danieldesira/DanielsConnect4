@@ -1,21 +1,29 @@
-var connect4;
-var menu = document.getElementById('menu');
-var samePCBtn = document.getElementById('samePC');
-var exitBtn = document.getElementById('exitBtn');
-var canvas = document.getElementById('board');
-samePCBtn.addEventListener('click', function () {
+let connect4: Game;
+
+let menu = document.getElementById('menu');
+let samePCBtn = document.getElementById('samePC');
+
+let exitBtn = document.getElementById('exitBtn');
+
+import { Game, GameMode } from "./game";
+
+let canvas = document.getElementById('board');
+
+samePCBtn.addEventListener('click', () => {
     connect4 = new Game('board', 'exitBtn', 'timer', 'playerRed', 'playerGreen');
     connect4.mode = GameMode.SAME_PC;
-    connect4.onGameEnd = function () {
+    connect4.onGameEnd = () => {
         menu.classList.remove('hide');
         canvas.classList.add('hide');
         exitBtn.classList.add('hide');
     };
     connect4.start();
+
     menu.classList.add('hide');
     canvas.classList.remove('hide');
     exitBtn.classList.remove('hide');
 }, false);
-exitBtn.addEventListener('click', function () {
+
+exitBtn.addEventListener('click', () => {
     connect4.exit();
 }, false);
