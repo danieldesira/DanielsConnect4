@@ -1,11 +1,12 @@
+import { Game } from "./game";
+import { GameMode } from "./game-mode";
+
 let connect4: Game;
 
 let menu = document.getElementById('menu');
 let samePCBtn = document.getElementById('samePC');
 
 let exitBtn = document.getElementById('exitBtn');
-
-import { Game, GameMode } from "./game";
 
 let canvas = document.getElementById('board');
 

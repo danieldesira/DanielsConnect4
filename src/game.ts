@@ -1,12 +1,5 @@
-enum Tile {
-    EMPTY = 0,
-    RED = 1,
-    GREEN = 2
-}
-
-export enum GameMode {
-    SAME_PC = 1
-}
+import { GameMode } from './game-mode';
+import { Tile } from './tile';
 
 export class Game {
 
@@ -391,4 +384,3 @@ class Position {
         this.y = y;
     }
 }
-
