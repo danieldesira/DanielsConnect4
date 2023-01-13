@@ -1,5 +1,5 @@
 import { GameMode } from './game-mode';
-import { Tile } from './tile';
+import { Dot } from './dot';
 
 export class Game {
 
@@ -8,14 +8,14 @@ export class Game {
 
     private canvas: any;
     private context: any;
-    private board: Array<Array<Tile>> = new Array(Game.columns);
+    private board: Array<Array<Dot>> = new Array(Game.columns);
 
     private exitBtn: any;
     private timerSpan: any;
     private playerRedSpan: any;
     private playerGreenSpan: any;
 
-    private turn: Tile = Tile.RED;
+    private turn: Dot = Dot.RED;
 
     private playerRed: string;
     private playerGreen: string;
@@ -26,6 +26,10 @@ export class Game {
     private secondsRunning: number;
     private timerInterval: any;
 
+    private circleRadius: number;
+    private rowGap: number;
+    private colGap: number;
+
     constructor(canvasId: string,
                 exitBtnId: string = null,
                 timerId: string = null,
@@ -34,11 +38,11 @@ export class Game {
         this.canvas = document.getElementById(canvasId);
         this.context = this.canvas.getContext('2d');
 
-        // Initialise board with empty tiles
+        // Initialise board with empty dots
         for (let col = 0; col < Game.columns; col++) {
             this.board[col] = new Array(Game.rows);
             for (let row = 0; row < Game.rows; row++){
-                this.board[col][row] = Tile.EMPTY;
+                this.board[col][row] = Dot.EMPTY;
             }
         }
 
@@ -61,9 +65,9 @@ export class Game {
     }
 
     public start() {
+        this.resizeCanvas();
         this.checkGameData();
         this.setUpPlayerNames();
-        this.paintBoard();
         this.setGameEvents();
         this.setTimer();
     }
@@ -110,16 +114,16 @@ export class Game {
 
         for (let col = Game.columns - 1; col >= 0; col--) {
             for (let row = Game.rows - 1; row >= 0; row--) {
-                if (this.board[col][row] === Tile.RED) {
+                if (this.board[col][row] === Dot.RED) {
                     this.context.fillStyle = 'red';
-                } else if (this.board[col][row] === Tile.GREEN) {
+                } else if (this.board[col][row] === Dot.GREEN) {
                     this.context.fillStyle = 'greenyellow';
                 } else {
                     this.context.fillStyle = 'black';
                 }
 
                 this.context.beginPath();
-                this.context.arc(50 + col * 110, 150 + row * 110, 30, 0, 2 * Math.PI);
+                this.context.arc(50 + col * this.colGap, 150 + row * this.rowGap, this.circleRadius, 0, 2 * Math.PI);
                 this.context.closePath();
                 this.context.fill();
             }
@@ -146,32 +150,33 @@ export class Game {
         this.canvas.addEventListener('mousemove', this.moveDot, false);
         this.canvas.addEventListener('click', this.landDot, false);
         window.addEventListener('beforeunload', this.beforeUnload);
+        window.addEventListener('resize', this.resizeCanvas);
     }
 
     private moveDot = (event) => {
         this.clearUpper();
 
         let position: Position = this.getCursorPosition(event);
-        let column = Math.round(position.x - 50) / 110;
+        let column = Math.round(position.x - 50) / this.colGap;
         
-        if (this.turn == Tile.RED) {
+        if (this.turn == Dot.RED) {
             this.context.fillStyle = 'red';
-        } else if (this.turn == Tile.GREEN) {
+        } else if (this.turn == Dot.GREEN) {
             this.context.fillStyle = 'greenyellow';
         }
 
         this.context.beginPath();
-        this.context.arc(50 + column * 120, 35, 35, 0, 2 * Math.PI);
+        this.context.arc(50 + column * this.colGap, this.rowGap - this.circleRadius, this.circleRadius, 0, 2 * Math.PI);
         this.context.closePath();
         this.context.fill();
     }
 
     private landDot = (event) => {
         let position = this.getCursorPosition(event);
-        let column = Math.round((position.x - 50) / 110);
+        let column = Math.round((position.x - 50) / this.colGap);
         let row: number;
 
-        if (this.board[column][0] === 0) {
+        if (this.board[column][0] === Dot.EMPTY) {
 
             // Places the circle at the buttom of the column
             for (var r = Game.rows - 1; r > -1; r--) {
@@ -182,26 +187,26 @@ export class Game {
                 }
             }
             
-            if (this.turn === Tile.RED) {
+            if (this.turn === Dot.RED) {
                 this.context.fillStyle = 'red';
-            } else if (this.turn === Tile.GREEN) {
+            } else if (this.turn === Dot.GREEN) {
                 this.context.fillStyle = 'greenyellow';
             }
             
             // Draws the circle at the appropriate position
             this.context.beginPath();
-            this.context.arc(50 + column * 110, 150 + r * 110, 30, 0, Math.PI * 2);
+            this.context.arc(50 + column * this.colGap, 150 + r * this.rowGap, this.circleRadius, 0, Math.PI * 2);
             this.context.closePath();
             this.context.fill();
             
-            let dotCount = this.checkTileCount(column, row);
+            let dotCount = this.checkDotCount(column, row);
 
-            // Announce winner in case any player completes 4 tiles
+            // Announce winner in case any player completes 4 Dots
             if (dotCount > 3) {
                 let winner: string = '';
-                if (this.turn === Tile.RED) {
+                if (this.turn === Dot.RED) {
                     winner = this.playerRed + ' (Red)';
-                } else if (this.turn === Tile.GREEN) {
+                } else if (this.turn === Dot.GREEN) {
                     winner = this.playerGreen + ' (Green)';
                 }
 
@@ -229,10 +234,10 @@ export class Game {
             }
             
             // Switches turn
-            if (this.turn === Tile.RED){
-                this.turn = Tile.GREEN;
-            } else if (this.turn === Tile.GREEN){
-                this.turn = Tile.RED;
+            if (this.turn === Dot.RED) {
+                this.turn = Dot.GREEN;
+            } else if (this.turn === Dot.GREEN) {
+                this.turn = Dot.RED;
             }
 
         }
@@ -253,7 +258,7 @@ export class Game {
         this.context.clearRect(0, 0, this.canvas.width, 70);
     }
 
-    private checkTileCount(column: number, row: number): number {
+    private checkDotCount(column: number, row: number): number {
         let count: number = row;
         let dotCount: number = 0;
 
@@ -323,6 +328,7 @@ export class Game {
         this.canvas.removeEventListener('mousemove', this.moveDot, false);
         this.canvas.removeEventListener('click', this.landDot, false);
         window.removeEventListener('beforeunload', this.beforeUnload);
+        window.removeEventListener('resize', this.resizeCanvas);
     }
 
     private saveGame() {
@@ -371,6 +377,23 @@ export class Game {
         if (this.playerRedSpan) {
             this.playerRedSpan.innerText = '';
         }
+    }
+
+    private resizeCanvas = () => {
+        this.canvas.height = window.innerHeight - 100;
+        this.canvas.width = window.innerWidth;
+
+        if (this.canvas.height > this.canvas.width) {
+            this.circleRadius = Math.max(this.canvas.width / Game.columns - 65, 10);
+            this.colGap = 65;
+            this.rowGap = this.canvas.height / Game.rows + this.circleRadius;
+        } else {
+            this.circleRadius = Math.max(this.canvas.height / Game.rows - 65, 10);
+            this.colGap = this.canvas.width / Game.columns + this.circleRadius;
+            this.rowGap = 65;
+        }
+
+        this.paintBoard();
     }
 
 }
