@@ -65,8 +65,8 @@ export class Game {
     }
 
     public start() {
-        this.resizeCanvas();
         this.checkGameData();
+        this.resizeCanvas();
         this.setUpPlayerNames();
         this.setGameEvents();
         this.setTimer();
@@ -151,13 +151,14 @@ export class Game {
         this.canvas.addEventListener('click', this.landDot, false);
         window.addEventListener('beforeunload', this.beforeUnload);
         window.addEventListener('resize', this.resizeCanvas);
+        document.addEventListener('visibilitychange', this.pageVisibilityChange);
     }
 
     private moveDot = (event) => {
         this.clearUpper();
 
         let position: Position = this.getCursorPosition(event);
-        let column = Math.round(position.x - 50) / this.colGap;
+        let column = Math.round((position.x - 50) / this.colGap);
         
         if (this.turn == Dot.RED) {
             this.context.fillStyle = 'red';
@@ -165,10 +166,7 @@ export class Game {
             this.context.fillStyle = 'greenyellow';
         }
 
-        this.context.beginPath();
-        this.context.arc(50 + column * this.colGap, this.rowGap - this.circleRadius, this.circleRadius, 0, 2 * Math.PI);
-        this.context.closePath();
-        this.context.fill();
+        this.paintDotToDrop(column);
     }
 
     private landDot = (event) => {
@@ -236,11 +234,22 @@ export class Game {
             // Switches turn
             if (this.turn === Dot.RED) {
                 this.turn = Dot.GREEN;
+                this.context.fillStyle = 'greenyellow';
             } else if (this.turn === Dot.GREEN) {
                 this.turn = Dot.RED;
+                this.context.fillStyle = 'red';
             }
 
+            this.paintDotToDrop(column);
+
         }
+    }
+
+    private paintDotToDrop(column: number) {
+        this.context.beginPath();
+        this.context.arc(50 + column * this.colGap, this.rowGap - this.circleRadius, this.circleRadius, 0, 2 * Math.PI);
+        this.context.closePath();
+        this.context.fill();
     }
 
     private beforeUnload = () => {
@@ -252,6 +261,14 @@ export class Game {
         let minutes: number = Math.floor(this.secondsRunning / 60);
         let seconds: number = this.secondsRunning % 60;
         this.timerSpan.innerText = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+    };
+
+    private pageVisibilityChange = () => {
+        if (document.hidden) {
+            clearInterval(this.timerInterval);
+        } else {
+            this.timerInterval = setInterval(this.timerCallback, 1000);
+        }
     };
 
     private clearUpper() {
@@ -329,6 +346,7 @@ export class Game {
         this.canvas.removeEventListener('click', this.landDot, false);
         window.removeEventListener('beforeunload', this.beforeUnload);
         window.removeEventListener('resize', this.resizeCanvas);
+        document.removeEventListener('changevisibility', this.pageVisibilityChange);
     }
 
     private saveGame() {
@@ -385,12 +403,17 @@ export class Game {
 
         if (this.canvas.height > this.canvas.width) {
             this.circleRadius = Math.max(this.canvas.width / Game.columns - 65, 10);
-            this.colGap = 65;
-            this.rowGap = this.canvas.height / Game.rows + this.circleRadius;
+            this.colGap = 75;
+            this.rowGap = this.canvas.height / (Game.rows + 1) + this.circleRadius;
         } else {
             this.circleRadius = Math.max(this.canvas.height / Game.rows - 65, 10);
-            this.colGap = this.canvas.width / Game.columns + this.circleRadius;
+            this.colGap = this.canvas.width / (Game.columns + 1) + this.circleRadius;
             this.rowGap = 65;
+        }
+
+        // If mobile/tablet screen, use a small radius
+        if (this.canvas.width < 1000) {
+            this.circleRadius = 10;
         }
 
         this.paintBoard();
