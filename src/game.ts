@@ -401,19 +401,18 @@ export class Game {
         this.canvas.height = window.innerHeight - 100;
         this.canvas.width = window.innerWidth;
 
-        if (this.canvas.height > this.canvas.width) {
-            this.circleRadius = Math.max(this.canvas.width / Game.columns - 65, 10);
-            this.colGap = 75;
-            this.rowGap = this.canvas.height / (Game.rows + 1) + this.circleRadius;
+        if (this.canvas.width < 1000) {
+            this.circleRadius = 10; // Mobile/tablet
         } else {
-            this.circleRadius = Math.max(this.canvas.height / Game.rows - 65, 10);
-            this.colGap = this.canvas.width / (Game.columns + 1) + this.circleRadius;
-            this.rowGap = 65;
+            this.circleRadius = 15; // Desktop
         }
 
-        // If mobile/tablet screen, use a small radius
-        if (this.canvas.width < 1000) {
-            this.circleRadius = 10;
+        if (this.canvas.height > this.canvas.width) {
+            this.colGap = this.canvas.width / (Game.columns + 1);
+            this.rowGap = this.canvas.height / (Game.rows + 1);
+        } else {
+            this.colGap = this.canvas.width / (Game.columns + 1);
+            this.rowGap = 65;
         }
 
         this.paintBoard();
