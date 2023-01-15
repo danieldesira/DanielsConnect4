@@ -11,3 +11,10 @@ In order to take advantage of source map during debugging, do the following in t
 - Then click the Filesystem tab within Sources and click "Add folder to workspace".
 - Navigate to the src folder on your environment.
 - Reload the page and feel free to set breakpoints in the code.
+
+## Libraries
+- Dilo World Font: https://www.fontspace.com/dilo-world-font-f72650
+
+## Credits
+### Developers
+- Daniel Desira

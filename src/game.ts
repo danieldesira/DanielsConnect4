@@ -402,9 +402,9 @@ export class Game {
         this.canvas.width = window.innerWidth;
 
         if (this.canvas.width < 1000) {
-            this.circleRadius = 10; // Mobile/tablet
+            this.circleRadius = 20; // Mobile/tablet
         } else {
-            this.circleRadius = 15; // Desktop
+            this.circleRadius = 30; // Desktop
         }
 
         if (this.canvas.height > this.canvas.width) {
