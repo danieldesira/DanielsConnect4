@@ -30,6 +30,8 @@ export class Game {
     private rowGap: number;
     private colGap: number;
 
+    private socket: WebSocket;
+
     constructor(canvasId: string,
                 exitBtnId: string = null,
                 timerId: string = null,
@@ -167,7 +169,7 @@ export class Game {
         }
 
         this.paintDotToDrop(column);
-    }
+    };
 
     private landDot = (event) => {
         let position = this.getCursorPosition(event);
@@ -243,7 +245,7 @@ export class Game {
             this.paintDotToDrop(column);
 
         }
-    }
+    };
 
     private paintDotToDrop(column: number) {
         this.context.beginPath();
@@ -253,7 +255,11 @@ export class Game {
     }
 
     private beforeUnload = () => {
-        this.saveGame();
+        if (this.mode === GameMode.SAME_PC) {
+            this.saveGame();
+        } else if (this.mode === GameMode.SOCKETS) {
+            // add logic for confirmation box before closing
+        }
     };
 
     private timerCallback = () => {
@@ -367,7 +373,9 @@ export class Game {
 
     public exit() {
         this.cleanUpEvents();
-        this.saveGame();
+        if (this.mode === GameMode.SAME_PC) {
+            this.saveGame();
+        }
         this.onGameEnd();
         this.stopTimer();
         this.clearPlayerNames();
@@ -416,6 +424,12 @@ export class Game {
         }
 
         this.paintBoard();
+    };
+
+    private defineSocket() {
+        // connect to websocket
+
+        // define event handler for ServerSent event
     }
 
 }

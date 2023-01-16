@@ -5,6 +5,8 @@ let connect4: Game;
 
 let menu = document.getElementById('menu');
 let samePCBtn = document.getElementById('samePC');
+let socketsBtn = document.getElementById('sockets');
+let creditsBtn = document.getElementById('credits');
 
 let exitBtn = document.getElementById('exitBtn');
 
@@ -23,6 +25,14 @@ samePCBtn.addEventListener('click', () => {
     menu.classList.add('hide');
     canvas.classList.remove('hide');
     exitBtn.classList.remove('hide');
+}, false);
+
+socketsBtn.addEventListener('click', () => {
+    
+}, false);
+
+creditsBtn.addEventListener('click', () => {
+    open('contributors.html');
 }, false);
 
 exitBtn.addEventListener('click', () => {

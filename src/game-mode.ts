@@ -1,3 +1,4 @@
 export enum GameMode {
-    SAME_PC = 1
+    SAME_PC = 1,
+    SOCKETS = 2
 }
