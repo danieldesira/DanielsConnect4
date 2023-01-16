@@ -247,7 +247,7 @@ export class Game {
 
     private paintDotToDrop(column: number) {
         this.context.beginPath();
-        this.context.arc(50 + column * this.colGap, this.rowGap - this.circleRadius, this.circleRadius, 0, 2 * Math.PI);
+        this.context.arc(50 + column * this.colGap, this.circleRadius, this.circleRadius, 0, 2 * Math.PI);
         this.context.closePath();
         this.context.fill();
     }
