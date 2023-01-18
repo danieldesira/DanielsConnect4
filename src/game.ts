@@ -30,7 +30,10 @@ export class Game {
     private rowGap: number;
     private colGap: number;
 
+    // Network game state
     private socket: WebSocket;
+    private playerColor: Dot;
+    private gameId: number;
 
     constructor(canvasId: string,
                 exitBtnId: string = null,
@@ -67,6 +70,7 @@ export class Game {
     }
 
     public start() {
+        this.defineSocket();
         this.checkGameData();
         this.resizeCanvas();
         this.setUpPlayerNames();
@@ -74,7 +78,7 @@ export class Game {
         this.setTimer();
     }
 
-    private checkGameData(){
+    private checkGameData() {
         if (this.mode === GameMode.SAME_PC) {
             let board = localStorage.getItem('board');
             let nextTurn = localStorage.getItem('nextTurn');
@@ -96,6 +100,13 @@ export class Game {
                 this.playerRed = prompt('Please enter name for Red Player!');
                 this.playerGreen = prompt('Please enter name for Green Player!');
             }
+        } else if (this.mode === GameMode.NETWORK) {
+            let playerName = prompt('You are ' + this.playerColor + '. Please enter your name.');
+            if (this.playerColor === Dot.RED) {
+                this.playerRed = playerName;
+            } else if (this.playerColor === Dot.GREEN) {
+                this.playerGreen = playerName;
+            }
         }
 
         // Print player names on screen
@@ -116,13 +127,7 @@ export class Game {
 
         for (let col = Game.columns - 1; col >= 0; col--) {
             for (let row = Game.rows - 1; row >= 0; row--) {
-                if (this.board[col][row] === Dot.RED) {
-                    this.context.fillStyle = 'red';
-                } else if (this.board[col][row] === Dot.GREEN) {
-                    this.context.fillStyle = 'greenyellow';
-                } else {
-                    this.context.fillStyle = 'black';
-                }
+                this.context.fillStyle = this.board[col][row];
 
                 this.context.beginPath();
                 this.context.arc(50 + col * this.colGap, 150 + row * this.rowGap, this.circleRadius, 0, 2 * Math.PI);
@@ -162,11 +167,7 @@ export class Game {
         let position: Position = this.getCursorPosition(event);
         let column = Math.round((position.x - 50) / this.colGap);
         
-        if (this.turn == Dot.RED) {
-            this.context.fillStyle = 'red';
-        } else if (this.turn == Dot.GREEN) {
-            this.context.fillStyle = 'greenyellow';
-        }
+        this.context.fillStyle = this.turn;
 
         this.paintDotToDrop(column);
     };
@@ -180,18 +181,14 @@ export class Game {
 
             // Places the circle at the buttom of the column
             for (var r = Game.rows - 1; r > -1; r--) {
-                if (this.board[column][r] === 0) {
+                if (this.board[column][r] === Dot.EMPTY) {
                     this.board[column][r] = this.turn;
                     row = r;
                     break;
                 }
             }
             
-            if (this.turn === Dot.RED) {
-                this.context.fillStyle = 'red';
-            } else if (this.turn === Dot.GREEN) {
-                this.context.fillStyle = 'greenyellow';
-            }
+            this.context.fillStyle = this.turn;
             
             // Draws the circle at the appropriate position
             this.context.beginPath();
@@ -236,11 +233,11 @@ export class Game {
             // Switches turn
             if (this.turn === Dot.RED) {
                 this.turn = Dot.GREEN;
-                this.context.fillStyle = 'greenyellow';
             } else if (this.turn === Dot.GREEN) {
                 this.turn = Dot.RED;
-                this.context.fillStyle = 'red';
             }
+
+            this.context.fillStyle = this.turn;
 
             this.paintDotToDrop(column);
 
@@ -257,7 +254,7 @@ export class Game {
     private beforeUnload = () => {
         if (this.mode === GameMode.SAME_PC) {
             this.saveGame();
-        } else if (this.mode === GameMode.SOCKETS) {
+        } else if (this.mode === GameMode.NETWORK) {
             // add logic for confirmation box before closing
         }
     };
@@ -364,7 +361,13 @@ export class Game {
     }
 
     private restoreLastGame() {
-        this.turn = parseInt(localStorage.getItem('nextTurn'));
+        let nextTurn: string = localStorage.getItem('nextTurn');
+        if (nextTurn === Dot.RED) {
+            this.turn = Dot.RED;
+        } else if (nextTurn === Dot.GREEN) {
+            this.turn = Dot.GREEN;
+        }
+        
         this.playerRed = localStorage.getItem('playerRed');
         this.playerGreen = localStorage.getItem('playerGreen');
         this.board = JSON.parse(localStorage.getItem('board'));
@@ -427,10 +430,30 @@ export class Game {
     };
 
     private defineSocket() {
-        // connect to websocket
+        if (this.mode === GameMode.NETWORK) {
+            this.socket = new WebSocket('ws://localhost:443/');
 
-        // define event handler for ServerSent event
+            this.socket.onmessage = this.socketMessage;
+            // define event handler for ServerSent event
+        }
     }
+
+    private socketMessage = (event) => {
+        let messageData = JSON.parse(event.data);
+
+        if (!this.playerColor) {
+            this.playerColor = messageData.color;
+            this.setUpPlayerNames();
+        }
+
+        if (!this.gameId) {
+            this.gameId = messageData.gameId;
+        }
+
+        if (messageData.column) {
+            //drop dot logic for other player. to reorganise and call existing code
+        }
+    };
 
 }
 

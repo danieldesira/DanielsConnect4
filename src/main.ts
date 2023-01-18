@@ -28,7 +28,18 @@ samePCBtn.addEventListener('click', () => {
 }, false);
 
 socketsBtn.addEventListener('click', () => {
-    
+    connect4 = new Game('board', 'exitBtn', 'timer', 'playerRed', 'playerGreen');
+    connect4.mode = GameMode.NETWORK;
+    connect4.onGameEnd = () => {
+        menu.classList.remove('hide');
+        canvas.classList.add('hide');
+        exitBtn.classList.add('hide');
+    };
+    connect4.start();
+
+    menu.classList.add('hide');
+    canvas.classList.remove('hide');
+    exitBtn.classList.remove('hide');
 }, false);
 
 creditsBtn.addEventListener('click', () => {
