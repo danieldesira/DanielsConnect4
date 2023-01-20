@@ -1,5 +1,6 @@
-import { GameMode } from './game-mode';
-import { Dot } from './dot';
+import { GameMode } from './enums/game-mode';
+import { Dot } from './enums/dot';
+import { Position } from './position';
 
 export class Game {
 
@@ -100,7 +101,7 @@ export class Game {
                 this.playerRed = prompt('Please enter name for Red Player!');
                 this.playerGreen = prompt('Please enter name for Green Player!');
             }
-        } else if (this.mode === GameMode.NETWORK) {
+        } else if (this.mode === GameMode.NETWORK && this.playerColor) { // This client's color should be defined
             let playerName = prompt('You are ' + this.playerColor + '. Please enter your name.');
             if (this.playerColor === Dot.RED) {
                 this.playerRed = playerName;
@@ -155,26 +156,34 @@ export class Game {
 
     private setGameEvents() {
         this.canvas.addEventListener('mousemove', this.moveDot, false);
-        this.canvas.addEventListener('click', this.landDot, false);
+        this.canvas.addEventListener('click', this.canvasClick, false);
         window.addEventListener('beforeunload', this.beforeUnload);
         window.addEventListener('resize', this.resizeCanvas);
         document.addEventListener('visibilitychange', this.pageVisibilityChange);
     }
 
     private moveDot = (event) => {
-        this.clearUpper();
+        if (this.mode === GameMode.SAME_PC || this.turn === this.playerColor) {
+            this.clearUpper();
 
-        let position: Position = this.getCursorPosition(event);
-        let column = Math.round((position.x - 50) / this.colGap);
-        
-        this.context.fillStyle = this.turn;
+            let position: Position = this.getCursorPosition(event);
+            let column = Math.round((position.x - 50) / this.colGap);
+            
+            this.context.fillStyle = this.turn;
 
-        this.paintDotToDrop(column);
+            this.paintDotToDrop(column);
+        }
     };
 
-    private landDot = (event) => {
-        let position = this.getCursorPosition(event);
-        let column = Math.round((position.x - 50) / this.colGap);
+    private canvasClick = (event) => {
+        if (this.mode === GameMode.SAME_PC || this.turn === this.playerColor) {
+            let position = this.getCursorPosition(event);
+            let column = Math.round((position.x - 50) / this.colGap);
+            this.landDot(column);
+        }
+    };
+
+    private landDot(column: number) {
         let row: number;
 
         if (this.board[column][0] === Dot.EMPTY) {
@@ -240,9 +249,8 @@ export class Game {
             this.context.fillStyle = this.turn;
 
             this.paintDotToDrop(column);
-
         }
-    };
+    }
 
     private paintDotToDrop(column: number) {
         this.context.beginPath();
@@ -251,11 +259,13 @@ export class Game {
         this.context.fill();
     }
 
-    private beforeUnload = () => {
+    private beforeUnload = (event) => {
         if (this.mode === GameMode.SAME_PC) {
             this.saveGame();
         } else if (this.mode === GameMode.NETWORK) {
-            // add logic for confirmation box before closing
+            // Display default dialog before closing
+            event.preventDefault();
+            event.returnValue = ''; // Required by Chrome
         }
     };
 
@@ -346,7 +356,7 @@ export class Game {
 
     private cleanUpEvents() {
         this.canvas.removeEventListener('mousemove', this.moveDot, false);
-        this.canvas.removeEventListener('click', this.landDot, false);
+        this.canvas.removeEventListener('click', this.canvasClick, false);
         window.removeEventListener('beforeunload', this.beforeUnload);
         window.removeEventListener('resize', this.resizeCanvas);
         document.removeEventListener('changevisibility', this.pageVisibilityChange);
@@ -434,35 +444,53 @@ export class Game {
             this.socket = new WebSocket('ws://localhost:443/');
 
             this.socket.onmessage = this.socketMessage;
-            // define event handler for ServerSent event
         }
     }
 
     private socketMessage = (event) => {
         let messageData = JSON.parse(event.data);
 
-        if (!this.playerColor) {
+        if (!this.playerColor && messageData.color) {
             this.playerColor = messageData.color;
             this.setUpPlayerNames();
+            let data = { name: null };
+            if (this.playerColor === Dot.RED) {
+                data.name = this.playerRed;
+            } else if (this.playerColor === Dot.GREEN) {
+                data.name = this.playerGreen;
+            }
+            this.socket.send(JSON.stringify(data));
         }
 
-        if (!this.gameId) {
+        if (messageData.opponentName) {
+            if (this.playerColor === Dot.RED) {
+                this.playerGreen = messageData.opponentName;
+                this.playerGreenSpan.innerText = this.playerGreen;
+            } else if (this.playerColor === Dot.GREEN) {
+                this.playerRed = messageData.opponentName;
+                this.playerRedSpan.innerText = this.playerRed;
+            }
+        }
+
+        if (!this.gameId && messageData.gameId) {
             this.gameId = messageData.gameId;
         }
 
-        if (messageData.column) {
-            //drop dot logic for other player. to reorganise and call existing code
+        if (messageData.message) {
+            alert(messageData.message);
+        }
+
+        if (messageData.win) {
+            //todo: logic to close game
+        }
+
+        if (messageData.column && messageData.mousemove) {
+            //todo: call existing logic for opponent mousemove
+        }
+
+        if (messageData.column && messageData.click) {
+            this.landDot(messageData.column);//to test this
         }
     };
 
-}
-
-class Position {
-    public x: number;
-    public y: number;
-
-    constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
-    }
 }
