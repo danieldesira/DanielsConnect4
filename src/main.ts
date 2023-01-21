@@ -13,33 +13,11 @@ let exitBtn = document.getElementById('exitBtn');
 let canvas = document.getElementById('board');
 
 samePCBtn.addEventListener('click', () => {
-    connect4 = new Game('board', 'exitBtn', 'timer', 'playerRed', 'playerGreen');
-    connect4.mode = GameMode.SAME_PC;
-    connect4.onGameEnd = () => {
-        menu.classList.remove('hide');
-        canvas.classList.add('hide');
-        exitBtn.classList.add('hide');
-    };
-    connect4.start();
-
-    menu.classList.add('hide');
-    canvas.classList.remove('hide');
-    exitBtn.classList.remove('hide');
+    initGame(GameMode.SamePC);
 }, false);
 
 socketsBtn.addEventListener('click', () => {
-    connect4 = new Game('board', 'exitBtn', 'timer', 'playerRed', 'playerGreen');
-    connect4.mode = GameMode.NETWORK;
-    connect4.onGameEnd = () => {
-        menu.classList.remove('hide');
-        canvas.classList.add('hide');
-        exitBtn.classList.add('hide');
-    };
-    connect4.start();
-
-    menu.classList.add('hide');
-    canvas.classList.remove('hide');
-    exitBtn.classList.remove('hide');
+    initGame(GameMode.Network);
 }, false);
 
 creditsBtn.addEventListener('click', () => {
@@ -49,3 +27,18 @@ creditsBtn.addEventListener('click', () => {
 exitBtn.addEventListener('click', () => {
     connect4.exit();
 }, false);
+
+function initGame(mode: GameMode) {
+    connect4 = new Game('board', 'exitBtn', 'timer', 'playerRed', 'playerGreen');
+    connect4.mode = mode;
+    connect4.onGameEnd = () => {
+        menu.classList.remove('hide');
+        canvas.classList.add('hide');
+        exitBtn.classList.add('hide');
+    };
+    connect4.start();
+
+    menu.classList.add('hide');
+    canvas.classList.remove('hide');
+    exitBtn.classList.remove('hide');
+}

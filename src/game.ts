@@ -1,6 +1,7 @@
 import { GameMode } from './enums/game-mode';
 import { Dot } from './enums/dot';
 import { Position } from './position';
+import { Utils } from './utils';
 
 export class Game {
 
@@ -16,7 +17,7 @@ export class Game {
     private playerRedSpan: any;
     private playerGreenSpan: any;
 
-    private turn: Dot = Dot.RED;
+    private turn: Dot = Dot.Red;
 
     private playerRed: string;
     private playerGreen: string;
@@ -48,7 +49,7 @@ export class Game {
         for (let col = 0; col < Game.columns; col++) {
             this.board[col] = new Array(Game.rows);
             for (let row = 0; row < Game.rows; row++){
-                this.board[col][row] = Dot.EMPTY;
+                this.board[col][row] = Dot.Empty;
             }
         }
 
@@ -80,7 +81,7 @@ export class Game {
     }
 
     private checkGameData() {
-        if (this.mode === GameMode.SAME_PC) {
+        if (this.mode === GameMode.SamePC) {
             let board = localStorage.getItem('board');
             let nextTurn = localStorage.getItem('nextTurn');
             
@@ -96,16 +97,16 @@ export class Game {
     }
 
     private setUpPlayerNames() {
-        if (this.mode === GameMode.SAME_PC) {
+        if (this.mode === GameMode.SamePC) {
             if (!localStorage.getItem('playerRed') || !localStorage.getItem('playerGreen')) {
                 this.playerRed = prompt('Please enter name for Red Player!');
                 this.playerGreen = prompt('Please enter name for Green Player!');
             }
-        } else if (this.mode === GameMode.NETWORK && this.playerColor) { // This client's color should be defined
+        } else if (this.mode === GameMode.Network && this.playerColor) { // This client's color should be defined
             let playerName = prompt('You are ' + this.playerColor + '. Please enter your name.');
-            if (this.playerColor === Dot.RED) {
+            if (this.playerColor === Dot.Red) {
                 this.playerRed = playerName;
-            } else if (this.playerColor === Dot.GREEN) {
+            } else if (this.playerColor === Dot.Green) {
                 this.playerGreen = playerName;
             }
         }
@@ -114,11 +115,20 @@ export class Game {
     }
 
     private printPlayerNames() {
+        const waiting = 'Waiting to connect...';
         if (this.playerGreenSpan) {
-            this.playerGreenSpan.innerText = this.playerGreen;
+            if (this.mode === GameMode.Network && !this.playerGreen) {
+                this.playerGreenSpan.innerText = waiting;
+            } else {
+                this.playerGreenSpan.innerText = this.playerGreen;
+            }
         }
         if (this.playerRedSpan) {
-            this.playerRedSpan.innerText = this.playerRed;
+            if (this.mode === GameMode.Network && !this.playerRed) {
+                this.playerRedSpan.innerText = waiting;
+            } else {
+                this.playerRedSpan.innerText = this.playerRed;
+            }
         }
     }
 
@@ -165,13 +175,13 @@ export class Game {
         document.addEventListener('visibilitychange', this.pageVisibilityChange);
     }
 
-    private canvasMousemove = (event) => {//to-do: in network-mode, block mousemove until both players are connected
-        if (this.mode === GameMode.SAME_PC || this.turn === this.playerColor) {
+    private canvasMousemove = (event) => {
+        if (this.mode === GameMode.SamePC || (this.turn === this.playerColor && this.opponentConnected())) {
             let position: Position = this.getCursorPosition(event);
             let column = Math.round((position.x - 50) / this.colGap);
             this.moveDot(column);
 
-            if (this.mode === GameMode.NETWORK && this.socket) {
+            if (this.mode === GameMode.Network && this.socket) {
                 let data = {
                     action: 'mousemove',
                     column: column
@@ -181,13 +191,13 @@ export class Game {
         }
     };
 
-    private canvasClick = (event) => {//to-do: in network-mode, block click until both players are connected
-        if (this.mode === GameMode.SAME_PC || this.turn === this.playerColor) {
+    private canvasClick = (event) => {
+        if (this.mode === GameMode.SamePC || (this.turn === this.playerColor && this.opponentConnected())) {
             let position = this.getCursorPosition(event);
             let column = Math.round((position.x - 50) / this.colGap);
             this.landDot(column);
 
-            if (this.mode === GameMode.NETWORK && this.socket) {
+            if (this.mode === GameMode.Network && this.socket) {
                 let data = {
                     action: 'click',
                     column: column
@@ -198,10 +208,10 @@ export class Game {
     };
 
     private switchTurn() {
-        if (this.turn === Dot.RED) {
-            this.turn = Dot.GREEN;
-        } else if (this.turn === Dot.GREEN) {
-            this.turn = Dot.RED;
+        if (this.turn === Dot.Red) {
+            this.turn = Dot.Green;
+        } else if (this.turn === Dot.Green) {
+            this.turn = Dot.Red;
         }
     }
 
@@ -214,11 +224,11 @@ export class Game {
     private landDot(column: number) {
         let row: number;
 
-        if (this.board[column][0] === Dot.EMPTY) {
+        if (this.board[column][0] === Dot.Empty) {
 
             // Places the circle at the buttom of the column
             for (var r = Game.rows - 1; r > -1; r--) {
-                if (this.board[column][r] === Dot.EMPTY) {
+                if (this.board[column][r] === Dot.Empty) {
                     this.board[column][r] = this.turn;
                     row = r;
                     break;
@@ -238,9 +248,9 @@ export class Game {
             // Announce winner in case any player completes 4 Dots
             if (dotCount > 3) {
                 let winner: string = '';
-                if (this.turn === Dot.RED) {
+                if (this.turn === Dot.Red) {
                     winner = this.playerRed + ' (Red)';
-                } else if (this.turn === Dot.GREEN) {
+                } else if (this.turn === Dot.Green) {
                     winner = this.playerGreen + ' (Green)';
                 }
 
@@ -287,9 +297,9 @@ export class Game {
     }
 
     private beforeUnload = (event) => {
-        if (this.mode === GameMode.SAME_PC) {
+        if (this.mode === GameMode.SamePC) {
             this.saveGame();
-        } else if (this.mode === GameMode.NETWORK) {
+        } else if (this.mode === GameMode.Network) {
             // Display default dialog before closing
             event.preventDefault();
             event.returnValue = ''; // Required by Chrome
@@ -399,10 +409,10 @@ export class Game {
 
     private restoreLastGame() {
         let nextTurn: string = localStorage.getItem('nextTurn');
-        if (nextTurn === Dot.RED) {
-            this.turn = Dot.RED;
-        } else if (nextTurn === Dot.GREEN) {
-            this.turn = Dot.GREEN;
+        if (nextTurn === Dot.Red) {
+            this.turn = Dot.Red;
+        } else if (nextTurn === Dot.Green) {
+            this.turn = Dot.Green;
         }
         
         this.playerRed = localStorage.getItem('playerRed');
@@ -413,7 +423,7 @@ export class Game {
 
     public exit() {
         this.cleanUpEvents();
-        if (this.mode === GameMode.SAME_PC) {
+        if (this.mode === GameMode.SamePC) {
             this.saveGame();
         }
         this.onGameEnd();
@@ -467,8 +477,15 @@ export class Game {
     };
 
     private defineSocket() {
-        if (this.mode === GameMode.NETWORK) {
-            this.socket = new WebSocket('ws://localhost:443/');
+        if (this.mode === GameMode.Network) {
+            let url: string;
+            if (Utils.isLocal()) {
+                url = 'ws://localhost:443/';
+            } else {
+                //to set url to deployed location
+            }
+
+            this.socket = new WebSocket(url);
 
             this.socket.onmessage = this.socketMessage;
         }
@@ -481,21 +498,21 @@ export class Game {
             this.playerColor = messageData.color;
             this.setUpPlayerNames();
             let data = { name: null };
-            if (this.playerColor === Dot.RED) {
+            if (this.playerColor === Dot.Red) {
                 data.name = this.playerRed;
-            } else if (this.playerColor === Dot.GREEN) {
+            } else if (this.playerColor === Dot.Green) {
                 data.name = this.playerGreen;
             }
             this.socket.send(JSON.stringify(data));
         }
 
         if (messageData.opponentName) {
-            if (this.playerColor === Dot.RED) {
+            if (this.playerColor === Dot.Red) {
                 this.playerGreen = messageData.opponentName;
                 if (this.playerGreenSpan) {
                     this.playerGreenSpan.innerText = this.playerGreen;
                 }
-            } else if (this.playerColor === Dot.GREEN) {
+            } else if (this.playerColor === Dot.Green) {
                 this.playerRed = messageData.opponentName;
                 if (this.playerRedSpan) {
                     this.playerRedSpan.innerText = this.playerRed;
@@ -523,5 +540,10 @@ export class Game {
             this.landDot(messageData.column);
         }
     };
+
+    private opponentConnected(): boolean {
+        // Return true for network play when both player names are defined (i.e. both connected)
+        return this.mode === GameMode.Network && !!this.playerRed && !!this.playerGreen;
+    }
 
 }
