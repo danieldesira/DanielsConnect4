@@ -258,12 +258,7 @@ export class Game {
                     this.exitBtn.classList.add('hide');
                 }
 
-                let winMsg: string = winner + ' wins!';
-                if (this.timerSpan) {
-                    winMsg += '\nTime taken: ' + this.timerSpan.innerText;
-                }
-                alert(winMsg);
-
+                this.winDialog(winner);
                 this.closeGameByWinning();
             }
             
@@ -273,6 +268,22 @@ export class Game {
 
             this.paintDotToDrop(column);
         }
+    }
+
+    private winDialog(winner: string) {
+        let winMsg: string = winner + ' wins!';
+        if (this.timerSpan) {
+            winMsg += '\nTime taken: ' + this.timerSpan.innerText;
+        }
+        if (this.mode === GameMode.Network) {
+            winMsg += '\n';
+            if (this.playerColor === this.turn) {
+                winMsg += 'You win!';
+            } else {
+                winMsg += 'You lose!';
+            }
+        }
+        alert(winMsg);
     }
 
     private closeGameByWinning() {
@@ -422,13 +433,20 @@ export class Game {
     }
 
     public exit() {
-        this.cleanUpEvents();
-        if (this.mode === GameMode.SamePC) {
-            this.saveGame();
+        let exitConfirmation: boolean = (this.mode === GameMode.Network ? confirm('Network game in progress. Are you sure you want to quit?') : true);
+
+        if (exitConfirmation) {
+            this.cleanUpEvents();
+            if (this.mode === GameMode.SamePC) {
+                this.saveGame();
+            } else if (this.mode === GameMode.Network && this.socket) {
+                this.socket.close();
+                this.socket = null;
+            }
+            this.onGameEnd();
+            this.stopTimer();
+            this.clearPlayerNames();
         }
-        this.onGameEnd();
-        this.stopTimer();
-        this.clearPlayerNames();
     }
 
     private setTimer() {
