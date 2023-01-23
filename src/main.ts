@@ -1,5 +1,5 @@
-import { Game } from "./game";
-import { GameMode } from "./enums/game-mode";
+import { Game } from "./lib/game";
+import { GameMode } from "./lib/enums/game-mode";
 
 let connect4: Game;
 

@@ -260,13 +260,14 @@ export class Game {
 
                 this.winDialog(winner);
                 this.closeGameByWinning();
+            } else if (this.isBoardFull()) {
+                alert(this.playerRed + ' (Red) and ' + this.playerGreen + ' (Green) are tied!');
+                this.closeGameByWinning();
+            } else {
+                this.switchTurn();
+                this.context.fillStyle = this.turn;
+                this.paintDotToDrop(column);
             }
-            
-            this.switchTurn();
-
-            this.context.fillStyle = this.turn;
-
-            this.paintDotToDrop(column);
         }
     }
 
@@ -506,6 +507,7 @@ export class Game {
             this.socket = new WebSocket(url);
 
             this.socket.onmessage = this.socketMessage;
+            this.socket.onerror = this.socketError;
         }
     }
 
@@ -559,9 +561,25 @@ export class Game {
         }
     };
 
+    private socketError = (event) => {
+        alert('Problem connecting to server!');
+    };
+
     private opponentConnected(): boolean {
         // Return true for network play when both player names are defined (i.e. both connected)
         return this.mode === GameMode.Network && !!this.playerRed && !!this.playerGreen;
+    }
+
+    private isBoardFull(): boolean {
+        let full: boolean = true;
+        for (let col: number = 0; col < Game.columns; col++) {
+            // Check upper row in every column
+            if (this.board[col][0] === Dot.Empty) {
+                full = false;
+                break;
+            }
+        }
+        return full;
     }
 
 }
