@@ -245,8 +245,7 @@ export class Game {
             
             let dotCount = this.checkDotCount(column, row);
 
-            // Announce winner in case any player completes 4 Dots
-            if (dotCount > 3) {
+            if (dotCount > 3) { // If a player completes 4 dots
                 let winner: string = '';
                 if (this.turn === Dot.Red) {
                     winner = this.playerRed + ' (Red)';
@@ -254,16 +253,12 @@ export class Game {
                     winner = this.playerGreen + ' (Green)';
                 }
 
-                if (this.exitBtn) {
-                    this.exitBtn.classList.add('hide');
-                }
-
                 this.winDialog(winner);
                 this.closeGameByWinning();
             } else if (this.isBoardFull()) {
                 alert(this.playerRed + ' (Red) and ' + this.playerGreen + ' (Green) are tied!');
                 this.closeGameByWinning();
-            } else {
+            } else { // If game is still going on
                 this.switchTurn();
                 this.context.fillStyle = this.turn;
                 this.paintDotToDrop(column);
@@ -295,8 +290,12 @@ export class Game {
         this.stopTimer();
         this.clearPlayerNames();
 
+        if (this.exitBtn) {
+            this.exitBtn.classList.add('hide');
+        }
+
         // Run delegate function to return to main menu, in case it is defined
-        if (this.onGameEnd !== undefined && this.onGameEnd !== null){
+        if (this.onGameEnd !== undefined && this.onGameEnd !== null) {
             setTimeout(this.onGameEnd, 3000);
         }
     }
@@ -319,17 +318,23 @@ export class Game {
     };
 
     private timerCallback = () => {
-        this.secondsRunning++;
-        let minutes: number = Math.floor(this.secondsRunning / 60);
-        let seconds: number = this.secondsRunning % 60;
-        this.timerSpan.innerText = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+        if (this.mode !== GameMode.Network || this.opponentConnected()) {
+            this.secondsRunning++;
+            let minutes: number = Math.floor(this.secondsRunning / 60);
+            let seconds: number = this.secondsRunning % 60;
+            this.timerSpan.innerText = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+        }
+        this.timerInterval = setTimeout(this.timerCallback, 1000);
+        console.log('interval value ' + this.timerInterval);
     };
 
     private pageVisibilityChange = () => {
-        if (document.hidden) {
-            clearInterval(this.timerInterval);
-        } else {
-            this.timerInterval = setInterval(this.timerCallback, 1000);
+        if (this.mode !== GameMode.Network) {
+            if (document.hidden) {
+                clearTimeout(this.timerInterval);
+            } else {
+                this.timerInterval = setTimeout(this.timerCallback, 1000);
+            }
         }
     };
 
@@ -452,16 +457,17 @@ export class Game {
 
     private setTimer() {
         if (this.timerSpan) {
-            this.timerCallback();
-            this.timerInterval = setInterval(this.timerCallback, 1000);
             this.timerSpan.classList.remove('hide');
+            this.timerCallback();
         }
     }
 
     private stopTimer() {
         if (this.timerInterval) {
-            clearInterval(this.timerInterval);
+            clearTimeout(this.timerInterval);
+            this.timerSpan.innerText = '';
             this.timerSpan.classList.add('hide');
+            console.log(this.timerInterval);
         }
     }
 
