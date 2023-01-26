@@ -5,6 +5,8 @@ import { Utils } from './utils';
 
 export class Game {
 
+    private static instance: Game;
+
     private static columns: number = 9;
     private static rows: number = 8;
 
@@ -26,7 +28,7 @@ export class Game {
     public onGameEnd: Function;
 
     private secondsRunning: number;
-    private timerInterval: any;
+    private timeouts: Array<any> = [];
 
     private circleRadius: number;
     private rowGap: number;
@@ -37,21 +39,15 @@ export class Game {
     private playerColor: Dot;
     private gameId: number;
 
-    constructor(canvasId: string,
-                exitBtnId: string = null,
-                timerId: string = null,
-                playerRedId: string = null,
-                playerGreenId: string = null) {
+    private constructor(canvasId: string,
+                exitBtnId: string,
+                timerId: string,
+                playerRedId: string,
+                playerGreenId: string) {
         this.canvas = document.getElementById(canvasId);
         this.context = this.canvas.getContext('2d');
 
-        // Initialise board with empty dots
-        for (let col = 0; col < Game.columns; col++) {
-            this.board[col] = new Array(Game.rows);
-            for (let row = 0; row < Game.rows; row++){
-                this.board[col][row] = Dot.Empty;
-            }
-        }
+        this.initBoard();
 
         if (exitBtnId !== null) {
             this.exitBtn = document.getElementById(exitBtnId);
@@ -68,6 +64,26 @@ export class Game {
 
         if (playerGreenId !== null) {
             this.playerGreenSpan = document.getElementById(playerGreenId);
+        }
+    }
+
+    public static getInstance(canvasId: string,
+                exitBtnId: string = null,
+                timerId: string = null,
+                playerRedId: string = null,
+                playerGreenId: string = null): Game {
+        if (!Game.instance) {
+            Game.instance = new Game(canvasId, exitBtnId, timerId, playerRedId, playerGreenId);
+        }
+        return Game.instance;
+    }
+
+    private initBoard() {
+        for (let col = 0; col < Game.columns; col++) {
+            this.board[col] = new Array(Game.rows);
+            for (let row = 0; row < Game.rows; row++){
+                this.board[col][row] = Dot.Empty;
+            }
         }
     }
 
@@ -294,6 +310,8 @@ export class Game {
             this.exitBtn.classList.add('hide');
         }
 
+        this.resetValues();
+
         // Run delegate function to return to main menu, in case it is defined
         if (this.onGameEnd !== undefined && this.onGameEnd !== null) {
             setTimeout(this.onGameEnd, 3000);
@@ -324,16 +342,22 @@ export class Game {
             let seconds: number = this.secondsRunning % 60;
             this.timerSpan.innerText = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
         }
-        this.timerInterval = setTimeout(this.timerCallback, 1000);
-        console.log('interval value ' + this.timerInterval);
+        
+        if (!this.timerSpan.classList.contains('hide')) {
+            let timeout = setTimeout(this.timerCallback, 1000);
+            this.timeouts.push(timeout);console.log(timeout);
+        } else {
+            Utils.clearTimeouts(this.timeouts);
+        }
     };
 
     private pageVisibilityChange = () => {
         if (this.mode !== GameMode.Network) {
             if (document.hidden) {
-                clearTimeout(this.timerInterval);
+                Utils.clearTimeouts(this.timeouts);
             } else {
-                this.timerInterval = setTimeout(this.timerCallback, 1000);
+                let timeout = setTimeout(this.timerCallback, 1000);
+                this.timeouts.push(timeout);
             }
         }
     };
@@ -452,6 +476,7 @@ export class Game {
             this.onGameEnd();
             this.stopTimer();
             this.clearPlayerNames();
+            this.resetValues();
         }
     }
 
@@ -463,11 +488,10 @@ export class Game {
     }
 
     private stopTimer() {
-        if (this.timerInterval) {
-            clearTimeout(this.timerInterval);
+        if (this.timeouts.length > 0) {
+            Utils.clearTimeouts(this.timeouts);
             this.timerSpan.innerText = '';
             this.timerSpan.classList.add('hide');
-            console.log(this.timerInterval);
         }
     }
 
@@ -586,6 +610,14 @@ export class Game {
             }
         }
         return full;
+    }
+
+    private resetValues() {
+        this.secondsRunning = 0;
+        this.turn = Dot.Red;
+        this.initBoard();
+        this.playerRed = null;
+        this.playerGreen = null;
     }
 
 }

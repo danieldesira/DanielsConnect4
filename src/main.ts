@@ -29,7 +29,7 @@ exitBtn.addEventListener('click', () => {
 }, false);
 
 function initGame(mode: GameMode) {
-    connect4 = new Game('board', 'exitBtn', 'timer', 'playerRed', 'playerGreen');
+    connect4 = Game.getInstance('board', 'exitBtn', 'timer', 'playerRed', 'playerGreen');
     connect4.mode = mode;
     connect4.onGameEnd = () => {
         menu.classList.remove('hide');
