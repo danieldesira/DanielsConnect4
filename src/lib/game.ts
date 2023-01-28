@@ -2,6 +2,7 @@ import { GameMode } from './enums/game-mode';
 import { Dot } from './enums/dot';
 import { Position } from './position';
 import { Utils } from './utils';
+import { Socket } from './socket';
 
 export class Game {
 
@@ -28,16 +29,13 @@ export class Game {
     public onGameEnd: Function;
 
     private secondsRunning: number;
-    private timeouts: Array<any> = [];
+    private timeout: any;
 
     private circleRadius: number;
     private rowGap: number;
     private colGap: number;
 
-    // Network game state
-    private socket: WebSocket;
-    private playerColor: Dot;
-    private gameId: number;
+    private socket: Socket;
 
     private constructor(canvasId: string,
                 exitBtnId: string,
@@ -88,46 +86,38 @@ export class Game {
     }
 
     public start() {
-        this.defineSocket();
-        this.checkGameData();
+        if (this.mode === GameMode.SamePC) {
+            this.checkGameData();
+            this.setUpPlayerNames();
+        } else if (this.mode === GameMode.Network) {
+            this.defineSocket();
+        }
+        
+        this.printPlayerNames();
         this.resizeCanvas();
-        this.setUpPlayerNames();
         this.setGameEvents();
         this.setTimer();
     }
 
     private checkGameData() {
-        if (this.mode === GameMode.SamePC) {
-            let board = localStorage.getItem('board');
-            let nextTurn = localStorage.getItem('nextTurn');
-            
-            if (board && nextTurn) {
-                let restore = confirm('Do you want to continue playing the previous game? OK/Cancel');
-                if (restore) {
-                    this.restoreLastGame();
-                } else {
-                    localStorage.clear();
-                }
+        let board = localStorage.getItem('board');
+        let nextTurn = localStorage.getItem('nextTurn');
+        
+        if (board && nextTurn) {
+            let restore = confirm('Do you want to continue playing the previous game? OK/Cancel');
+            if (restore) {
+                this.restoreLastGame();
+            } else {
+                localStorage.clear();
             }
         }
     }
 
     private setUpPlayerNames() {
-        if (this.mode === GameMode.SamePC) {
-            if (!localStorage.getItem('playerRed') || !localStorage.getItem('playerGreen')) {
-                this.playerRed = prompt('Please enter name for Red Player!');
-                this.playerGreen = prompt('Please enter name for Green Player!');
-            }
-        } else if (this.mode === GameMode.Network && this.playerColor) { // This client's color should be defined
-            let playerName = prompt('You are ' + this.playerColor + '. Please enter your name.');
-            if (this.playerColor === Dot.Red) {
-                this.playerRed = playerName;
-            } else if (this.playerColor === Dot.Green) {
-                this.playerGreen = playerName;
-            }
+        if (!localStorage.getItem('playerRed') || !localStorage.getItem('playerGreen')) {
+            this.playerRed = prompt('Please enter name for Red Player!');
+            this.playerGreen = prompt('Please enter name for Green Player!');
         }
-
-        this.printPlayerNames();
     }
 
     private printPlayerNames() {
@@ -167,22 +157,6 @@ export class Game {
         }
     }
 
-    private getCursorPosition(event): Position {
-        var x: number;
-        var y: number;
-        if (event.pageX !== undefined || event.pageY !== undefined) {
-            x = event.pageX;
-            y = event.pageY;
-        }
-        else {
-            x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-            y = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-        }
-        x -= this.canvas.offsetLeft;
-        y -= this.canvas.offsetTop;
-        return new Position(x, y);
-    }
-
     private setGameEvents() {
         this.canvas.addEventListener('mousemove', this.canvasMousemove, false);
         this.canvas.addEventListener('click', this.canvasClick, false);
@@ -192,8 +166,8 @@ export class Game {
     }
 
     private canvasMousemove = (event) => {
-        if (this.mode === GameMode.SamePC || (this.turn === this.playerColor && this.opponentConnected())) {
-            let position: Position = this.getCursorPosition(event);
+        if (this.mode === GameMode.SamePC || (this.socket && this.turn === this.socket.getPlayerColor() && this.opponentConnected())) {
+            let position: Position = Position.getCursorPosition(event, this.canvas);
             let column = Math.round((position.x - 50) / this.colGap);
             this.moveDot(column);
 
@@ -202,14 +176,14 @@ export class Game {
                     action: 'mousemove',
                     column: column
                 };
-                this.socket.send(JSON.stringify(data));
+                this.socket.send(data);
             }
         }
     };
 
     private canvasClick = (event) => {
-        if (this.mode === GameMode.SamePC || (this.turn === this.playerColor && this.opponentConnected())) {
-            let position = this.getCursorPosition(event);
+        if (this.mode === GameMode.SamePC || (this.socket && this.turn === this.socket.getPlayerColor() && this.opponentConnected())) {
+            let position = Position.getCursorPosition(event, this.canvas);
             let column = Math.round((position.x - 50) / this.colGap);
             this.landDot(column);
 
@@ -218,7 +192,7 @@ export class Game {
                     action: 'click',
                     column: column
                 };
-                this.socket.send(JSON.stringify(data));
+                this.socket.send(data);
             }
         }
     };
@@ -289,7 +263,7 @@ export class Game {
         }
         if (this.mode === GameMode.Network) {
             winMsg += '\n';
-            if (this.playerColor === this.turn) {
+            if (this.socket.getPlayerColor() === this.turn) {
                 winMsg += 'You win!';
             } else {
                 winMsg += 'You lose!';
@@ -299,8 +273,10 @@ export class Game {
     }
 
     private closeGameByWinning() {
-        // Clear game data
-        localStorage.clear();
+        if (this.mode === GameMode.SamePC) {
+            // Clear game data
+            localStorage.clear();
+        }
 
         this.cleanUpEvents();
         this.stopTimer();
@@ -313,7 +289,7 @@ export class Game {
         this.resetValues();
 
         // Run delegate function to return to main menu, in case it is defined
-        if (this.onGameEnd !== undefined && this.onGameEnd !== null) {
+        if (this.onGameEnd) {
             setTimeout(this.onGameEnd, 3000);
         }
     }
@@ -344,20 +320,18 @@ export class Game {
         }
         
         if (!this.timerSpan.classList.contains('hide')) {
-            let timeout = setTimeout(this.timerCallback, 1000);
-            this.timeouts.push(timeout);console.log(timeout);
+            this.timeout = setTimeout(this.timerCallback, 1000);
         } else {
-            Utils.clearTimeouts(this.timeouts);
+            clearTimeout(this.timeout);
         }
     };
 
     private pageVisibilityChange = () => {
         if (this.mode !== GameMode.Network) {
             if (document.hidden) {
-                Utils.clearTimeouts(this.timeouts);
+                clearTimeout(this.timeout);
             } else {
-                let timeout = setTimeout(this.timerCallback, 1000);
-                this.timeouts.push(timeout);
+                this.timeout = setTimeout(this.timerCallback, 1000);
             }
         }
     };
@@ -469,9 +443,8 @@ export class Game {
             this.cleanUpEvents();
             if (this.mode === GameMode.SamePC) {
                 this.saveGame();
-            } else if (this.mode === GameMode.Network && this.socket) {
+            } else if (this.mode === GameMode.Network) {
                 this.socket.close();
-                this.socket = null;
             }
             this.onGameEnd();
             this.stopTimer();
@@ -488,8 +461,8 @@ export class Game {
     }
 
     private stopTimer() {
-        if (this.timeouts.length > 0) {
-            Utils.clearTimeouts(this.timeouts);
+        if (this.timeout) {
+            clearTimeout(this.timeout);
             this.timerSpan.innerText = '';
             this.timerSpan.classList.add('hide');
         }
@@ -526,43 +499,18 @@ export class Game {
     };
 
     private defineSocket() {
-        if (this.mode === GameMode.Network) {
-            let url: string;
-            if (Utils.isLocal()) {
-                url = 'ws://localhost:443/';
-            } else {
-                //to set url to deployed location
-            }
-
-            this.socket = new WebSocket(url);
-
-            this.socket.onmessage = this.socketMessage;
-            this.socket.onerror = this.socketError;
-        }
+        this.socket = new Socket();
+        this.socket.onMessageCallback = this.socketMessage;
     }
 
-    private socketMessage = (event) => {
-        let messageData = JSON.parse(event.data);
-
-        if (!this.playerColor && messageData.color) {
-            this.playerColor = messageData.color;
-            this.setUpPlayerNames();
-            let data = { name: null };
-            if (this.playerColor === Dot.Red) {
-                data.name = this.playerRed;
-            } else if (this.playerColor === Dot.Green) {
-                data.name = this.playerGreen;
-            }
-            this.socket.send(JSON.stringify(data));
-        }
-
-        if (messageData.opponentName) {
-            if (this.playerColor === Dot.Red) {
+    private socketMessage = (messageData) => {
+        if (messageData.opponentName && this.socket) {
+            if (this.socket.getPlayerColor() === Dot.Red) {
                 this.playerGreen = messageData.opponentName;
                 if (this.playerGreenSpan) {
                     this.playerGreenSpan.innerText = this.playerGreen;
                 }
-            } else if (this.playerColor === Dot.Green) {
+            } else if (this.socket.getPlayerColor() === Dot.Green) {
                 this.playerRed = messageData.opponentName;
                 if (this.playerRedSpan) {
                     this.playerRedSpan.innerText = this.playerRed;
@@ -570,12 +518,18 @@ export class Game {
             }
         }
 
-        if (!this.gameId && messageData.gameId) {
-            this.gameId = messageData.gameId;
-        }
-
-        if (messageData.message) {
-            alert(messageData.message);
+        if (messageData.color && this.socket) {
+            if (messageData.color === Dot.Red) {
+                this.playerRed = this.socket.getPlayerName();
+                if (this.playerRedSpan) {
+                    this.playerRedSpan.innerText = this.playerRed;
+                }
+            } else if (messageData.color === Dot.Green) {
+                this.playerGreen = this.socket.getPlayerName();
+                if (this.playerGreenSpan) {
+                    this.playerGreenSpan.innerText = this.playerGreen;
+                }
+            }
         }
 
         if (messageData.win) {
@@ -589,10 +543,6 @@ export class Game {
         if (messageData.column && messageData.action === 'click') {
             this.landDot(messageData.column);
         }
-    };
-
-    private socketError = (event) => {
-        alert('Problem connecting to server!');
     };
 
     private opponentConnected(): boolean {
