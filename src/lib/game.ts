@@ -252,6 +252,7 @@ export class Game {
                 this.switchTurn();
                 this.context.fillStyle = this.turn;
                 this.paintDotToDrop(column);
+                Utils.playSound('./sounds/land-dot.m4a');
             }
         }
     }
@@ -536,11 +537,11 @@ export class Game {
             this.closeGameByWinning();
         }
 
-        if (messageData.column && messageData.action === 'mousemove') {
+        if (!isNaN(messageData.column) && messageData.action === 'mousemove') {
             this.moveDot(messageData.column);
         }
 
-        if (messageData.column && messageData.action === 'click') {
+        if (!isNaN(messageData.column) && messageData.action === 'click') {
             this.landDot(messageData.column);
         }
     };
