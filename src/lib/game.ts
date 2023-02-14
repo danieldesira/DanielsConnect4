@@ -3,6 +3,7 @@ import { Dot } from './enums/dot';
 import { Position } from './position';
 import { Utils } from './utils';
 import { Socket } from './socket';
+import { Sound } from './enums/sound';
 
 export class Game {
 
@@ -252,7 +253,7 @@ export class Game {
                 this.switchTurn();
                 this.context.fillStyle = this.turn;
                 this.paintDotToDrop(column);
-                Utils.playSound('./sounds/land-dot.m4a');
+                Utils.playSound(Sound.LandDot);
             }
         }
     }
@@ -266,9 +267,13 @@ export class Game {
             winMsg += '\n';
             if (this.socket.getPlayerColor() === this.turn) {
                 winMsg += 'You win!';
+                Utils.playSound(Sound.Win);
             } else {
                 winMsg += 'You lose!';
+                Utils.playSound(Sound.Lose);
             }
+        } else {
+            Utils.playSound(Sound.Win);
         }
         alert(winMsg);
     }
@@ -489,10 +494,10 @@ export class Game {
         }
 
         if (this.canvas.height > this.canvas.width) {
-            this.colGap = this.canvas.width / (Game.columns + 1);
-            this.rowGap = this.canvas.height / (Game.rows + 1);
+            this.colGap = this.canvas.width / Game.columns;
+            this.rowGap = this.canvas.height / Game.rows;
         } else {
-            this.colGap = this.canvas.width / (Game.columns + 1);
+            this.colGap = this.canvas.width / Game.columns;
             this.rowGap = 65;
         }
 

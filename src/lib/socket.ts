@@ -11,9 +11,9 @@ export class Socket {
     public constructor() {
         let url: string;
         if (Utils.isLocal()) {
-            url = 'ws://localhost:443/';
+            url = 'ws://localhost:3000';
         } else {
-            //to set url to deployed location
+            url = 'wss://daniels-connect4-server.adaptable.app';
         }
 
         this.webSocket = new WebSocket(url);
