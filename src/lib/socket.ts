@@ -9,17 +9,26 @@ export class Socket {
     public onMessageCallback: Function;
 
     public constructor() {
+        this.connect();
+    }
+
+    private connect() {
         let url: string;
         if (Utils.isLocal()) {
-            url = 'ws://localhost:3000';
+            url = 'ws://localhost:3000/';
         } else {
-            url = 'wss://daniels-connect4-server.adaptable.app';
+            url = 'wss://daniels-connect4-server.adaptable.app/';
+        }
+
+        if (this.playerColor && this.gameId) {
+            url += '?playerColor=' + this.playerColor + '&gameId=' + this.gameId;
         }
 
         this.webSocket = new WebSocket(url);
 
         this.webSocket.onmessage = this.onMessage;
         this.webSocket.onerror = this.onError;
+        this.webSocket.onclose = this.onClose;
     }
 
     public send(data: object) {
@@ -68,5 +77,9 @@ export class Socket {
 
     private onError = () => {
         alert('Problem connecting to server!');
+    };
+
+    private onClose = () => {
+        this.connect();
     };
 }
