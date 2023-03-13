@@ -20,8 +20,8 @@ export class Socket {
             url = 'wss://daniels-connect4-server.adaptable.app/';
         }
 
-        if (this.playerColor && this.gameId) {
-            url += '?playerColor=' + this.playerColor + '&gameId=' + this.gameId;
+        if (this.playerColor && !isNaN(this.gameId)) {
+            url += '?playerColor=' + this.playerColor + '&gameId=' + this.gameId + '&playerName=' + this.playerName;
         }
 
         this.webSocket = new WebSocket(url);
@@ -51,7 +51,7 @@ export class Socket {
     private onMessage = (event) => {
         let messageData = JSON.parse(event.data);
 
-        if (!this.gameId && messageData.gameId) {
+        if (!this.gameId && !isNaN(messageData.gameId)) {
             this.gameId = messageData.gameId;
         }
 
