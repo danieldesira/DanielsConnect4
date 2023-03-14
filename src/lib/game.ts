@@ -4,17 +4,15 @@ import { Position } from './position';
 import { Utils } from './utils';
 import { Socket } from './socket';
 import { Sound } from './enums/sound';
+import { BoardLogic } from './board-logic';
 
 export class Game {
 
     private static instance: Game;
 
-    private static columns: number = 9;
-    private static rows: number = 8;
-
     private canvas: any;
     private context: any;
-    private board: Array<Array<Dot>> = new Array(Game.columns);
+    private board: Array<Array<Dot>> = new Array(BoardLogic.columns);
 
     private exitBtn: any;
     private timerSpan: any;
@@ -46,7 +44,7 @@ export class Game {
         this.canvas = document.getElementById(canvasId);
         this.context = this.canvas.getContext('2d');
 
-        this.initBoard();
+        BoardLogic.initBoard(this.board);
 
         if (exitBtnId !== null) {
             this.exitBtn = document.getElementById(exitBtnId);
@@ -75,15 +73,6 @@ export class Game {
             Game.instance = new Game(canvasId, exitBtnId, timerId, playerRedId, playerGreenId);
         }
         return Game.instance;
-    }
-
-    private initBoard() {
-        for (let col = 0; col < Game.columns; col++) {
-            this.board[col] = new Array(Game.rows);
-            for (let row = 0; row < Game.rows; row++){
-                this.board[col][row] = Dot.Empty;
-            }
-        }
     }
 
     public start() {
@@ -146,8 +135,8 @@ export class Game {
         this.context.fillStyle = boardGradient;
         this.context.fillRect(0, 70, this.canvas.width, this.canvas.height);
 
-        for (let col = Game.columns - 1; col >= 0; col--) {
-            for (let row = Game.rows - 1; row >= 0; row--) {
+        for (let col = BoardLogic.columns - 1; col >= 0; col--) {
+            for (let row = BoardLogic.rows - 1; row >= 0; row--) {
                 this.context.fillStyle = this.board[col][row];
 
                 this.context.beginPath();
@@ -186,7 +175,6 @@ export class Game {
         if (this.mode === GameMode.SamePC || (this.socket && this.turn === this.socket.getPlayerColor() && this.opponentConnected())) {
             let position = Position.getCursorPosition(event, this.canvas);
             let column = Math.round((position.x - 50) / this.colGap);
-            this.landDot(column);
 
             if (this.mode === GameMode.Network && this.socket) {
                 let data = {
@@ -195,6 +183,8 @@ export class Game {
                 };
                 this.socket.send(data);
             }
+
+            this.landDot(column);
         }
     };
 
@@ -218,7 +208,7 @@ export class Game {
         if (this.board[column][0] === Dot.Empty) {
 
             // Places the circle at the buttom of the column
-            for (var r = Game.rows - 1; r > -1; r--) {
+            for (var r = BoardLogic.rows - 1; r > -1; r--) {
                 if (this.board[column][r] === Dot.Empty) {
                     this.board[column][r] = this.turn;
                     row = r;
@@ -234,7 +224,7 @@ export class Game {
             this.context.closePath();
             this.context.fill();
             
-            let dotCount = this.checkDotCount(column, row);
+            let dotCount = BoardLogic.checkDotCount(this.board, column, row, this.turn);
 
             if (dotCount > 3) { // If a player completes 4 dots
                 let winner: string = '';
@@ -246,7 +236,7 @@ export class Game {
 
                 this.winDialog(winner);
                 this.closeGameByWinning();
-            } else if (this.isBoardFull()) {
+            } else if (BoardLogic.isBoardFull(this.board)) {
                 alert(this.playerRed + ' (Red) and ' + this.playerGreen + ' (Green) are tied!');
                 this.closeGameByWinning();
             } else { // If game is still going on
@@ -346,72 +336,6 @@ export class Game {
         this.context.clearRect(0, 0, this.canvas.width, 70);
     }
 
-    private checkDotCount(column: number, row: number): number {
-        let count: number = row;
-        let dotCount: number = 0;
-
-        // Vertical check
-        while (dotCount < 4 && count < Game.rows && this.board[column][count] === this.turn) {
-            dotCount++;
-            count++;
-        }
-        
-        if (dotCount < 4) {
-
-            // Horizontal check
-            dotCount = 0;
-            count = column;
-            while (count < Game.columns && this.board[count][row] === this.turn) {
-                dotCount++;
-                count++;
-            }
-            count = column - 1;
-            while (count > -1 && this.board[count][row] === this.turn) {
-                dotCount++;
-                count--;
-            }
-        
-            // Diagonal checks
-            if (dotCount < 4) {
-                dotCount = 0;
-                let rowCount: number = row - 1;
-                let colCount: number = column + 1;
-                while (dotCount < 4 && rowCount > -1 &&  colCount < Game.columns && this.board[colCount][rowCount] === this.turn) {
-                    dotCount++;
-                    colCount++; //right columns
-                    rowCount--; //upper rows
-                }
-                colCount = column;
-                rowCount = row;
-                while (dotCount < 4 && rowCount < Game.rows && colCount > -1 && this.board[colCount][rowCount] === this.turn) {
-                    dotCount++;
-                    colCount--; // left columns
-                    rowCount++; // lower rows
-                }
-                
-                if (dotCount < 4) {
-                    dotCount = 0;
-                    rowCount = row - 1;
-                    colCount = column - 1;
-                    while (dotCount < 4 && rowCount > -1 && colCount > -1 && this.board[colCount][rowCount] === this.turn) {
-                        dotCount++;
-                        colCount--; // left columns
-                        rowCount--; // upper rows
-                    }
-                    colCount = column;
-                    rowCount = row;
-                    while (dotCount < 4 && rowCount < Game.rows && colCount < Game.columns && this.board[colCount][rowCount] === this.turn) {
-                        dotCount++;
-                        colCount++; // right columns
-                        rowCount++; // lower rows
-                    }
-                }
-            }
-        }
-
-        return dotCount;
-    }
-
     private cleanUpEvents() {
         this.canvas.removeEventListener('mousemove', this.canvasMousemove, false);
         this.canvas.removeEventListener('click', this.canvasClick, false);
@@ -494,10 +418,10 @@ export class Game {
         }
 
         if (this.canvas.height > this.canvas.width) {
-            this.colGap = this.canvas.width / Game.columns;
-            this.rowGap = this.canvas.height / Game.rows;
+            this.colGap = this.canvas.width / BoardLogic.columns;
+            this.rowGap = this.canvas.height / BoardLogic.rows;
         } else {
-            this.colGap = this.canvas.width / Game.columns;
+            this.colGap = this.canvas.width / BoardLogic.columns;
             this.rowGap = 65;
         }
 
@@ -556,24 +480,13 @@ export class Game {
         return this.mode === GameMode.Network && !!this.playerRed && !!this.playerGreen;
     }
 
-    private isBoardFull(): boolean {
-        let full: boolean = true;
-        for (let col: number = 0; col < Game.columns; col++) {
-            // Check upper row in every column
-            if (this.board[col][0] === Dot.Empty) {
-                full = false;
-                break;
-            }
-        }
-        return full;
-    }
-
     private resetValues() {
         this.secondsRunning = 0;
         this.turn = Dot.Red;
-        this.initBoard();
+        BoardLogic.initBoard(this.board);
         this.playerRed = null;
         this.playerGreen = null;
+        this.socket.close();
     }
 
 }

@@ -8,6 +8,10 @@ export class Socket {
     private gameId: number;
     public onMessageCallback: Function;
 
+    private skipTurn: boolean;
+    private endGameDueToInactivity: boolean;
+    private timeout: number;
+
     public constructor() {
         this.connect();
     }
@@ -36,8 +40,10 @@ export class Socket {
     }
 
     public close() {
+        this.webSocket.onclose = null;
+        this.webSocket.onmessage = null;
+        this.webSocket.onerror = null;
         this.webSocket.close();
-        this.webSocket = null;
     }
 
     public getPlayerColor(): Dot {
@@ -54,11 +60,7 @@ export class Socket {
         if (!this.gameId && !isNaN(messageData.gameId)) {
             this.gameId = messageData.gameId;
         }
-
-        if (messageData.message) {
-            alert(messageData.message);
-        }
-
+        
         if (!this.playerColor && messageData.color) {
             this.playerColor = messageData.color;
 
