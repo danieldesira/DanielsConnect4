@@ -5,6 +5,7 @@ import { Utils } from './utils';
 import { Socket } from './socket';
 import { Sound } from './enums/sound';
 import { BoardLogic } from './board-logic';
+import { Timer } from './timer';
 
 export class Game {
 
@@ -15,7 +16,6 @@ export class Game {
     private board: Array<Array<Dot>> = new Array(BoardLogic.columns);
 
     private exitBtn: any;
-    private timerSpan: any;
     private playerRedSpan: any;
     private playerGreenSpan: any;
 
@@ -27,14 +27,13 @@ export class Game {
     public mode: GameMode;
     public onGameEnd: Function;
 
-    private secondsRunning: number;
-    private timeout: any;
-
     private circleRadius: number;
     private rowGap: number;
     private colGap: number;
 
     private socket: Socket;
+
+    private timer: Timer;
 
     private constructor(canvasId: string,
                 exitBtnId: string,
@@ -46,31 +45,26 @@ export class Game {
 
         BoardLogic.initBoard(this.board);
 
-        if (exitBtnId !== null) {
+        if (exitBtnId) {
             this.exitBtn = document.getElementById(exitBtnId);
         }
 
-        if (timerId !== null) {
-            this.timerSpan = document.getElementById(timerId);
-            this.secondsRunning = 0;
+        if (timerId) {
+            this.timer = new Timer(timerId);
         }
 
-        if (playerRedId !== null) {
+        if (playerRedId) {
             this.playerRedSpan = document.getElementById(playerRedId);
         }
 
-        if (playerGreenId !== null) {
+        if (playerGreenId) {
             this.playerGreenSpan = document.getElementById(playerGreenId);
         }
     }
 
-    public static getInstance(canvasId: string,
-                exitBtnId: string = null,
-                timerId: string = null,
-                playerRedId: string = null,
-                playerGreenId: string = null): Game {
+    public static getInstance(options: any): Game {
         if (!Game.instance) {
-            Game.instance = new Game(canvasId, exitBtnId, timerId, playerRedId, playerGreenId);
+            Game.instance = new Game(options.canvasId, options.exitBtnId, options.timerId, options.playerRedId, options.playerGreenId);
         }
         return Game.instance;
     }
@@ -79,6 +73,10 @@ export class Game {
         if (this.mode === GameMode.SamePC) {
             this.checkGameData();
             this.setUpPlayerNames();
+
+            if (this.timer) {
+                this.timer.setRunnable(true);
+            }
         } else if (this.mode === GameMode.Network) {
             this.defineSocket();
         }
@@ -86,7 +84,10 @@ export class Game {
         this.printPlayerNames();
         this.resizeCanvas();
         this.setGameEvents();
-        this.setTimer();
+
+        if (this.timer) {
+            this.timer.set();
+        }
     }
 
     private checkGameData() {
@@ -250,8 +251,8 @@ export class Game {
 
     private winDialog(winner: string) {
         let winMsg: string = winner + ' wins!';
-        if (this.timerSpan) {
-            winMsg += '\nTime taken: ' + this.timerSpan.innerText;
+        if (this.timer) {
+            winMsg += '\nTime taken: ' + this.timer.getTimeInStringFormat();
         }
         if (this.mode === GameMode.Network) {
             winMsg += '\n';
@@ -275,8 +276,11 @@ export class Game {
         }
 
         this.cleanUpEvents();
-        this.stopTimer();
         this.clearPlayerNames();
+
+        if (this.timer) {
+            this.timer.stop();
+        }
 
         if (this.exitBtn) {
             this.exitBtn.classList.add('hide');
@@ -307,28 +311,9 @@ export class Game {
         }
     };
 
-    private timerCallback = () => {
-        if (this.mode !== GameMode.Network || this.opponentConnected()) {
-            this.secondsRunning++;
-            let minutes: number = Math.floor(this.secondsRunning / 60);
-            let seconds: number = this.secondsRunning % 60;
-            this.timerSpan.innerText = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-        }
-        
-        if (!this.timerSpan.classList.contains('hide')) {
-            this.timeout = setTimeout(this.timerCallback, 1000);
-        } else {
-            clearTimeout(this.timeout);
-        }
-    };
-
     private pageVisibilityChange = () => {
-        if (this.mode !== GameMode.Network) {
-            if (document.hidden) {
-                clearTimeout(this.timeout);
-            } else {
-                this.timeout = setTimeout(this.timerCallback, 1000);
-            }
+        if (this.mode !== GameMode.Network && this.timer) {
+            this.timer.pauseWhenDocumentHidden();
         }
     };
 
@@ -349,7 +334,10 @@ export class Game {
 	    localStorage.setItem('board', JSON.stringify(this.board));
         localStorage.setItem('playerRed', this.playerRed);
         localStorage.setItem('playerGreen', this.playerGreen);
-        localStorage.setItem('secondsRunning', this.secondsRunning.toString());
+
+        if (this.timer) {
+            this.timer.saveSecondsRunningToLocalStorage();
+        }
     }
 
     private restoreLastGame() {
@@ -363,7 +351,10 @@ export class Game {
         this.playerRed = localStorage.getItem('playerRed');
         this.playerGreen = localStorage.getItem('playerGreen');
         this.board = JSON.parse(localStorage.getItem('board'));
-        this.secondsRunning = parseInt(localStorage.getItem('secondsRunning'));
+
+        if (this.timer) {
+            this.timer.setSecondsRunningFromLocalStorage();
+        }
     }
 
     public exit() {
@@ -377,24 +368,12 @@ export class Game {
                 this.socket.close();
             }
             this.onGameEnd();
-            this.stopTimer();
             this.clearPlayerNames();
             this.resetValues();
-        }
-    }
 
-    private setTimer() {
-        if (this.timerSpan) {
-            this.timerSpan.classList.remove('hide');
-            this.timerCallback();
-        }
-    }
-
-    private stopTimer() {
-        if (this.timeout) {
-            clearTimeout(this.timeout);
-            this.timerSpan.innerText = '';
-            this.timerSpan.classList.add('hide');
+            if (this.timer) {
+                this.timer.stop();
+            }
         }
     }
 
@@ -446,6 +425,10 @@ export class Game {
                     this.playerRedSpan.innerText = this.playerRed;
                 }
             }
+
+            if (this.timer) {
+                this.timer.setRunnable(true);
+            }
         }
 
         if (messageData.color && this.socket) {
@@ -481,12 +464,18 @@ export class Game {
     }
 
     private resetValues() {
-        this.secondsRunning = 0;
         this.turn = Dot.Red;
         BoardLogic.initBoard(this.board);
         this.playerRed = null;
         this.playerGreen = null;
-        this.socket.close();
+
+        if (this.socket) {
+            this.socket.close();
+        }
+
+        if (this.timer) {
+            this.timer.reset();
+        }
     }
 
 }
