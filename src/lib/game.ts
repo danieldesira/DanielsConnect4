@@ -6,6 +6,7 @@ import { Socket } from './socket';
 import { Sound } from './enums/sound';
 import { BoardLogic } from './board-logic';
 import { Timer } from './timer';
+import { PlayerNameArea } from './player-name-area';
 
 export class Game {
 
@@ -16,13 +17,9 @@ export class Game {
     private board: Array<Array<Dot>> = new Array(BoardLogic.columns);
 
     private exitBtn: any;
-    private playerRedSpan: any;
-    private playerGreenSpan: any;
+    private playerNames: PlayerNameArea;
 
     private turn: Dot = Dot.Red;
-
-    private playerRed: string;
-    private playerGreen: string;
 
     public mode: GameMode;
     public onGameEnd: Function;
@@ -53,12 +50,8 @@ export class Game {
             this.timer = new Timer(timerId);
         }
 
-        if (playerRedId) {
-            this.playerRedSpan = document.getElementById(playerRedId);
-        }
-
-        if (playerGreenId) {
-            this.playerGreenSpan = document.getElementById(playerGreenId);
+        if (playerRedId && playerGreenId) {
+            this.playerNames = new PlayerNameArea(playerRedId, playerGreenId);
         }
     }
 
@@ -72,7 +65,10 @@ export class Game {
     public start() {
         if (this.mode === GameMode.SamePC) {
             this.checkGameData();
-            this.setUpPlayerNames();
+
+            if (this.playerNames) {
+                this.playerNames.setUpPlayerNames();
+            }
 
             if (this.timer) {
                 this.timer.setRunnable(true);
@@ -81,7 +77,10 @@ export class Game {
             this.defineSocket();
         }
         
-        this.printPlayerNames();
+        if (this.playerNames) {
+            this.playerNames.printPlayerNames(this.mode);
+        }
+
         this.resizeCanvas();
         this.setGameEvents();
 
@@ -100,31 +99,6 @@ export class Game {
                 this.restoreLastGame();
             } else {
                 localStorage.clear();
-            }
-        }
-    }
-
-    private setUpPlayerNames() {
-        if (!localStorage.getItem('playerRed') || !localStorage.getItem('playerGreen')) {
-            this.playerRed = prompt('Please enter name for Red Player!');
-            this.playerGreen = prompt('Please enter name for Green Player!');
-        }
-    }
-
-    private printPlayerNames() {
-        const waiting = 'Waiting to connect...';
-        if (this.playerGreenSpan) {
-            if (this.mode === GameMode.Network && !this.playerGreen) {
-                this.playerGreenSpan.innerText = waiting;
-            } else {
-                this.playerGreenSpan.innerText = this.playerGreen;
-            }
-        }
-        if (this.playerRedSpan) {
-            if (this.mode === GameMode.Network && !this.playerRed) {
-                this.playerRedSpan.innerText = waiting;
-            } else {
-                this.playerRedSpan.innerText = this.playerRed;
             }
         }
     }
@@ -157,7 +131,7 @@ export class Game {
     }
 
     private canvasMousemove = (event) => {
-        if (this.mode === GameMode.SamePC || (this.socket && this.turn === this.socket.getPlayerColor() && this.opponentConnected())) {
+        if (this.mode === GameMode.SamePC || (this.socket && this.turn === this.socket.getPlayerColor() && (!this.playerNames || this.playerNames.bothPlayersConnected()))) {
             let position: Position = Position.getCursorPosition(event, this.canvas);
             let column = Math.round((position.x - 50) / this.colGap);
             this.moveDot(column);
@@ -173,7 +147,7 @@ export class Game {
     };
 
     private canvasClick = (event) => {
-        if (this.mode === GameMode.SamePC || (this.socket && this.turn === this.socket.getPlayerColor() && this.opponentConnected())) {
+        if (this.mode === GameMode.SamePC || (this.socket && this.turn === this.socket.getPlayerColor() && (!this.playerNames || this.playerNames.bothPlayersConnected()))) {
             let position = Position.getCursorPosition(event, this.canvas);
             let column = Math.round((position.x - 50) / this.colGap);
 
@@ -229,16 +203,24 @@ export class Game {
 
             if (dotCount > 3) { // If a player completes 4 dots
                 let winner: string = '';
-                if (this.turn === Dot.Red) {
-                    winner = this.playerRed + ' (Red)';
-                } else if (this.turn === Dot.Green) {
-                    winner = this.playerGreen + ' (Green)';
+
+                if (this.playerNames) {
+                    if (this.turn === Dot.Red) {
+                        winner = this.playerNames.getPlayerRed() + ' (Red)';
+                    } else if (this.turn === Dot.Green) {
+                        winner = this.playerNames.getPlayerGreen() + ' (Green)';
+                    }
                 }
 
                 this.winDialog(winner);
                 this.closeGameByWinning();
             } else if (BoardLogic.isBoardFull(this.board)) {
-                alert(this.playerRed + ' (Red) and ' + this.playerGreen + ' (Green) are tied!');
+                let message: string = '';
+                if (this.playerNames) {
+                    message += this.playerNames.getPlayerRed() + ' (Red) and ' + this.playerNames.getPlayerGreen() + ' (Green)';
+                }
+                message += ' are tied!';
+                alert(message);
                 this.closeGameByWinning();
             } else { // If game is still going on
                 this.switchTurn();
@@ -276,7 +258,10 @@ export class Game {
         }
 
         this.cleanUpEvents();
-        this.clearPlayerNames();
+
+        if (this.playerNames) {
+            this.playerNames.clear();
+        }
 
         if (this.timer) {
             this.timer.stop();
@@ -332,8 +317,10 @@ export class Game {
     private saveGame() {
         localStorage.setItem('nextTurn', this.turn.toString());
 	    localStorage.setItem('board', JSON.stringify(this.board));
-        localStorage.setItem('playerRed', this.playerRed);
-        localStorage.setItem('playerGreen', this.playerGreen);
+
+        if (this.playerNames) {
+            this.playerNames.saveIntoLocalStorage();
+        }
 
         if (this.timer) {
             this.timer.saveSecondsRunningToLocalStorage();
@@ -348,12 +335,14 @@ export class Game {
             this.turn = Dot.Green;
         }
         
-        this.playerRed = localStorage.getItem('playerRed');
-        this.playerGreen = localStorage.getItem('playerGreen');
         this.board = JSON.parse(localStorage.getItem('board'));
 
         if (this.timer) {
             this.timer.setSecondsRunningFromLocalStorage();
+        }
+
+        if (this.playerNames) {
+            this.playerNames.setFromLocalStorage();
         }
     }
 
@@ -368,21 +357,15 @@ export class Game {
                 this.socket.close();
             }
             this.onGameEnd();
-            this.clearPlayerNames();
             this.resetValues();
+
+            if (this.playerNames) {
+                this.playerNames.clear();
+            }
 
             if (this.timer) {
                 this.timer.stop();
             }
-        }
-    }
-
-    private clearPlayerNames() {
-        if (this.playerGreenSpan) {
-            this.playerGreenSpan.innerText = '';
-        }
-        if (this.playerRedSpan) {
-            this.playerRedSpan.innerText = '';
         }
     }
 
@@ -413,17 +396,11 @@ export class Game {
     }
 
     private socketMessage = (messageData) => {
-        if (messageData.opponentName && this.socket) {
+        if (messageData.opponentName && this.socket && this.playerNames) {
             if (this.socket.getPlayerColor() === Dot.Red) {
-                this.playerGreen = messageData.opponentName;
-                if (this.playerGreenSpan) {
-                    this.playerGreenSpan.innerText = this.playerGreen;
-                }
+                this.playerNames.setPlayerGreen(messageData.opponentName);
             } else if (this.socket.getPlayerColor() === Dot.Green) {
-                this.playerRed = messageData.opponentName;
-                if (this.playerRedSpan) {
-                    this.playerRedSpan.innerText = this.playerRed;
-                }
+                this.playerNames.setPlayerRed(messageData.opponentName);
             }
 
             if (this.timer) {
@@ -431,17 +408,11 @@ export class Game {
             }
         }
 
-        if (messageData.color && this.socket) {
+        if (messageData.color && this.socket && this.playerNames) {
             if (messageData.color === Dot.Red) {
-                this.playerRed = this.socket.getPlayerName();
-                if (this.playerRedSpan) {
-                    this.playerRedSpan.innerText = this.playerRed;
-                }
+                this.playerNames.setPlayerRed(this.socket.getPlayerName());
             } else if (messageData.color === Dot.Green) {
-                this.playerGreen = this.socket.getPlayerName();
-                if (this.playerGreenSpan) {
-                    this.playerGreenSpan.innerText = this.playerGreen;
-                }
+                this.playerNames.setPlayerGreen(this.socket.getPlayerName());
             }
         }
 
@@ -458,16 +429,13 @@ export class Game {
         }
     };
 
-    private opponentConnected(): boolean {
-        // Return true for network play when both player names are defined (i.e. both connected)
-        return this.mode === GameMode.Network && !!this.playerRed && !!this.playerGreen;
-    }
-
     private resetValues() {
         this.turn = Dot.Red;
         BoardLogic.initBoard(this.board);
-        this.playerRed = null;
-        this.playerGreen = null;
+        
+        if (this.playerNames) {
+            this.playerNames.reset();
+        }
 
         if (this.socket) {
             this.socket.close();
