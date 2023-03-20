@@ -1,25 +1,23 @@
-import { GameMode } from './enums/game-mode';
 import { Dot } from './enums/dot';
 import { Position } from './position';
 import { Utils } from './utils';
-import { Socket } from './socket';
 import { Sound } from './enums/sound';
 import { BoardLogic } from './board-logic';
 import { Timer } from './timer';
-import { PlayerNameArea } from './player-name-area';
+import { PlayerNameSection } from './player-name-section';
+import { GameOptions } from './game-options';
+import { GameMode } from './enums/game-mode';
 
-export class Game {
-
-    private static instance: Game;
+export abstract class Game {
 
     private canvas: any;
     private context: any;
-    private board: Array<Array<Dot>> = new Array(BoardLogic.columns);
+    protected board: Array<Array<Dot>> = new Array(BoardLogic.columns);
 
     private exitBtn: any;
-    private playerNames: PlayerNameArea;
+    protected playerNames: PlayerNameSection;
 
-    private turn: Dot = Dot.Red;
+    protected turn: Dot = Dot.Red;
 
     public mode: GameMode;
     public onGameEnd: Function;
@@ -28,55 +26,28 @@ export class Game {
     private rowGap: number;
     private colGap: number;
 
-    private socket: Socket;
+    protected timer: Timer;
 
-    private timer: Timer;
-
-    private constructor(canvasId: string,
-                exitBtnId: string,
-                timerId: string,
-                playerRedId: string,
-                playerGreenId: string) {
-        this.canvas = document.getElementById(canvasId);
+    protected constructor(options: GameOptions) {
+        this.canvas = document.getElementById(options.canvasId);
         this.context = this.canvas.getContext('2d');
 
         BoardLogic.initBoard(this.board);
 
-        if (exitBtnId) {
-            this.exitBtn = document.getElementById(exitBtnId);
+        if (options.exitBtnId) {
+            this.exitBtn = document.getElementById(options.exitBtnId);
         }
 
-        if (timerId) {
-            this.timer = new Timer(timerId);
+        if (options.timerId) {
+            this.timer = new Timer(options.timerId);
         }
 
-        if (playerRedId && playerGreenId) {
-            this.playerNames = new PlayerNameArea(playerRedId, playerGreenId);
+        if (options.playerRedId && options.playerGreenId) {
+            this.playerNames = new PlayerNameSection(options.playerRedId, options.playerGreenId);
         }
     }
 
-    public static getInstance(options: any): Game {
-        if (!Game.instance) {
-            Game.instance = new Game(options.canvasId, options.exitBtnId, options.timerId, options.playerRedId, options.playerGreenId);
-        }
-        return Game.instance;
-    }
-
-    public start() {
-        if (this.mode === GameMode.SamePC) {
-            this.checkGameData();
-
-            if (this.playerNames) {
-                this.playerNames.setUpPlayerNames();
-            }
-
-            if (this.timer) {
-                this.timer.setRunnable(true);
-            }
-        } else if (this.mode === GameMode.Network) {
-            this.defineSocket();
-        }
-        
+    protected start() {
         if (this.playerNames) {
             this.playerNames.printPlayerNames(this.mode);
         }
@@ -86,20 +57,6 @@ export class Game {
 
         if (this.timer) {
             this.timer.set();
-        }
-    }
-
-    private checkGameData() {
-        let board = localStorage.getItem('board');
-        let nextTurn = localStorage.getItem('nextTurn');
-        
-        if (board && nextTurn) {
-            let restore = confirm('Do you want to continue playing the previous game? OK/Cancel');
-            if (restore) {
-                this.restoreLastGame();
-            } else {
-                localStorage.clear();
-            }
         }
     }
 
@@ -122,46 +79,21 @@ export class Game {
         }
     }
 
-    private setGameEvents() {
+    protected setGameEvents() {
         this.canvas.addEventListener('mousemove', this.canvasMousemove, false);
         this.canvas.addEventListener('click', this.canvasClick, false);
         window.addEventListener('beforeunload', this.beforeUnload);
         window.addEventListener('resize', this.resizeCanvas);
-        document.addEventListener('visibilitychange', this.pageVisibilityChange);
     }
 
-    private canvasMousemove = (event) => {
-        if (this.mode === GameMode.SamePC || (this.socket && this.turn === this.socket.getPlayerColor() && (!this.playerNames || this.playerNames.bothPlayersConnected()))) {
-            let position: Position = Position.getCursorPosition(event, this.canvas);
-            let column = Math.round((position.x - 50) / this.colGap);
-            this.moveDot(column);
+    protected abstract canvasMousemove(event);
+    protected abstract canvasClick(event);
 
-            if (this.mode === GameMode.Network && this.socket) {
-                let data = {
-                    action: 'mousemove',
-                    column: column
-                };
-                this.socket.send(data);
-            }
-        }
-    };
-
-    private canvasClick = (event) => {
-        if (this.mode === GameMode.SamePC || (this.socket && this.turn === this.socket.getPlayerColor() && (!this.playerNames || this.playerNames.bothPlayersConnected()))) {
-            let position = Position.getCursorPosition(event, this.canvas);
-            let column = Math.round((position.x - 50) / this.colGap);
-
-            if (this.mode === GameMode.Network && this.socket) {
-                let data = {
-                    action: 'click',
-                    column: column
-                };
-                this.socket.send(data);
-            }
-
-            this.landDot(column);
-        }
-    };
+    protected getColumnFromCursorPosition(): number {
+        let position = Position.getCursorPosition(event, this.canvas);
+        let column = Math.round((position.x - 50) / this.colGap);
+        return column;
+    }
 
     private switchTurn() {
         if (this.turn === Dot.Red) {
@@ -171,13 +103,13 @@ export class Game {
         }
     }
 
-    private moveDot(column: number) {
+    protected moveDot(column: number) {
         this.clearUpper();
         this.context.fillStyle = this.turn;
         this.paintDotToDrop(column);
     }
 
-    private landDot(column: number) {
+    protected landDot(column: number) {
         let row: number;
 
         if (this.board[column][0] === Dot.Empty) {
@@ -213,7 +145,7 @@ export class Game {
                 }
 
                 this.winDialog(winner);
-                this.closeGameByWinning();
+                this.closeGameAfterWinning();
             } else if (BoardLogic.isBoardFull(this.board)) {
                 let message: string = '';
                 if (this.playerNames) {
@@ -221,7 +153,7 @@ export class Game {
                 }
                 message += ' are tied!';
                 alert(message);
-                this.closeGameByWinning();
+                this.closeGameAfterWinning();
             } else { // If game is still going on
                 this.switchTurn();
                 this.context.fillStyle = this.turn;
@@ -231,32 +163,16 @@ export class Game {
         }
     }
 
-    private winDialog(winner: string) {
+    protected winDialog(winner: string) {
         let winMsg: string = winner + ' wins!';
         if (this.timer) {
             winMsg += '\nTime taken: ' + this.timer.getTimeInStringFormat();
         }
-        if (this.mode === GameMode.Network) {
-            winMsg += '\n';
-            if (this.socket.getPlayerColor() === this.turn) {
-                winMsg += 'You win!';
-                Utils.playSound(Sound.Win);
-            } else {
-                winMsg += 'You lose!';
-                Utils.playSound(Sound.Lose);
-            }
-        } else {
-            Utils.playSound(Sound.Win);
-        }
+        Utils.playSound(Sound.Win);
         alert(winMsg);
     }
 
-    private closeGameByWinning() {
-        if (this.mode === GameMode.SamePC) {
-            // Clear game data
-            localStorage.clear();
-        }
-
+    protected closeGameAfterWinning() {
         this.cleanUpEvents();
 
         if (this.playerNames) {
@@ -286,86 +202,30 @@ export class Game {
         this.context.fill();
     }
 
-    private beforeUnload = (event) => {
-        if (this.mode === GameMode.SamePC) {
-            this.saveGame();
-        } else if (this.mode === GameMode.Network) {
-            // Display default dialog before closing
-            event.preventDefault();
-            event.returnValue = ''; // Required by Chrome
-        }
-    };
-
-    private pageVisibilityChange = () => {
-        if (this.mode !== GameMode.Network && this.timer) {
-            this.timer.pauseWhenDocumentHidden();
-        }
-    };
+    protected abstract beforeUnload(event);
 
     private clearUpper() {
         this.context.clearRect(0, 0, this.canvas.width, 70);
     }
 
-    private cleanUpEvents() {
+    protected cleanUpEvents() {
         this.canvas.removeEventListener('mousemove', this.canvasMousemove, false);
         this.canvas.removeEventListener('click', this.canvasClick, false);
         window.removeEventListener('beforeunload', this.beforeUnload);
         window.removeEventListener('resize', this.resizeCanvas);
-        document.removeEventListener('changevisibility', this.pageVisibilityChange);
     }
 
-    private saveGame() {
-        localStorage.setItem('nextTurn', this.turn.toString());
-	    localStorage.setItem('board', JSON.stringify(this.board));
+    protected exit() {
+        this.cleanUpEvents();
+        this.onGameEnd();
+        this.resetValues();
 
         if (this.playerNames) {
-            this.playerNames.saveIntoLocalStorage();
+            this.playerNames.clear();
         }
 
         if (this.timer) {
-            this.timer.saveSecondsRunningToLocalStorage();
-        }
-    }
-
-    private restoreLastGame() {
-        let nextTurn: string = localStorage.getItem('nextTurn');
-        if (nextTurn === Dot.Red) {
-            this.turn = Dot.Red;
-        } else if (nextTurn === Dot.Green) {
-            this.turn = Dot.Green;
-        }
-        
-        this.board = JSON.parse(localStorage.getItem('board'));
-
-        if (this.timer) {
-            this.timer.setSecondsRunningFromLocalStorage();
-        }
-
-        if (this.playerNames) {
-            this.playerNames.setFromLocalStorage();
-        }
-    }
-
-    public exit() {
-        let exitConfirmation: boolean = (this.mode === GameMode.Network ? confirm('Network game in progress. Are you sure you want to quit?') : true);
-
-        if (exitConfirmation) {
-            this.cleanUpEvents();
-            if (this.mode === GameMode.SamePC) {
-                this.saveGame();
-            } else if (this.mode === GameMode.Network) {
-                this.socket.close();
-            }
-            this.onGameEnd();
-            this.resetValues();
-
-            if (this.playerNames) {
-                this.playerNames.clear();
-            }
-
-            if (this.timer) {
-                this.timer.stop();
-            }
+            this.timer.stop();
         }
     }
 
@@ -390,55 +250,12 @@ export class Game {
         this.paintBoard();
     };
 
-    private defineSocket() {
-        this.socket = new Socket();
-        this.socket.onMessageCallback = this.socketMessage;
-    }
-
-    private socketMessage = (messageData) => {
-        if (messageData.opponentName && this.socket && this.playerNames) {
-            if (this.socket.getPlayerColor() === Dot.Red) {
-                this.playerNames.setPlayerGreen(messageData.opponentName);
-            } else if (this.socket.getPlayerColor() === Dot.Green) {
-                this.playerNames.setPlayerRed(messageData.opponentName);
-            }
-
-            if (this.timer) {
-                this.timer.setRunnable(true);
-            }
-        }
-
-        if (messageData.color && this.socket && this.playerNames) {
-            if (messageData.color === Dot.Red) {
-                this.playerNames.setPlayerRed(this.socket.getPlayerName());
-            } else if (messageData.color === Dot.Green) {
-                this.playerNames.setPlayerGreen(this.socket.getPlayerName());
-            }
-        }
-
-        if (messageData.win) {
-            this.closeGameByWinning();
-        }
-
-        if (!isNaN(messageData.column) && messageData.action === 'mousemove') {
-            this.moveDot(messageData.column);
-        }
-
-        if (!isNaN(messageData.column) && messageData.action === 'click') {
-            this.landDot(messageData.column);
-        }
-    };
-
-    private resetValues() {
+    protected resetValues() {
         this.turn = Dot.Red;
         BoardLogic.initBoard(this.board);
         
         if (this.playerNames) {
             this.playerNames.reset();
-        }
-
-        if (this.socket) {
-            this.socket.close();
         }
 
         if (this.timer) {

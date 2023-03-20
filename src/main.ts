@@ -1,5 +1,8 @@
-import { Game } from "./lib/game";
 import { GameMode } from "./lib/enums/game-mode";
+import { Game } from "./lib/game";
+import { GameOptions } from "./lib/game-options";
+import { NetworkGame } from "./lib/network-game";
+import { SameDeviceGame } from "./lib/same-device-game";
 
 let connect4: Game;
 
@@ -25,24 +28,37 @@ creditsBtn.addEventListener('click', () => {
 }, false);
 
 exitBtn.addEventListener('click', () => {
-    connect4.exit();
+    if (connect4.mode === GameMode.Network) {
+        (connect4 as NetworkGame).exit();
+    } else {
+        (connect4 as SameDeviceGame).exit();
+    }
 }, false);
 
 function initGame(mode: GameMode) {
-    connect4 = Game.getInstance({
+    let options: GameOptions = {
         canvasId: 'board',
         exitBtnId: 'exitBtn',
         timerId: 'timer',
         playerRedId: 'playerRed',
         playerGreenId: 'playerGreen'
-    });
+    };
+    if (mode === GameMode.Network) {
+        connect4 = NetworkGame.getInstance(options);
+    } else {
+        connect4 = SameDeviceGame.getInstance(options);
+    }
     connect4.mode = mode;
     connect4.onGameEnd = () => {
         menu.classList.remove('hide');
         canvas.classList.add('hide');
         exitBtn.classList.add('hide');
     };
-    connect4.start();
+    if (mode === GameMode.Network) {
+        (connect4 as NetworkGame).start();
+    } else {
+        (connect4 as SameDeviceGame).start();
+    }
 
     menu.classList.add('hide');
     canvas.classList.remove('hide');

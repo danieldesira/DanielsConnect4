@@ -1,6 +1,6 @@
 import { GameMode } from "./enums/game-mode";
 
-export class PlayerNameArea {
+export class PlayerNameSection {
     private playerRedSpan: any;
     private playerGreenSpan: any;
     private playerRed: string;

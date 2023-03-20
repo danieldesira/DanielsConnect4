@@ -7,6 +7,7 @@ export class Timer {
 
     public constructor(timerId: string) {
         this.timerSpan = document.getElementById(timerId);
+        this.secondsRunning = 0;
     }
 
     private timerCallback = () => {
