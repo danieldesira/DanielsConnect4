@@ -48,3 +48,8 @@
 .red-text {
     color: red;
 }
+
+.currentTurn {
+    font-style: italic;
+    text-decoration: underline;
+}

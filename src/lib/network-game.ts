@@ -1,4 +1,5 @@
 import { Dot } from "./enums/dot";
+import { GameMode } from "./enums/game-mode";
 import { Sound } from "./enums/sound";
 import { Game } from "./game";
 import { GameOptions } from "./game-options";
@@ -10,9 +11,14 @@ export class NetworkGame extends Game {
     private static instance: NetworkGame;
 
     private socket: Socket;
+    private skipTurn: boolean;
+    private endGameDueToInactivity: boolean;
+    private turnCountDown: number;
+    private turnCountDownInterval: any;
 
     private constructor(options: GameOptions) {
         super(options);
+        this.mode = GameMode.Network;
     }
 
     public static getInstance(options: GameOptions): Game {
@@ -85,6 +91,8 @@ export class NetworkGame extends Game {
                 column: column
             };
             this.socket.send(data);
+
+            this.endGameDueToInactivity = false;
         }
     };
 
@@ -97,6 +105,8 @@ export class NetworkGame extends Game {
                 column: column
             };
             this.socket.send(data);
+
+            this.skipTurn = false;
 
             this.landDot(column);
         }
@@ -134,6 +144,34 @@ export class NetworkGame extends Game {
             Utils.playSound(Sound.Lose);
         }
         alert(winMsg);
+    }
+
+    protected switchTurn() {
+        super.switchTurn();
+
+        if (this.socket && this.turn === this.socket.getPlayerColor()) {
+            this.skipTurn = true;
+            this.endGameDueToInactivity = true;
+            this.turnCountDown = 60;
+            this.turnCountDownInterval = setInterval(this.turnCountDownCallback, 1000);
+        } else {
+            clearInterval(this.turnCountDownInterval);
+        }
+    }
+
+    private turnCountDownCallback = () => {
+        this.turnCountDown--;
+
+        if (this.turnCountDown <= 0) {
+            if (this.endGameDueToInactivity) {
+                // to-do: end game and send flag to server
+            }
+
+            if (this.skipTurn) {
+                this.switchTurn();
+                // to-do: send message to server to let the opponent's client know that the turn switched
+            }
+        }
     }
     
 }

@@ -8,10 +8,6 @@ export class Socket {
     private gameId: number;
     public onMessageCallback: Function;
 
-    private skipTurn: boolean;
-    private endGameDueToInactivity: boolean;
-    private timeout: number;
-
     public constructor() {
         this.connect();
     }

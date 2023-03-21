@@ -1,3 +1,4 @@
+import { Dot } from "./enums/dot";
 import { GameMode } from "./enums/game-mode";
 
 export class PlayerNameSection {
@@ -88,6 +89,16 @@ export class PlayerNameSection {
         this.playerGreen = playerName;
         if (this.playerGreenSpan) {
             this.playerGreenSpan.innerText = this.playerGreen;
+        }
+    }
+
+    public switchTurn(turn: Dot) {
+        if (turn === Dot.Red) {
+            this.playerRedSpan.classList.add('currentTurn');
+            this.playerGreenSpan.classList.remove('currentTurn');
+        } else if (turn === Dot.Green) {
+            this.playerGreenSpan.classList.add('currentTurn');
+            this.playerRedSpan.classList.remove('currentTurn');
         }
     }
 

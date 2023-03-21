@@ -19,7 +19,7 @@ export abstract class Game {
 
     protected turn: Dot = Dot.Red;
 
-    public mode: GameMode;
+    protected mode: GameMode;
     public onGameEnd: Function;
 
     private circleRadius: number;
@@ -50,6 +50,7 @@ export abstract class Game {
     protected start() {
         if (this.playerNames) {
             this.playerNames.printPlayerNames(this.mode);
+            this.playerNames.switchTurn(this.turn);
         }
 
         this.resizeCanvas();
@@ -95,11 +96,15 @@ export abstract class Game {
         return column;
     }
 
-    private switchTurn() {
+    protected switchTurn() {
         if (this.turn === Dot.Red) {
             this.turn = Dot.Green;
         } else if (this.turn === Dot.Green) {
             this.turn = Dot.Red;
+        }
+
+        if (this.playerNames) {
+            this.playerNames.switchTurn(this.turn);
         }
     }
 

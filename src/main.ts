@@ -28,7 +28,7 @@ creditsBtn.addEventListener('click', () => {
 }, false);
 
 exitBtn.addEventListener('click', () => {
-    if (connect4.mode === GameMode.Network) {
+    if (connect4 instanceof NetworkGame) {
         (connect4 as NetworkGame).exit();
     } else {
         (connect4 as SameDeviceGame).exit();
@@ -48,7 +48,6 @@ function initGame(mode: GameMode) {
     } else {
         connect4 = SameDeviceGame.getInstance(options);
     }
-    connect4.mode = mode;
     connect4.onGameEnd = () => {
         menu.classList.remove('hide');
         canvas.classList.add('hide');

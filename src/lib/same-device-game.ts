@@ -1,4 +1,5 @@
 import { Dot } from "./enums/dot";
+import { GameMode } from "./enums/game-mode";
 import { Game } from "./game";
 import { GameOptions } from "./game-options";
 
@@ -8,6 +9,7 @@ export class SameDeviceGame extends Game {
 
     private constructor(options: GameOptions) {
         super(options);
+        this.mode = GameMode.SamePC;
     }
 
     public static getInstance(options: GameOptions): Game {
