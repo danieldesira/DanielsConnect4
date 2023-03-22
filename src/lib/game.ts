@@ -50,7 +50,7 @@ export abstract class Game {
     protected start() {
         if (this.playerNames) {
             this.playerNames.printPlayerNames(this.mode);
-            this.playerNames.switchTurn(this.turn);
+            this.playerNames.indicateTurn(this.turn);
         }
 
         this.resizeCanvas();
@@ -90,7 +90,7 @@ export abstract class Game {
     protected abstract canvasMousemove(event);
     protected abstract canvasClick(event);
 
-    protected getColumnFromCursorPosition(): number {
+    protected getColumnFromCursorPosition(event): number {
         let position = Position.getCursorPosition(event, this.canvas);
         let column = Math.round((position.x - 50) / this.colGap);
         return column;
@@ -104,7 +104,7 @@ export abstract class Game {
         }
 
         if (this.playerNames) {
-            this.playerNames.switchTurn(this.turn);
+            this.playerNames.indicateTurn(this.turn);
         }
     }
 
@@ -136,9 +136,9 @@ export abstract class Game {
             this.context.closePath();
             this.context.fill();
             
-            let dotCount = BoardLogic.checkDotCount(this.board, column, row, this.turn);
+            let dotCount = BoardLogic.countConsecutiveDots(this.board, column, row, this.turn);
 
-            if (dotCount > 3) { // If a player completes 4 dots
+            if (dotCount >= 4) {
                 let winner: string = '';
 
                 if (this.playerNames) {

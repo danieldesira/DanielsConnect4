@@ -14,7 +14,7 @@ export class BoardLogic {
         }
     }
 
-    public static checkDotCount(board: Array<Array<Dot>>, column: number, row: number, currentTurn: Dot): number {
+    public static countConsecutiveDots(board: Array<Array<Dot>>, column: number, row: number, currentTurn: Dot): number {
         let count: number = row;
         let dotCount: number = 0;
 

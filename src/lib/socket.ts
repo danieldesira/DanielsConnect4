@@ -1,4 +1,5 @@
 import { Dot } from "./enums/dot";
+import { GameMessage } from "./models/game-message";
 import { Utils } from "./utils";
 
 export class Socket {
@@ -51,7 +52,7 @@ export class Socket {
     }
 
     private onMessage = (event) => {
-        let messageData = JSON.parse(event.data);
+        let messageData: GameMessage = JSON.parse(event.data);
 
         if (!this.gameId && !isNaN(messageData.gameId)) {
             this.gameId = messageData.gameId;

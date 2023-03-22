@@ -36,30 +36,52 @@ exitBtn.addEventListener('click', () => {
 }, false);
 
 function initGame(mode: GameMode) {
-    let options: GameOptions = {
-        canvasId: 'board',
-        exitBtnId: 'exitBtn',
-        timerId: 'timer',
-        playerRedId: 'playerRed',
-        playerGreenId: 'playerGreen'
-    };
-    if (mode === GameMode.Network) {
-        connect4 = NetworkGame.getInstance(options);
-    } else {
-        connect4 = SameDeviceGame.getInstance(options);
-    }
-    connect4.onGameEnd = () => {
-        menu.classList.remove('hide');
-        canvas.classList.add('hide');
-        exitBtn.classList.add('hide');
-    };
-    if (mode === GameMode.Network) {
-        (connect4 as NetworkGame).start();
-    } else {
-        (connect4 as SameDeviceGame).start();
-    }
+    clearError();
 
-    menu.classList.add('hide');
-    canvas.classList.remove('hide');
-    exitBtn.classList.remove('hide');
+    try {
+        let options: GameOptions = {
+            canvasId: 'board',
+            exitBtnId: 'exitBtn',
+            timerId: 'timer',
+            playerRedId: 'playerRed',
+            playerGreenId: 'playerGreen'
+        };
+        if (mode === GameMode.Network) {
+            connect4 = NetworkGame.getInstance(options);
+        } else {
+            connect4 = SameDeviceGame.getInstance(options);
+        }
+        connect4.onGameEnd = () => {
+            menu.classList.remove('hide');
+            canvas.classList.add('hide');
+            exitBtn.classList.add('hide');
+        };
+        if (mode === GameMode.Network) {
+            (connect4 as NetworkGame).start();
+        } else {
+            (connect4 as SameDeviceGame).start();
+        }
+    
+        menu.classList.add('hide');
+        canvas.classList.remove('hide');
+        exitBtn.classList.remove('hide');
+    } catch (ex) {
+        showError('Problem encountered!');
+        // To-do: include logging
+    }
+}
+
+function showError(message: string) {
+    let errorMessageDiv: any = document.getElementById('errorMessage');
+    if (errorMessageDiv) {
+        errorMessageDiv.classList.remove('hide');
+        errorMessageDiv.innerText = message;
+    }
+}
+
+function clearError() {
+    let errorMessageDiv: any = document.getElementById('errorMessage');
+    if (errorMessageDiv) {
+        errorMessageDiv.classList.add('hide');
+    }
 }

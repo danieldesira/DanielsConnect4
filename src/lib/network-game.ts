@@ -3,6 +3,7 @@ import { GameMode } from "./enums/game-mode";
 import { Sound } from "./enums/sound";
 import { Game } from "./game";
 import { GameOptions } from "./game-options";
+import { GameMessage } from "./models/game-message";
 import { Socket } from "./socket";
 import { Utils } from "./utils";
 
@@ -39,7 +40,7 @@ export class NetworkGame extends Game {
         this.socket.onMessageCallback = this.socketMessage;
     }
 
-    private socketMessage = (messageData) => {
+    private socketMessage = (messageData: GameMessage) => {
         if (messageData.opponentName && this.socket && this.playerNames) {
             if (this.socket.getPlayerColor() === Dot.Red) {
                 this.playerNames.setPlayerGreen(messageData.opponentName);
@@ -71,6 +72,10 @@ export class NetworkGame extends Game {
         if (!isNaN(messageData.column) && messageData.action === 'click') {
             this.landDot(messageData.column);
         }
+
+        if (messageData.skipTurn && messageData.currentTurn !== this.socket.getPlayerColor()) {
+            this.switchTurn();
+        }
     };
 
     protected resetValues() {
@@ -83,7 +88,7 @@ export class NetworkGame extends Game {
 
     protected canvasMousemove = (event) => {
         if (this.socket && this.turn === this.socket.getPlayerColor() && (!this.playerNames || this.playerNames.bothPlayersConnected())) {
-            let column = this.getColumnFromCursorPosition();
+            let column = this.getColumnFromCursorPosition(event);
             this.moveDot(column);
 
             let data = {
@@ -98,7 +103,7 @@ export class NetworkGame extends Game {
 
     protected canvasClick = (event) => {
         if (this.socket && this.turn === this.socket.getPlayerColor() && (!this.playerNames || this.playerNames.bothPlayersConnected())) {
-            let column = this.getColumnFromCursorPosition();
+            let column = this.getColumnFromCursorPosition(event);
 
             let data = {
                 action: 'click',
@@ -162,14 +167,18 @@ export class NetworkGame extends Game {
     private turnCountDownCallback = () => {
         this.turnCountDown--;
 
-        if (this.turnCountDown <= 0) {
+        if (this.turnCountDown <= 0 && this.socket) {
             if (this.endGameDueToInactivity) {
                 // to-do: end game and send flag to server
             }
 
             if (this.skipTurn) {
                 this.switchTurn();
-                // to-do: send message to server to let the opponent's client know that the turn switched
+
+                this.socket.send({
+                    skipTurn: this.skipTurn,
+                    currentTurn: this.turn
+                });
             }
         }
     }

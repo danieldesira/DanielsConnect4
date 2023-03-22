@@ -80,12 +80,12 @@ export class SameDeviceGame extends Game {
     }
 
     protected canvasMousemove = (event) => {
-        let column = this.getColumnFromCursorPosition();
+        let column = this.getColumnFromCursorPosition(event);
         this.moveDot(column);
     };
 
     protected canvasClick = (event) => {
-        let column = this.getColumnFromCursorPosition();
+        let column = this.getColumnFromCursorPosition(event);
         this.landDot(column);
     };
 

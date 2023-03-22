@@ -92,7 +92,7 @@ export class PlayerNameSection {
         }
     }
 
-    public switchTurn(turn: Dot) {
+    public indicateTurn(turn: Dot) {
         if (turn === Dot.Red) {
             this.playerRedSpan.classList.add('currentTurn');
             this.playerGreenSpan.classList.remove('currentTurn');
