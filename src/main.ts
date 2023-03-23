@@ -44,7 +44,8 @@ function initGame(mode: GameMode) {
             exitBtnId: 'exitBtn',
             timerId: 'timer',
             playerRedId: 'playerRed',
-            playerGreenId: 'playerGreen'
+            playerGreenId: 'playerGreen',
+            countdownId: 'countdown'
         };
         if (mode === GameMode.Network) {
             connect4 = NetworkGame.getInstance(options);

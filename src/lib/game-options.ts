@@ -4,4 +4,5 @@ export class GameOptions {
     public timerId: string;
     public playerRedId: string;
     public playerGreenId: string;
+    public countdownId: string;
 }
