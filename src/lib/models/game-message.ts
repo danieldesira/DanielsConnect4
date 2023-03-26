@@ -4,7 +4,7 @@ export class GameMessage {
     public gameId: number;
     public opponentName: string;
     public color: Dot;
-    public win: boolean;
+    public endGameDueToInactivity: boolean;
     public column: number;
     public action: string;
     public skipTurn: boolean;

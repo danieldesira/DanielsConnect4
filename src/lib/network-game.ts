@@ -36,7 +36,7 @@ export class NetworkGame extends Game {
 
     public start() {
         this.defineSocket();
-
+        this.startCountdown();
         super.start();
     }
 
@@ -66,7 +66,9 @@ export class NetworkGame extends Game {
             }
         }
 
-        if (messageData.win) {
+        if (messageData.endGameDueToInactivity && messageData.currentTurn !== this.socket.getPlayerColor()) {
+            alert('You win due to opponent inactivity!');
+            Utils.playSound(Sound.Win);
             this.closeGameAfterWinning();
         }
 
@@ -85,6 +87,7 @@ export class NetworkGame extends Game {
 
     protected resetValues() {
         super.resetValues();
+        this.stopCountdown();
 
         if (this.socket) {
             this.socket.close();
@@ -158,33 +161,35 @@ export class NetworkGame extends Game {
 
     protected switchTurn() {
         super.switchTurn();
-
-        if (this.socket && this.turn === this.socket.getPlayerColor()) {
-            this.skipTurn = true;
-            this.endGameDueToInactivity = true;
-            this.turnCountDown = 60;
-            this.turnCountDownInterval = setInterval(this.turnCountDownCallback, 1000);
-        } else {
-            clearInterval(this.turnCountDownInterval);
-        }
+        this.resetCountdown();
     }
 
     private turnCountDownCallback = () => {
-        this.turnCountDown--;
-        this.countdownSpan.innerText = this.turnCountDown;
-        this.adaptCountDownColor();
+        if (this.playerNames && this.playerNames.bothPlayersConnected()) {
+            this.turnCountDown--;
+            this.countdownSpan.innerText = this.turnCountDown;
+            this.adaptCountDownColor();
+        }
 
-        if (this.turnCountDown <= 0 && this.socket) {
+        let playerColor: Dot = this.socket.getPlayerColor();
+        if (this.turn === playerColor && this.turnCountDown <= 0 && this.socket) {
             if (this.endGameDueToInactivity) {
-                // to-do: end game and send flag to server
+                this.socket.send({
+                    endGameDueToInactivity: true,
+                    currentTurn: playerColor
+                });
+
+                alert('You lose due to inactivity!');
+                Utils.playSound(Sound.Lose);
+                this.closeGameAfterWinning();
             }
 
             if (this.skipTurn) {
                 this.switchTurn();
 
                 this.socket.send({
-                    skipTurn: this.skipTurn,
-                    currentTurn: this.turn
+                    skipTurn: true,
+                    currentTurn: playerColor
                 });
             }
         }
@@ -198,6 +203,24 @@ export class NetworkGame extends Game {
             this.countdownSpan.classList.remove('green-text');
             this.countdownSpan.classList.add('red-text');
         }
+    }
+
+    private startCountdown() {
+        this.skipTurn = true;
+        this.endGameDueToInactivity = true;
+        this.turnCountDown = 60;
+        this.turnCountDownInterval = setInterval(this.turnCountDownCallback, 1000);
+    }
+
+    private stopCountdown() {
+        clearInterval(this.turnCountDownInterval);
+        this.countdownSpan.innerText = '';
+    }
+
+    private resetCountdown() {
+        this.turnCountDown = 60;
+        this.skipTurn = true;
+        this.endGameDueToInactivity = true;
     }
     
 }
