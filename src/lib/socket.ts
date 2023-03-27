@@ -8,6 +8,7 @@ export class Socket {
     private playerName: string;
     private gameId: number;
     public onMessageCallback: Function;
+    public onErrorCallback: Function;
 
     public constructor() {
         this.connect();
@@ -75,6 +76,7 @@ export class Socket {
     };
 
     private onError = () => {
+        this.onErrorCallback();
         alert('Problem connecting to server!');
     };
 

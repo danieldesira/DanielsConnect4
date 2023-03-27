@@ -25,6 +25,8 @@ export abstract class Game {
     private circleRadius: number;
     private rowGap: number;
     private colGap: number;
+    private colOffset: number;
+    private static verticalOffset: number = 70;
 
     protected timer: Timer;
 
@@ -66,16 +68,12 @@ export abstract class Game {
         boardGradient.addColorStop(0, 'blue');
         boardGradient.addColorStop(1, 'aqua');
         this.context.fillStyle = boardGradient;
-        this.context.fillRect(0, 70, this.canvas.width, this.canvas.height);
+        this.context.fillRect(0, Game.verticalOffset, this.canvas.width, this.canvas.height);
 
         for (let col = BoardLogic.columns - 1; col >= 0; col--) {
             for (let row = BoardLogic.rows - 1; row >= 0; row--) {
                 this.context.fillStyle = this.board[col][row];
-
-                this.context.beginPath();
-                this.context.arc(50 + col * this.colGap, 150 + row * this.rowGap, this.circleRadius, 0, 2 * Math.PI);
-                this.context.closePath();
-                this.context.fill();
+                this.drawCircle(col, row);
             }
         }
     }
@@ -92,7 +90,7 @@ export abstract class Game {
 
     protected getColumnFromCursorPosition(event): number {
         let position = Position.getCursorPosition(event, this.canvas);
-        let column = Math.round((position.x - 50) / this.colGap);
+        let column = Math.round((position.x - this.colOffset) / this.colGap);
         return column;
     }
 
@@ -120,7 +118,8 @@ export abstract class Game {
         if (this.board[column][0] === Dot.Empty) {
 
             // Places the circle at the buttom of the column
-            for (var r = BoardLogic.rows - 1; r > -1; r--) {
+            let r: number;
+            for (r = BoardLogic.rows - 1; r >= 0; r--) {
                 if (this.board[column][r] === Dot.Empty) {
                     this.board[column][r] = this.turn;
                     row = r;
@@ -129,12 +128,7 @@ export abstract class Game {
             }
             
             this.context.fillStyle = this.turn;
-            
-            // Draws the circle at the appropriate position
-            this.context.beginPath();
-            this.context.arc(50 + column * this.colGap, 150 + r * this.rowGap, this.circleRadius, 0, Math.PI * 2);
-            this.context.closePath();
-            this.context.fill();
+            this.drawCircle(column, r);
             
             let dotCount = BoardLogic.countConsecutiveDots(this.board, column, row, this.turn);
 
@@ -202,7 +196,7 @@ export abstract class Game {
 
     private paintDotToDrop(column: number) {
         this.context.beginPath();
-        this.context.arc(50 + column * this.colGap, this.circleRadius, this.circleRadius, 0, 2 * Math.PI);
+        this.context.arc(this.colOffset + column * this.colGap, this.circleRadius, this.circleRadius, 0, 2 * Math.PI);
         this.context.closePath();
         this.context.fill();
     }
@@ -210,7 +204,7 @@ export abstract class Game {
     protected abstract beforeUnload(event);
 
     private clearUpper() {
-        this.context.clearRect(0, 0, this.canvas.width, 70);
+        this.context.clearRect(0, 0, this.canvas.width, Game.verticalOffset);
     }
 
     protected cleanUpEvents() {
@@ -252,6 +246,8 @@ export abstract class Game {
             this.rowGap = 65;
         }
 
+        this.colOffset = this.colGap / 2;
+
         this.paintBoard();
     };
 
@@ -266,6 +262,13 @@ export abstract class Game {
         if (this.timer) {
             this.timer.reset();
         }
+    }
+
+    private drawCircle(column: number, row: number) {
+        this.context.beginPath();
+        this.context.arc(this.colOffset + column * this.colGap, Game.verticalOffset * 2 + row * this.rowGap, this.circleRadius, 0, Math.PI * 2);
+        this.context.closePath();
+        this.context.fill();
     }
 
 }

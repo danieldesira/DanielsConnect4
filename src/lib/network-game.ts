@@ -42,10 +42,11 @@ export class NetworkGame extends Game {
 
     private defineSocket() {
         this.socket = new Socket();
-        this.socket.onMessageCallback = this.socketMessage;
+        this.socket.onMessageCallback = this.onSocketMessage;
+        this.socket.onErrorCallback = this.onSocketError;
     }
 
-    private socketMessage = (messageData: GameMessage) => {
+    private onSocketMessage = (messageData: GameMessage) => {
         if (messageData.opponentName && this.socket && this.playerNames) {
             if (this.socket.getPlayerColor() === Dot.Red) {
                 this.playerNames.setPlayerGreen(messageData.opponentName);
@@ -83,6 +84,10 @@ export class NetworkGame extends Game {
         if (messageData.skipTurn && messageData.currentTurn !== this.socket.getPlayerColor()) {
             this.switchTurn();
         }
+    };
+
+    private onSocketError = () => {
+        super.exit();
     };
 
     protected resetValues() {
