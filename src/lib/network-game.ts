@@ -182,9 +182,7 @@ export class NetworkGame extends Game {
                 alert('You lose due to inactivity!');
                 Utils.playSound(Sound.Lose);
                 this.closeGameAfterWinning();
-            }
-
-            if (this.skipTurn) {
+            } else if (this.skipTurn) {
                 this.switchTurn();
 
                 this.socket.send({
