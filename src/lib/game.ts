@@ -11,11 +11,11 @@ import { Dialog } from './dialog/dialog';
 
 export abstract class Game {
 
-    private canvas: any;
-    private context: any;
+    private canvas: HTMLCanvasElement;
+    private context: CanvasRenderingContext2D;
     protected board: Array<Array<Dot>> = new Array(BoardLogic.columns);
 
-    private exitBtn: any;
+    private exitBtn: HTMLButtonElement;
     protected playerNames: PlayerNameSection;
 
     protected turn: Dot = Dot.Red;
@@ -32,13 +32,13 @@ export abstract class Game {
     protected timer: Timer;
 
     protected constructor(options: GameOptions) {
-        this.canvas = document.getElementById(options.canvasId);
+        this.canvas = document.getElementById(options.canvasId) as HTMLCanvasElement;
         this.context = this.canvas.getContext('2d');
 
         BoardLogic.initBoard(this.board);
 
         if (options.exitBtnId) {
-            this.exitBtn = document.getElementById(options.exitBtnId);
+            this.exitBtn = document.getElementById(options.exitBtnId) as HTMLButtonElement;
         }
 
         if (options.timerId) {
@@ -52,7 +52,7 @@ export abstract class Game {
 
     protected start() {
         if (this.playerNames) {
-            this.playerNames.printPlayerNames(this.mode);
+            this.playerNames.printPlayerNames();
             this.playerNames.indicateTurn(this.turn);
         }
 
@@ -86,8 +86,8 @@ export abstract class Game {
         window.addEventListener('resize', this.resizeCanvas);
     }
 
-    protected abstract canvasMousemove(event);
-    protected abstract canvasClick(event);
+    protected abstract canvasMousemove(event): void;
+    protected abstract canvasClick(event): void;
 
     protected getColumnFromCursorPosition(event): number {
         let position = Position.getCursorPosition(event, this.canvas);

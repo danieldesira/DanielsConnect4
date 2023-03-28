@@ -16,15 +16,15 @@ export class NetworkGame extends Game {
     private skipTurn: boolean;
     private endGameDueToInactivity: boolean;
     private turnCountDown: number;
-    private turnCountDownInterval: any;
-    private countdownSpan: any;
+    private turnCountDownInterval: number;
+    private countdownSpan: HTMLSpanElement;
 
     private constructor(options: GameOptions) {
         super(options);
         this.mode = GameMode.Network;
 
         if (options.countdownId) {
-            this.countdownSpan = document.getElementById(options.countdownId);
+            this.countdownSpan = document.getElementById(options.countdownId) as HTMLSpanElement;
         }
     }
 
@@ -176,7 +176,7 @@ export class NetworkGame extends Game {
     private turnCountDownCallback = () => {
         if (this.playerNames && this.playerNames.bothPlayersConnected()) {
             this.turnCountDown--;
-            this.countdownSpan.innerText = this.turnCountDown;
+            this.countdownSpan.innerText = this.turnCountDown.toString();
             this.adaptCountDownColor();
         }
 
@@ -216,7 +216,7 @@ export class NetworkGame extends Game {
         this.skipTurn = true;
         this.endGameDueToInactivity = true;
         this.turnCountDown = 60;
-        this.turnCountDownInterval = setInterval(this.turnCountDownCallback, 1000);
+        this.turnCountDownInterval = window.setInterval(this.turnCountDownCallback, 1000);
     }
 
     private stopCountdown() {

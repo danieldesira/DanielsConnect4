@@ -1,3 +1,4 @@
+import { Dialog } from "./dialog/dialog";
 import { Dot } from "./enums/dot";
 import { GameMessage } from "./models/game-message";
 import { Utils } from "./utils";
@@ -77,7 +78,7 @@ export class Socket {
 
     private onError = () => {
         this.onErrorCallback();
-        alert('Problem connecting to server!');
+        Dialog.notify('Problem connecting to server!');
     };
 
     private onClose = () => {

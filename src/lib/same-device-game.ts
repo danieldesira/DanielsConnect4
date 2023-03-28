@@ -107,7 +107,7 @@ export class SameDeviceGame extends Game {
         super.exit();
     }
 
-    protected beforeUnload = (event) => {
+    protected beforeUnload = () => {
         this.saveGame();
     }
 

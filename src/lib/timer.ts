@@ -1,12 +1,12 @@
 export class Timer {
 
     private secondsRunning: number;
-    private timeout: any;
-    private timerSpan: any;
+    private timeout: number;
+    private timerSpan: HTMLSpanElement;
     private runnable: boolean;
 
     public constructor(timerId: string) {
-        this.timerSpan = document.getElementById(timerId);
+        this.timerSpan = document.getElementById(timerId) as HTMLSpanElement;
         this.secondsRunning = 0;
     }
 
@@ -19,7 +19,7 @@ export class Timer {
         }
         
         if (!this.timerSpan.classList.contains('hide')) {
-            this.timeout = setTimeout(this.timerCallback, 1000);
+            this.timeout = window.setTimeout(this.timerCallback, 1000);
         } else {
             clearTimeout(this.timeout);
         }
@@ -44,7 +44,7 @@ export class Timer {
         if (document.hidden) {
             clearTimeout(this.timeout);
         } else {
-            this.timeout = setTimeout(this.timerCallback, 1000);
+            this.timeout = window.setTimeout(this.timerCallback, 1000);
         }
     }
 

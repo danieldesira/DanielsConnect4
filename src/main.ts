@@ -6,14 +6,14 @@ import { SameDeviceGame } from "./lib/same-device-game";
 
 let connect4: Game;
 
-let menu = document.getElementById('menu');
-let samePCBtn = document.getElementById('samePC');
-let socketsBtn = document.getElementById('sockets');
-let creditsBtn = document.getElementById('credits');
+let menu = document.getElementById('menu') as HTMLDivElement;
+let samePCBtn = document.getElementById('samePC') as HTMLButtonElement;
+let socketsBtn = document.getElementById('sockets') as HTMLButtonElement;
+let creditsBtn = document.getElementById('credits') as HTMLButtonElement;
 
-let exitBtn = document.getElementById('exitBtn');
+let exitBtn = document.getElementById('exitBtn') as HTMLButtonElement;
 
-let canvas = document.getElementById('board');
+let canvas = document.getElementById('board') as HTMLCanvasElement;
 
 samePCBtn.addEventListener('click', () => {
     initGame(GameMode.SamePC);
@@ -73,7 +73,7 @@ function initGame(mode: GameMode) {
 }
 
 function showError(message: string) {
-    let errorMessageDiv: any = document.getElementById('errorMessage');
+    let errorMessageDiv = document.getElementById('errorMessage') as HTMLDivElement;
     if (errorMessageDiv) {
         errorMessageDiv.classList.remove('hide');
         errorMessageDiv.innerText = message;
@@ -81,7 +81,7 @@ function showError(message: string) {
 }
 
 function clearError() {
-    let errorMessageDiv: any = document.getElementById('errorMessage');
+    let errorMessageDiv = document.getElementById('errorMessage') as HTMLDivElement;
     if (errorMessageDiv) {
         errorMessageDiv.classList.add('hide');
     }

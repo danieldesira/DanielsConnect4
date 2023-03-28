@@ -1,6 +1,8 @@
 import { ConfirmationDialogOptions } from "./confirmation-dialog-options";
 import { DialogOptions } from "./dialog-options";
 import { DialogType } from "./enums/dialog-type";
+import { PromptDialogOptions } from "./prompt-dialog-options";
+import { PromptInput } from "./PromptInput";
 
 export class Dialog {
     
@@ -37,6 +39,19 @@ export class Dialog {
                 });
                 break;
             }
+            case DialogType.Prompt: {
+                let o = options as PromptDialogOptions;
+                this.appendInputs(modal, o.inputs);
+                this.appendBtn(btnContainer, 'OK', () => {
+                    let error: string = o.onOK();
+                    if (error) {
+                        this.appendError(modal, error);
+                    } else {
+                        this.closeModal(modal);
+                    }
+                });
+                break;
+            }
         }
         document.body.appendChild(modal);
     }
@@ -50,6 +65,34 @@ export class Dialog {
         container.appendChild(btn);
     }
 
+    private static appendInputs(modal: HTMLDivElement, inputs: Array<PromptInput>) {
+        let inputContainer = document.createElement('div') as HTMLDivElement;
+        for (let i: number = 0; i < inputs.length; i++) {
+            let label = document.createElement('label') as HTMLLabelElement;
+            label.innerText = inputs[i].name;
+            label.classList.add('text');
+            inputContainer.appendChild(label);
+
+            let input = document.createElement('input') as HTMLInputElement;
+            input.type = inputs[i].type;
+            input.id = inputs[i].name;
+            input.name = inputs[i].name;
+            inputContainer.appendChild(input);
+
+            let br = document.createElement('br') as HTMLBRElement;
+            inputContainer.appendChild(br);
+        }
+        modal.appendChild(inputContainer);
+    }
+
+    private static appendError(container: HTMLDivElement, text: string) {
+        let errorSpan = document.createElement('span') as HTMLSpanElement;
+        errorSpan.classList.add('red-text');
+        errorSpan.classList.add('text');
+        errorSpan.innerText = text;
+        container.appendChild(errorSpan);
+    }
+
     private static closeModal(modal) {
         document.body.removeChild(modal);
     }
@@ -60,6 +103,10 @@ export class Dialog {
 
     public static notify(text: string) {
         Dialog.modal(text, DialogType.Notification);
+    }
+
+    public static prompt(text: string, options: PromptDialogOptions) {
+        Dialog.modal(text, DialogType.Prompt, options);
     }
 
 }

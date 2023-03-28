@@ -1,9 +1,9 @@
+import { Dialog } from "./dialog/dialog";
 import { Dot } from "./enums/dot";
-import { GameMode } from "./enums/game-mode";
 
 export class PlayerNameSection {
-    private playerRedSpan: any;
-    private playerGreenSpan: any;
+    private playerRedSpan: HTMLSpanElement;
+    private playerGreenSpan: HTMLSpanElement;
     private playerRed: string;
     private playerGreen: string;
 
@@ -19,22 +19,48 @@ export class PlayerNameSection {
 
     public setUpPlayerNames() {
         if (!localStorage.getItem('playerRed') || !localStorage.getItem('playerGreen')) {
-            this.playerRed = prompt('Please enter name for Red Player!');
-            this.playerGreen = prompt('Please enter name for Green Player!');
+            Dialog.prompt('Please enter player names!', {
+                onOK: this.onPromptOK,
+                inputs: [
+                    {
+                        name: 'red',
+                        type: 'text'
+                    },
+                    {
+                        name: 'green',
+                        type: 'text'
+                    }
+                ]
+            });
         }
     }
 
-    public printPlayerNames(mode: GameMode) {
+    private onPromptOK = (): string => {
+        let redInput = document.getElementById('red') as HTMLInputElement;
+        let greenInput = document.getElementById('green') as HTMLInputElement;
+        if (redInput && greenInput) {
+            if (redInput.value && greenInput.value && redInput.value.trim() && greenInput.value.trim()) {
+                this.playerRed = redInput.value;
+                this.playerGreen = greenInput.value;
+                this.printPlayerNames();
+                return null;
+            } else {
+                return 'No empty fields allowed!';
+            }
+        }
+    };
+
+    public printPlayerNames() {
         const waiting = 'Waiting to connect...';
         if (this.playerGreenSpan) {
-            if (mode === GameMode.Network && !this.playerGreen) {
+            if (!this.playerGreen) {
                 this.playerGreenSpan.innerText = waiting;
             } else {
                 this.playerGreenSpan.innerText = this.playerGreen;
             }
         }
         if (this.playerRedSpan) {
-            if (mode === GameMode.Network && !this.playerRed) {
+            if (!this.playerRed) {
                 this.playerRedSpan.innerText = waiting;
             } else {
                 this.playerRedSpan.innerText = this.playerRed;
