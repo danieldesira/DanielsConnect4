@@ -7,6 +7,7 @@ import { Timer } from './timer';
 import { PlayerNameSection } from './player-name-section';
 import { GameOptions } from './game-options';
 import { GameMode } from './enums/game-mode';
+import { Dialog } from './dialog/dialog';
 
 export abstract class Game {
 
@@ -151,7 +152,7 @@ export abstract class Game {
                     message += this.playerNames.getPlayerRed() + ' (Red) and ' + this.playerNames.getPlayerGreen() + ' (Green)';
                 }
                 message += ' are tied!';
-                alert(message);
+                Dialog.notify(message);
                 this.closeGameAfterWinning();
             } else { // If game is still going on
                 this.switchTurn();
@@ -168,7 +169,7 @@ export abstract class Game {
             winMsg += '\nTime taken: ' + this.timer.getTimeInStringFormat();
         }
         Utils.playSound(Sound.Win);
-        alert(winMsg);
+        Dialog.notify(winMsg);
     }
 
     protected closeGameAfterWinning() {

@@ -1,3 +1,4 @@
+import { Dialog } from "./dialog/dialog";
 import { Dot } from "./enums/dot";
 import { GameMode } from "./enums/game-mode";
 import { Sound } from "./enums/sound";
@@ -68,7 +69,7 @@ export class NetworkGame extends Game {
         }
 
         if (messageData.endGameDueToInactivity && messageData.currentTurn !== this.socket.getPlayerColor()) {
-            alert('You win due to opponent inactivity!');
+            Dialog.notify('You win due to opponent inactivity!');
             Utils.playSound(Sound.Win);
             this.closeGameAfterWinning();
         }
@@ -130,17 +131,20 @@ export class NetworkGame extends Game {
         }
     };
 
-    public exit(): void {
-        let exitConfirmation: boolean = confirm('Network game in progress. Are you sure you want to quit?');
-
-        if (exitConfirmation) {
-            if (this.socket) {
-                this.socket.close();
-            }
-
-            super.exit();
-        }
+    public exit() {
+        Dialog.confirm('Network game in progress. Are you sure you want to quit?', {
+            yesCallback: this.confirmExit,
+            noCallback: () => {}
+        });
     }
+
+    private confirmExit = () => {
+        if (this.socket) {
+            this.socket.close();
+        }
+
+        super.exit();
+    };
 
     protected beforeUnload = (event) => {
         // Display default dialog before closing
@@ -161,7 +165,7 @@ export class NetworkGame extends Game {
             winMsg += 'You lose!';
             Utils.playSound(Sound.Lose);
         }
-        alert(winMsg);
+        Dialog.notify(winMsg);
     }
 
     protected switchTurn() {
@@ -184,7 +188,7 @@ export class NetworkGame extends Game {
                     currentTurn: playerColor
                 });
 
-                alert('You lose due to inactivity!');
+                Dialog.notify('You lose due to inactivity!');
                 Utils.playSound(Sound.Lose);
                 this.closeGameAfterWinning();
             } else if (this.skipTurn) {

@@ -1,3 +1,4 @@
+import { Dialog } from "./dialog/dialog";
 import { Dot } from "./enums/dot";
 import { GameMode } from "./enums/game-mode";
 import { Game } from "./game";
@@ -19,9 +20,11 @@ export class SameDeviceGame extends Game {
         return SameDeviceGame.instance;
     }
 
-    public start(): void {
+    public start() {
         this.checkGameData();
+    }
 
+    private onGameDataCheck() {
         if (this.playerNames) {
             this.playerNames.setUpPlayerNames();
         }
@@ -38,14 +41,24 @@ export class SameDeviceGame extends Game {
         let nextTurn = localStorage.getItem('nextTurn');
         
         if (board && nextTurn) {
-            let restore = confirm('Do you want to continue playing the previous game? OK/Cancel');
-            if (restore) {
-                this.restoreLastGame();
-            } else {
-                localStorage.clear();
-            }
+            Dialog.confirm('Do you want to continue playing the previous game?', {
+                yesCallback: this.continuePreviousGame,
+                noCallback: this.cancelPreviousGame
+            });
+        } else {
+            this.onGameDataCheck();
         }
     }
+
+    private continuePreviousGame = () => {
+        this.restoreLastGame();
+        this.onGameDataCheck();
+    };
+
+    private cancelPreviousGame = () => {
+        localStorage.clear();
+        this.onGameDataCheck();
+    };
 
     private restoreLastGame() {
         let nextTurn: string = localStorage.getItem('nextTurn');

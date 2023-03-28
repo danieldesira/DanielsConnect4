@@ -1,0 +1,23 @@
+.dialog {
+    position: fixed;
+    top: 200px;
+    left: 30%;
+    background-color: rgb(255, 0, 0);
+    opacity: 0.85;
+    width: 40%;
+    height: 200px;
+    border-radius: 20px;
+}
+
+.dialog-btns {
+    width: 150px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.dialog-text {
+    width: 90%;
+    margin-top: 50px;
+    margin-left: auto;
+    margin-right: auto;
+}
