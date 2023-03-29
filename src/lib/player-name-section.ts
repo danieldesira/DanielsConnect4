@@ -17,10 +17,10 @@ export class PlayerNameSection {
         }
     }
 
-    public setUpPlayerNames() {
+    public setUpPlayerNames(action: Function) {
         if (!localStorage.getItem('playerRed') || !localStorage.getItem('playerGreen')) {
             Dialog.prompt('Please enter player names!', {
-                onOK: this.onPromptOK,
+                onOK: () => this.onPromptOK(action),
                 inputs: [
                     {
                         name: 'red',
@@ -35,7 +35,7 @@ export class PlayerNameSection {
         }
     }
 
-    private onPromptOK = (): string => {
+    private onPromptOK = (action: Function): string => {
         let redInput = document.getElementById('red') as HTMLInputElement;
         let greenInput = document.getElementById('green') as HTMLInputElement;
         if (redInput && greenInput) {
@@ -43,10 +43,13 @@ export class PlayerNameSection {
                 this.playerRed = redInput.value;
                 this.playerGreen = greenInput.value;
                 this.printPlayerNames();
+                action();
                 return null;
             } else {
                 return 'No empty fields allowed!';
             }
+        } else {
+            return 'Field not implemented! Please fix this stupid bug!';
         }
     };
 
@@ -90,7 +93,7 @@ export class PlayerNameSection {
         return this.playerGreen;
     }
 
-    public bothPlayersConnected(): boolean {
+    public areBothPlayersConnected(): boolean {
         return !!this.playerRed && !!this.playerGreen;
     }
 

@@ -17,7 +17,7 @@ export class Dialog {
         modal.appendChild(textContainer);
 
         let btnContainer = document.createElement('div') as HTMLDivElement;
-        btnContainer.classList.add('dialog-btns');
+        btnContainer.classList.add('dialog-btn-container');
         modal.appendChild(btnContainer);
 
         switch (type) {
@@ -26,17 +26,17 @@ export class Dialog {
                 this.appendBtn(btnContainer, 'Yes', () => {
                     o.yesCallback();
                     this.closeModal(modal);
-                });
+                }, 'green');
                 this.appendBtn(btnContainer, 'No', () => {
                     o.noCallback();
                     this.closeModal(modal);
-                });
+                }, 'grey');
                 break;
             }
             case DialogType.Notification: {
                 this.appendBtn(btnContainer, 'OK', () => {
                     this.closeModal(modal);
-                });
+                }, 'green');
                 break;
             }
             case DialogType.Prompt: {
@@ -49,27 +49,30 @@ export class Dialog {
                     } else {
                         this.closeModal(modal);
                     }
-                });
+                }, 'green');
                 break;
             }
         }
         document.body.appendChild(modal);
     }
 
-    private static appendBtn(container: HTMLDivElement, text: string, callback: any) {
+    private static appendBtn(container: HTMLDivElement, text: string, callback: any, bgColor: string) {
         let btn = document.createElement('button') as HTMLButtonElement;
         btn.type = 'button';
         btn.innerText = text;
         btn.classList.add('text');
+        btn.classList.add('dialog-btn');
+        btn.classList.add('dialog-btn-' + bgColor);
         btn.addEventListener('click', callback);
         container.appendChild(btn);
     }
 
     private static appendInputs(modal: HTMLDivElement, inputs: Array<PromptInput>) {
         let inputContainer = document.createElement('div') as HTMLDivElement;
+        inputContainer.classList.add('dialog-input-container');
         for (let i: number = 0; i < inputs.length; i++) {
             let label = document.createElement('label') as HTMLLabelElement;
-            label.innerText = inputs[i].name;
+            label.innerText = inputs[i].name + ': ';
             label.classList.add('text');
             inputContainer.appendChild(label);
 
@@ -77,23 +80,35 @@ export class Dialog {
             input.type = inputs[i].type;
             input.id = inputs[i].name;
             input.name = inputs[i].name;
+            input.classList.add('dialog-input');
+            input.classList.add('text');
             inputContainer.appendChild(input);
 
-            let br = document.createElement('br') as HTMLBRElement;
-            inputContainer.appendChild(br);
+            this.appendBrElement(inputContainer);
+            this.appendBrElement(inputContainer);
         }
         modal.appendChild(inputContainer);
     }
 
-    private static appendError(container: HTMLDivElement, text: string) {
-        let errorSpan = document.createElement('span') as HTMLSpanElement;
-        errorSpan.classList.add('red-text');
-        errorSpan.classList.add('text');
-        errorSpan.innerText = text;
-        container.appendChild(errorSpan);
+    private static appendBrElement(container: HTMLDivElement) {
+        let br = document.createElement('br') as HTMLBRElement;
+        container.appendChild(br);
     }
 
-    private static closeModal(modal) {
+    private static appendError(container: HTMLDivElement, text: string) {
+        let errorDiv = document.getElementById('dialogError') as HTMLDivElement;
+        if (!errorDiv) {
+            errorDiv = document.createElement('div');
+            errorDiv.id = 'dialogError';
+            errorDiv.classList.add('red-text');
+            errorDiv.classList.add('text');
+            errorDiv.classList.add('dialog-error');
+            container.appendChild(errorDiv);
+        }
+        errorDiv.innerText = text;
+    }
+
+    private static closeModal(modal: HTMLDivElement) {
         document.body.removeChild(modal);
     }
 

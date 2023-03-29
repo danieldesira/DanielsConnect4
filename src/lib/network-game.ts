@@ -55,9 +55,7 @@ export class NetworkGame extends Game {
                 this.playerNames.setPlayerRed(messageData.opponentName);
             }
 
-            if (this.timer) {
-                this.timer.setRunnable(true);
-            }
+            this.setTimer();
         }
 
         if (messageData.color && this.socket && this.playerNames) {
@@ -100,8 +98,8 @@ export class NetworkGame extends Game {
         }
     }
 
-    protected canvasMousemove = (event) => {
-        if (this.socket && this.turn === this.socket.getPlayerColor() && (!this.playerNames || this.playerNames.bothPlayersConnected())) {
+    protected canvasMousemove = (event: MouseEvent) => {
+        if (this.socket && this.turn === this.socket.getPlayerColor() && this.areBothPlayersConnected()) {
             let column = this.getColumnFromCursorPosition(event);
             this.moveDot(column);
 
@@ -115,8 +113,8 @@ export class NetworkGame extends Game {
         }
     };
 
-    protected canvasClick = (event) => {
-        if (this.socket && this.turn === this.socket.getPlayerColor() && (!this.playerNames || this.playerNames.bothPlayersConnected())) {
+    protected canvasClick = (event: MouseEvent) => {
+        if (this.socket && this.turn === this.socket.getPlayerColor() && this.areBothPlayersConnected()) {
             let column = this.getColumnFromCursorPosition(event);
 
             let data = {
@@ -146,11 +144,11 @@ export class NetworkGame extends Game {
         super.exit();
     };
 
-    protected beforeUnload = (event) => {
+    protected beforeUnload = (event: Event) => {
         // Display default dialog before closing
         event.preventDefault();
-        event.returnValue = ''; // Required by Chrome
-    }
+        event.returnValue = false; // Required by Chrome
+    };
 
     protected winDialog(winner: string) {
         let winMsg: string = winner + ' wins!';
@@ -174,7 +172,7 @@ export class NetworkGame extends Game {
     }
 
     private turnCountDownCallback = () => {
-        if (this.playerNames && this.playerNames.bothPlayersConnected()) {
+        if (this.areBothPlayersConnected()) {
             this.turnCountDown--;
             this.countdownSpan.innerText = this.turnCountDown.toString();
             this.adaptCountDownColor();

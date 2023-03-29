@@ -26,11 +26,11 @@ export class SameDeviceGame extends Game {
 
     private onGameDataCheck() {
         if (this.playerNames) {
-            this.playerNames.setUpPlayerNames();
+            this.playerNames.setUpPlayerNames(this.setTimer);
         }
 
-        if (this.timer) {
-            this.timer.setRunnable(true);
+        if (this.areBothPlayersConnected()) {
+            this.setTimer();
         }
 
         super.start();
@@ -80,26 +80,32 @@ export class SameDeviceGame extends Game {
     }
 
     private saveGame() {
-        localStorage.setItem('nextTurn', this.turn.toString());
-	    localStorage.setItem('board', JSON.stringify(this.board));
+        if (this.areBothPlayersConnected()) {
+            localStorage.setItem('nextTurn', this.turn.toString());
+            localStorage.setItem('board', JSON.stringify(this.board));
 
-        if (this.playerNames) {
-            this.playerNames.saveIntoLocalStorage();
-        }
+            if (this.playerNames) {
+                this.playerNames.saveIntoLocalStorage();
+            }
 
-        if (this.timer) {
-            this.timer.saveSecondsRunningToLocalStorage();
+            if (this.timer) {
+                this.timer.saveSecondsRunningToLocalStorage();
+            }
         }
     }
 
-    protected canvasMousemove = (event) => {
-        let column = this.getColumnFromCursorPosition(event);
-        this.moveDot(column);
+    protected canvasMousemove = (event: MouseEvent) => {
+        if (this.areBothPlayersConnected()) {
+            let column = this.getColumnFromCursorPosition(event);
+            this.moveDot(column);
+        }
     };
 
-    protected canvasClick = (event) => {
-        let column = this.getColumnFromCursorPosition(event);
-        this.landDot(column);
+    protected canvasClick = (event: MouseEvent) => {
+        if (this.areBothPlayersConnected()) {
+            let column = this.getColumnFromCursorPosition(event);
+            this.landDot(column);
+        }
     };
 
     public exit() {

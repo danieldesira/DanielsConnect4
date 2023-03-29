@@ -58,10 +58,6 @@ export abstract class Game {
 
         this.resizeCanvas();
         this.setGameEvents();
-
-        if (this.timer) {
-            this.timer.set();
-        }
     }
 
     private paintBoard() {
@@ -86,10 +82,10 @@ export abstract class Game {
         window.addEventListener('resize', this.resizeCanvas);
     }
 
-    protected abstract canvasMousemove(event): void;
-    protected abstract canvasClick(event): void;
+    protected abstract canvasMousemove(event: MouseEvent): void;
+    protected abstract canvasClick(event: MouseEvent): void;
 
-    protected getColumnFromCursorPosition(event): number {
+    protected getColumnFromCursorPosition(event: MouseEvent): number {
         let position = Position.getCursorPosition(event, this.canvas);
         let column = Math.round((position.x - this.colOffset) / this.colGap);
         return column;
@@ -144,7 +140,7 @@ export abstract class Game {
                     }
                 }
 
-                this.winDialog(winner);
+                this.showWinDialog(winner);
                 this.closeGameAfterWinning();
             } else if (BoardLogic.isBoardFull(this.board)) {
                 let message: string = '';
@@ -163,7 +159,7 @@ export abstract class Game {
         }
     }
 
-    protected winDialog(winner: string) {
+    protected showWinDialog(winner: string) {
         let winMsg: string = winner + ' wins!';
         if (this.timer) {
             winMsg += '\nTime taken: ' + this.timer.getTimeInStringFormat();
@@ -202,7 +198,7 @@ export abstract class Game {
         this.context.fill();
     }
 
-    protected abstract beforeUnload(event);
+    protected abstract beforeUnload(event: Event);
 
     private clearUpper() {
         this.context.clearRect(0, 0, this.canvas.width, Game.verticalOffset);
@@ -270,6 +266,16 @@ export abstract class Game {
         this.context.arc(this.colOffset + column * this.colGap, Game.verticalOffset * 2 + row * this.rowGap, this.circleRadius, 0, Math.PI * 2);
         this.context.closePath();
         this.context.fill();
+    }
+
+    protected setTimer = () => {
+        if (this.timer) {
+            this.timer.set();
+        }
+    }
+
+    protected areBothPlayersConnected(): boolean {
+        return this.playerNames && this.playerNames.areBothPlayersConnected();
     }
 
 }

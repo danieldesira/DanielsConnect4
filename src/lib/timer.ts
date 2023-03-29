@@ -3,7 +3,6 @@ export class Timer {
     private secondsRunning: number;
     private timeout: number;
     private timerSpan: HTMLSpanElement;
-    private runnable: boolean;
 
     public constructor(timerId: string) {
         this.timerSpan = document.getElementById(timerId) as HTMLSpanElement;
@@ -11,12 +10,10 @@ export class Timer {
     }
 
     private timerCallback = () => {
-        if (this.runnable) {
-            this.secondsRunning++;
-            let minutes: number = Math.floor(this.secondsRunning / 60);
-            let seconds: number = this.secondsRunning % 60;
-            this.timerSpan.innerText = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-        }
+        this.secondsRunning++;
+        let minutes: number = Math.floor(this.secondsRunning / 60);
+        let seconds: number = this.secondsRunning % 60;
+        this.timerSpan.innerText = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
         
         if (!this.timerSpan.classList.contains('hide')) {
             this.timeout = window.setTimeout(this.timerCallback, 1000);
@@ -66,11 +63,6 @@ export class Timer {
 
     public reset() {
         this.secondsRunning = 0;
-        this.runnable = false;
-    }
-
-    public setRunnable(runnable: boolean) {
-        this.runnable = runnable;
     }
 
 }

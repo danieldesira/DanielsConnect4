@@ -8,7 +8,7 @@ let connect4: Game;
 
 let menu = document.getElementById('menu') as HTMLDivElement;
 let samePCBtn = document.getElementById('samePC') as HTMLButtonElement;
-let socketsBtn = document.getElementById('sockets') as HTMLButtonElement;
+let networkBtn = document.getElementById('network') as HTMLButtonElement;
 let creditsBtn = document.getElementById('credits') as HTMLButtonElement;
 
 let exitBtn = document.getElementById('exitBtn') as HTMLButtonElement;
@@ -19,7 +19,7 @@ samePCBtn.addEventListener('click', () => {
     initGame(GameMode.SamePC);
 }, false);
 
-socketsBtn.addEventListener('click', () => {
+networkBtn.addEventListener('click', () => {
     initGame(GameMode.Network);
 }, false);
 

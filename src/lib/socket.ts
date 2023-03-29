@@ -53,7 +53,7 @@ export class Socket {
         return this.playerName;
     }
 
-    private onMessage = (event) => {
+    private onMessage = (event: MessageEvent) => {
         let messageData: GameMessage = JSON.parse(event.data);
 
         if (!this.gameId && !isNaN(messageData.gameId)) {
@@ -63,16 +63,43 @@ export class Socket {
         if (!this.playerColor && messageData.color) {
             this.playerColor = messageData.color;
 
-            this.playerName = prompt('You are ' + this.playerColor + '. Please enter your name.');
-            
-            let data = {
-                name: this.playerName
-            };
-            this.send(data);
+            let color: string;
+            if (this.playerColor === Dot.Red) {
+                color = 'red';
+            } else {
+                color = 'green';
+            }
+
+            Dialog.prompt('You are ' + color + '. Please enter your name.', {
+                onOK: () => this.onPlayerNameInput(color),
+                inputs: [{
+                    name: color,
+                    type: 'text'
+                }]
+            });
         }
 
         if (this.onMessageCallback) {
             this.onMessageCallback(messageData);
+        }
+    };
+
+    private onPlayerNameInput = (color: string): string => {
+        let playerNameField = document.getElementById(color) as HTMLInputElement;
+
+        if (playerNameField) {
+            if (playerNameField.value && playerNameField.value.trim()) {
+                this.playerName = playerNameField.value;
+                let data = {
+                    name: this.playerName
+                };
+                this.send(data);
+                return null;
+            } else {
+                return 'Field may not be empty!';
+            }
+        } else {
+            return 'Field not implemented! Please fix this stupid bug!';
         }
     };
 
