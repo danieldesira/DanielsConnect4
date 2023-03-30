@@ -10,6 +10,7 @@ export class Socket {
     private gameId: number;
     public onMessageCallback: Function;
     public onErrorCallback: Function;
+    public onInputPlayerNameInDialog: Function;
 
     public constructor() {
         this.connect();
@@ -90,6 +91,7 @@ export class Socket {
         if (playerNameField) {
             if (playerNameField.value && playerNameField.value.trim()) {
                 this.playerName = playerNameField.value;
+                this.onInputPlayerNameInDialog(this.playerName);
                 let data = {
                     name: this.playerName
                 };

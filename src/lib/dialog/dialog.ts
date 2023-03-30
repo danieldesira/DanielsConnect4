@@ -6,20 +6,17 @@ import { PromptInput } from "./PromptInput";
 
 export class Dialog {
     
-    private static modal(text: string, type: DialogType, options: DialogOptions = null) {
+    private static modal(text: Array<string>, type: DialogType, options: DialogOptions = null) {
         let modal = document.createElement('div') as HTMLDivElement;
         modal.classList.add('dialog');
 
         let textContainer = document.createElement('div') as HTMLDivElement;
-        textContainer.classList.add('text');
-        textContainer.classList.add('dialog-text');
-        textContainer.innerText = text;
+        this.appendText(text, textContainer);
         modal.appendChild(textContainer);
 
         let btnContainer = document.createElement('div') as HTMLDivElement;
         btnContainer.classList.add('dialog-btn-container');
-        modal.appendChild(btnContainer);
-
+        
         switch (type) {
             case DialogType.Confirmation: {
                 let o = options as ConfirmationDialogOptions;
@@ -53,6 +50,7 @@ export class Dialog {
                 break;
             }
         }
+        modal.appendChild(btnContainer);
         document.body.appendChild(modal);
     }
 
@@ -108,20 +106,37 @@ export class Dialog {
         errorDiv.innerText = text;
     }
 
+    private static appendText(text: Array<string>, container: HTMLDivElement) {
+        container.classList.add('text');
+        container.classList.add('dialog-text');
+        for (let i: number = 0; i < text.length; i++) {
+            let p = document.createElement('p') as HTMLParagraphElement;
+            p.innerText = text[i];
+            container.appendChild(p);
+        }
+    }
+
     private static closeModal(modal: HTMLDivElement) {
         document.body.removeChild(modal);
     }
 
-    public static confirm(text: string, options: ConfirmationDialogOptions) {
+    public static confirm(text: Array<string>, options: ConfirmationDialogOptions) {
         Dialog.modal(text, DialogType.Confirmation, options);
     }
 
-    public static notify(text: string) {
+    public static notify(text: Array<string>) {
         Dialog.modal(text, DialogType.Notification);
     }
 
-    public static prompt(text: string, options: PromptDialogOptions) {
+    public static prompt(text: Array<string>, options: PromptDialogOptions) {
         Dialog.modal(text, DialogType.Prompt, options);
+    }
+
+    public static closeAllOpenDialogs() {
+        let dialogs = document.getElementsByClassName('dialog') as HTMLCollectionOf<HTMLDivElement>;
+        for (let i: number = 0; i < dialogs.length; i++) {
+            this.closeModal(dialogs[i]);
+        }
     }
 
 }

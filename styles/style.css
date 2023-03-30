@@ -14,12 +14,17 @@
 
 .btn {
     height: 100px;
-    background-color: darkred;
+    background-color: darkblue;
     color: whitesmoke;
+    border-radius: 45px;
 }
 
 .center-text {
     text-align: center;
+}
+
+.exit-btn {
+    background-color: red;
 }
 
 .green-text {

@@ -6,7 +6,6 @@ import { BoardLogic } from './board-logic';
 import { Timer } from './timer';
 import { PlayerNameSection } from './player-name-section';
 import { GameOptions } from './game-options';
-import { GameMode } from './enums/game-mode';
 import { Dialog } from './dialog/dialog';
 
 export abstract class Game {
@@ -16,11 +15,10 @@ export abstract class Game {
     protected board: Array<Array<Dot>> = new Array(BoardLogic.columns);
 
     private exitBtn: HTMLButtonElement;
-    protected playerNames: PlayerNameSection;
+    protected playerNameSection: PlayerNameSection;
 
     protected turn: Dot = Dot.Red;
 
-    protected mode: GameMode;
     public onGameEnd: Function;
 
     private circleRadius: number;
@@ -46,14 +44,14 @@ export abstract class Game {
         }
 
         if (options.playerRedId && options.playerGreenId) {
-            this.playerNames = new PlayerNameSection(options.playerRedId, options.playerGreenId);
+            this.playerNameSection = new PlayerNameSection(options.playerRedId, options.playerGreenId);
         }
     }
 
     protected start() {
-        if (this.playerNames) {
-            this.playerNames.printPlayerNames();
-            this.playerNames.indicateTurn(this.turn);
+        if (this.playerNameSection) {
+            this.playerNameSection.printPlayerNames();
+            this.playerNameSection.indicateTurn(this.turn);
         }
 
         this.resizeCanvas();
@@ -80,6 +78,7 @@ export abstract class Game {
         this.canvas.addEventListener('click', this.canvasClick, false);
         window.addEventListener('beforeunload', this.beforeUnload);
         window.addEventListener('resize', this.resizeCanvas);
+        this.exitBtn.addEventListener('click', this.exit);
     }
 
     protected abstract canvasMousemove(event: MouseEvent): void;
@@ -98,8 +97,8 @@ export abstract class Game {
             this.turn = Dot.Red;
         }
 
-        if (this.playerNames) {
-            this.playerNames.indicateTurn(this.turn);
+        if (this.playerNameSection) {
+            this.playerNameSection.indicateTurn(this.turn);
         }
     }
 
@@ -132,11 +131,11 @@ export abstract class Game {
             if (dotCount >= 4) {
                 let winner: string = '';
 
-                if (this.playerNames) {
+                if (this.playerNameSection) {
                     if (this.turn === Dot.Red) {
-                        winner = this.playerNames.getPlayerRed() + ' (Red)';
+                        winner = this.playerNameSection.getPlayerRed() + ' (Red)';
                     } else if (this.turn === Dot.Green) {
-                        winner = this.playerNames.getPlayerGreen() + ' (Green)';
+                        winner = this.playerNameSection.getPlayerGreen() + ' (Green)';
                     }
                 }
 
@@ -144,11 +143,11 @@ export abstract class Game {
                 this.closeGameAfterWinning();
             } else if (BoardLogic.isBoardFull(this.board)) {
                 let message: string = '';
-                if (this.playerNames) {
-                    message += this.playerNames.getPlayerRed() + ' (Red) and ' + this.playerNames.getPlayerGreen() + ' (Green)';
+                if (this.playerNameSection) {
+                    message += this.playerNameSection.getPlayerRed() + ' (Red) and ' + this.playerNameSection.getPlayerGreen() + ' (Green)';
                 }
                 message += ' are tied!';
-                Dialog.notify(message);
+                Dialog.notify([message]);
                 this.closeGameAfterWinning();
             } else { // If game is still going on
                 this.switchTurn();
@@ -160,9 +159,10 @@ export abstract class Game {
     }
 
     protected showWinDialog(winner: string) {
-        let winMsg: string = winner + ' wins!';
+        let winMsg: Array<string> = new Array();
+        winMsg.push(winner + ' wins!');
         if (this.timer) {
-            winMsg += '\nTime taken: ' + this.timer.getTimeInStringFormat();
+            winMsg.push('Time taken: ' + this.timer.getTimeInStringFormat());
         }
         Utils.playSound(Sound.Win);
         Dialog.notify(winMsg);
@@ -171,8 +171,8 @@ export abstract class Game {
     protected closeGameAfterWinning() {
         this.cleanUpEvents();
 
-        if (this.playerNames) {
-            this.playerNames.clear();
+        if (this.playerNameSection) {
+            this.playerNameSection.clear();
         }
 
         if (this.timer) {
@@ -209,6 +209,7 @@ export abstract class Game {
         this.canvas.removeEventListener('click', this.canvasClick, false);
         window.removeEventListener('beforeunload', this.beforeUnload);
         window.removeEventListener('resize', this.resizeCanvas);
+        this.exitBtn.removeEventListener('click', this.exit);
     }
 
     protected exit() {
@@ -216,8 +217,8 @@ export abstract class Game {
         this.onGameEnd();
         this.resetValues();
 
-        if (this.playerNames) {
-            this.playerNames.clear();
+        if (this.playerNameSection) {
+            this.playerNameSection.clear();
         }
 
         if (this.timer) {
@@ -252,8 +253,8 @@ export abstract class Game {
         this.turn = Dot.Red;
         BoardLogic.initBoard(this.board);
         
-        if (this.playerNames) {
-            this.playerNames.reset();
+        if (this.playerNameSection) {
+            this.playerNameSection.reset();
         }
 
         if (this.timer) {
@@ -275,7 +276,7 @@ export abstract class Game {
     }
 
     protected areBothPlayersConnected(): boolean {
-        return this.playerNames && this.playerNames.areBothPlayersConnected();
+        return this.playerNameSection && this.playerNameSection.areBothPlayersConnected();
     }
 
 }

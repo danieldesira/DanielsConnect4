@@ -19,7 +19,7 @@ export class PlayerNameSection {
 
     public setUpPlayerNames(action: Function) {
         if (!localStorage.getItem('playerRed') || !localStorage.getItem('playerGreen')) {
-            Dialog.prompt('Please enter player names!', {
+            Dialog.prompt(['Please enter player names!'], {
                 onOK: () => this.onPromptOK(action),
                 inputs: [
                     {

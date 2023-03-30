@@ -27,14 +27,6 @@ creditsBtn.addEventListener('click', () => {
     open('contributors.html');
 }, false);
 
-exitBtn.addEventListener('click', () => {
-    if (connect4 instanceof NetworkGame) {
-        (connect4 as NetworkGame).exit();
-    } else {
-        (connect4 as SameDeviceGame).exit();
-    }
-}, false);
-
 function initGame(mode: GameMode) {
     clearError();
 

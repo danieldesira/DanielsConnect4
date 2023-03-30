@@ -1,6 +1,5 @@
 import { Dialog } from "./dialog/dialog";
 import { Dot } from "./enums/dot";
-import { GameMode } from "./enums/game-mode";
 import { Sound } from "./enums/sound";
 import { Game } from "./game";
 import { GameOptions } from "./game-options";
@@ -18,10 +17,10 @@ export class NetworkGame extends Game {
     private turnCountDown: number;
     private turnCountDownInterval: number;
     private countdownSpan: HTMLSpanElement;
+    private static countDownMaxSeconds: number = 60;
 
     private constructor(options: GameOptions) {
         super(options);
-        this.mode = GameMode.Network;
 
         if (options.countdownId) {
             this.countdownSpan = document.getElementById(options.countdownId) as HTMLSpanElement;
@@ -45,29 +44,30 @@ export class NetworkGame extends Game {
         this.socket = new Socket();
         this.socket.onMessageCallback = this.onSocketMessage;
         this.socket.onErrorCallback = this.onSocketError;
+        this.socket.onInputPlayerNameInDialog = this.onInputPlayerNameInDialog;
     }
 
     private onSocketMessage = (messageData: GameMessage) => {
-        if (messageData.opponentName && this.socket && this.playerNames) {
+        if (messageData.opponentName && this.socket && this.playerNameSection) {
             if (this.socket.getPlayerColor() === Dot.Red) {
-                this.playerNames.setPlayerGreen(messageData.opponentName);
+                this.playerNameSection.setPlayerGreen(messageData.opponentName);
             } else if (this.socket.getPlayerColor() === Dot.Green) {
-                this.playerNames.setPlayerRed(messageData.opponentName);
+                this.playerNameSection.setPlayerRed(messageData.opponentName);
             }
 
             this.setTimer();
         }
 
-        if (messageData.color && this.socket && this.playerNames) {
+        if (messageData.color && this.socket && this.playerNameSection) {
             if (messageData.color === Dot.Red) {
-                this.playerNames.setPlayerRed(this.socket.getPlayerName());
+                this.playerNameSection.setPlayerRed(this.socket.getPlayerName());
             } else if (messageData.color === Dot.Green) {
-                this.playerNames.setPlayerGreen(this.socket.getPlayerName());
+                this.playerNameSection.setPlayerGreen(this.socket.getPlayerName());
             }
         }
 
         if (messageData.endGameDueToInactivity && messageData.currentTurn !== this.socket.getPlayerColor()) {
-            Dialog.notify('You win due to opponent inactivity!');
+            Dialog.notify(['You win due to opponent inactivity!']);
             Utils.playSound(Sound.Win);
             this.closeGameAfterWinning();
         }
@@ -129,17 +129,18 @@ export class NetworkGame extends Game {
         }
     };
 
-    public exit() {
-        Dialog.confirm('Network game in progress. Are you sure you want to quit?', {
+    public exit = () => {
+        Dialog.confirm(['Network game in progress. Are you sure you want to quit?'], {
             yesCallback: this.confirmExit,
             noCallback: () => {}
         });
-    }
+    };
 
     private confirmExit = () => {
         if (this.socket) {
             this.socket.close();
         }
+        Dialog.closeAllOpenDialogs();
 
         super.exit();
     };
@@ -150,17 +151,17 @@ export class NetworkGame extends Game {
         event.returnValue = false; // Required by Chrome
     };
 
-    protected winDialog(winner: string) {
-        let winMsg: string = winner + ' wins!';
+    protected showWinDialog(winner: string) {
+        let winMsg: Array<string> = new Array();
+        winMsg.push(winner + ' wins!');
         if (this.timer) {
-            winMsg += '\nTime taken: ' + this.timer.getTimeInStringFormat();
+            winMsg.push('Time taken: ' + this.timer.getTimeInStringFormat());
         }
-        winMsg += '\n';
         if (this.socket && this.socket.getPlayerColor() === this.turn) {
-            winMsg += 'You win!';
+            winMsg.push('You win!');
             Utils.playSound(Sound.Win);
         } else {
-            winMsg += 'You lose!';
+            winMsg.push('You lose!');
             Utils.playSound(Sound.Lose);
         }
         Dialog.notify(winMsg);
@@ -186,7 +187,7 @@ export class NetworkGame extends Game {
                     currentTurn: playerColor
                 });
 
-                Dialog.notify('You lose due to inactivity!');
+                Dialog.notify(['You lose due to inactivity!']);
                 Utils.playSound(Sound.Lose);
                 this.closeGameAfterWinning();
             } else if (this.skipTurn) {
@@ -201,7 +202,7 @@ export class NetworkGame extends Game {
     }
 
     private adaptCountDownColor() {
-        if (this.turnCountDown > 30) {
+        if (this.turnCountDown > NetworkGame.countDownMaxSeconds / 2) {
             this.countdownSpan.classList.add('green-text');
             this.countdownSpan.classList.remove('red-text');
         } else {
@@ -213,7 +214,7 @@ export class NetworkGame extends Game {
     private startCountdown() {
         this.skipTurn = true;
         this.endGameDueToInactivity = true;
-        this.turnCountDown = 60;
+        this.turnCountDown = NetworkGame.countDownMaxSeconds;
         this.turnCountDownInterval = window.setInterval(this.turnCountDownCallback, 1000);
     }
 
@@ -223,9 +224,19 @@ export class NetworkGame extends Game {
     }
 
     private resetCountdown() {
-        this.turnCountDown = 60;
+        this.turnCountDown = NetworkGame.countDownMaxSeconds;
         this.skipTurn = true;
         this.endGameDueToInactivity = true;
+    }
+
+    private onInputPlayerNameInDialog = (playerName: string) => {
+        if (this.socket) {
+            if (this.socket.getPlayerColor() === Dot.Red) {
+                this.playerNameSection.setPlayerRed(playerName);
+            } else {
+                this.playerNameSection.setPlayerGreen(playerName);
+            }
+        }
     }
     
 }
