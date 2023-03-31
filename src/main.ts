@@ -6,14 +6,9 @@ import { SameDeviceGame } from "./lib/same-device-game";
 
 let connect4: Game;
 
-let menu = document.getElementById('menu') as HTMLDivElement;
 let samePCBtn = document.getElementById('samePC') as HTMLButtonElement;
 let networkBtn = document.getElementById('network') as HTMLButtonElement;
 let creditsBtn = document.getElementById('credits') as HTMLButtonElement;
-
-let exitBtn = document.getElementById('exitBtn') as HTMLButtonElement;
-
-let canvas = document.getElementById('board') as HTMLCanvasElement;
 
 samePCBtn.addEventListener('click', () => {
     initGame(GameMode.SamePC);
@@ -37,27 +32,17 @@ function initGame(mode: GameMode) {
             timerId: 'timer',
             playerRedId: 'playerRed',
             playerGreenId: 'playerGreen',
-            countdownId: 'countdown'
+            countdownId: 'countdown',
+            menuId: 'menu',
+            gameIndicatorsId: 'gameIndicators'
         };
         if (mode === GameMode.Network) {
             connect4 = NetworkGame.getInstance(options);
-        } else {
-            connect4 = SameDeviceGame.getInstance(options);
-        }
-        connect4.onGameEnd = () => {
-            menu.classList.remove('hide');
-            canvas.classList.add('hide');
-            exitBtn.classList.add('hide');
-        };
-        if (mode === GameMode.Network) {
             (connect4 as NetworkGame).start();
         } else {
+            connect4 = SameDeviceGame.getInstance(options);
             (connect4 as SameDeviceGame).start();
         }
-    
-        menu.classList.add('hide');
-        canvas.classList.remove('hide');
-        exitBtn.classList.remove('hide');
     } catch (ex) {
         showError('Problem encountered!');
         // To-do: include logging

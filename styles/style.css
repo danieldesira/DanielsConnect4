@@ -1,5 +1,9 @@
 .blue-bg {
+    display: inline-block;
     background-color: blue;
+    color: whitesmoke;
+    border-radius: 10px;
+    max-width: 500px;
 }
 
 .btn {

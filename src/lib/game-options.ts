@@ -5,4 +5,6 @@ export class GameOptions {
     public playerRedId: string;
     public playerGreenId: string;
     public countdownId: string;
+    public menuId: string;
+    public gameIndicatorsId: string;
 }

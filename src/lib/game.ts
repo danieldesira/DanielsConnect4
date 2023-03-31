@@ -16,10 +16,10 @@ export abstract class Game {
 
     private exitBtn: HTMLButtonElement;
     protected playerNameSection: PlayerNameSection;
+    private gameIndicatorsContainer: HTMLDivElement;
+    private gameMenu: HTMLDivElement;
 
     protected turn: Dot = Dot.Red;
-
-    public onGameEnd: Function;
 
     private circleRadius: number;
     private rowGap: number;
@@ -46,9 +46,19 @@ export abstract class Game {
         if (options.playerRedId && options.playerGreenId) {
             this.playerNameSection = new PlayerNameSection(options.playerRedId, options.playerGreenId);
         }
+
+        if (options.gameIndicatorsId) {
+            this.gameIndicatorsContainer = document.getElementById(options.gameIndicatorsId) as HTMLDivElement;
+        }
+
+        if (options.menuId) {
+            this.gameMenu = document.getElementById(options.menuId) as HTMLDivElement;
+        }
     }
 
     protected start() {
+        this.showHideGame(true);
+
         if (this.playerNameSection) {
             this.playerNameSection.printPlayerNames();
             this.playerNameSection.indicateTurn(this.turn);
@@ -93,7 +103,7 @@ export abstract class Game {
     protected switchTurn() {
         if (this.turn === Dot.Red) {
             this.turn = Dot.Green;
-        } else if (this.turn === Dot.Green) {
+        } else {
             this.turn = Dot.Red;
         }
 
@@ -186,9 +196,9 @@ export abstract class Game {
         this.resetValues();
 
         // Run delegate function to return to main menu, in case it is defined
-        if (this.onGameEnd) {
-            setTimeout(this.onGameEnd, 3000);
-        }
+        setTimeout(() => {
+            this.showHideGame(false);
+        }, 3000);
     }
 
     private paintDotToDrop(column: number) {
@@ -214,7 +224,7 @@ export abstract class Game {
 
     protected exit() {
         this.cleanUpEvents();
-        this.onGameEnd();
+        this.showHideGame(false);
         this.resetValues();
 
         if (this.playerNameSection) {
@@ -277,6 +287,20 @@ export abstract class Game {
 
     protected areBothPlayersConnected(): boolean {
         return this.playerNameSection && this.playerNameSection.areBothPlayersConnected();
+    }
+
+    private showHideGame(show: boolean) {
+        if (show) {
+            this.canvas.classList.remove('hide');
+            this.exitBtn.classList.remove('hide');
+            this.gameIndicatorsContainer.classList.remove('hide');
+            this.gameMenu.classList.add('hide');
+        } else {
+            this.canvas.classList.add('hide');
+            this.exitBtn.classList.add('hide');
+            this.gameIndicatorsContainer.classList.add('hide');
+            this.gameMenu.classList.remove('hide');
+        }
     }
 
 }
