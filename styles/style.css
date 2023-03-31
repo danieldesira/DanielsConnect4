@@ -1,13 +1,3 @@
-@font-face {
-    font-family: DiloWorld;
-    src: url('DiloWorld-mLJLv.ttf');
-}
-
-.text {
-    font-family: DiloWorld;
-    font-size: 1.75em;
-}
-
 .blue-bg {
     background-color: blue;
 }
@@ -21,6 +11,11 @@
 
 .center-text {
     text-align: center;
+}
+
+.currentTurn {
+    font-style: italic;
+    text-decoration: underline;
 }
 
 .exit-btn {
@@ -54,7 +49,7 @@
     color: red;
 }
 
-.currentTurn {
-    font-style: italic;
-    text-decoration: underline;
+.text {
+    font-family: Source-Sans-Pro;
+    font-size: 1.75em;
 }

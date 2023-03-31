@@ -1,6 +1,8 @@
 import { Dialog } from "./dialog/dialog";
 import { Dot } from "./enums/dot";
 import { GameMessage } from "./models/game-message";
+import { InitialMessage } from "./models/initial-message";
+import { PlayerNameMessage } from "./models/player-name-message";
 import { Utils } from "./utils";
 
 export class Socket {
@@ -35,7 +37,7 @@ export class Socket {
         this.webSocket.onclose = this.onClose;
     }
 
-    public send(data: object) {
+    public send(data: GameMessage) {
         this.webSocket.send(JSON.stringify(data));
     }
 
@@ -57,27 +59,31 @@ export class Socket {
     private onMessage = (event: MessageEvent) => {
         let messageData: GameMessage = JSON.parse(event.data);
 
-        if (!this.gameId && !isNaN(messageData.gameId)) {
-            this.gameId = messageData.gameId;
-        }
-        
-        if (!this.playerColor && messageData.color) {
-            this.playerColor = messageData.color;
+        if (GameMessage.isInitialMessage(messageData)) {
+            let data = messageData as InitialMessage;
 
-            let color: string;
-            if (this.playerColor === Dot.Red) {
-                color = 'red';
-            } else {
-                color = 'green';
+            if (!this.gameId) {
+                this.gameId = data.gameId;
             }
-
-            Dialog.prompt('You are ' + color + '. Please enter your name.', {
-                onOK: () => this.onPlayerNameInput(color),
-                inputs: [{
-                    name: color,
-                    type: 'text'
-                }]
-            });
+            
+            if (!this.playerColor) {
+                this.playerColor = data.color;
+    
+                let color: string;
+                if (this.playerColor === Dot.Red) {
+                    color = 'red';
+                } else {
+                    color = 'green';
+                }
+    
+                Dialog.prompt(['You are ' + color + '. Please enter your name.'], {
+                    onOK: () => this.onPlayerNameInput(color),
+                    inputs: [{
+                        name: color,
+                        type: 'text'
+                    }]
+                });
+            }
         }
 
         if (this.onMessageCallback) {
@@ -92,9 +98,7 @@ export class Socket {
             if (playerNameField.value && playerNameField.value.trim()) {
                 this.playerName = playerNameField.value;
                 this.onInputPlayerNameInDialog(this.playerName);
-                let data = {
-                    name: this.playerName
-                };
+                let data = new PlayerNameMessage(this.playerName);
                 this.send(data);
                 return null;
             } else {
@@ -107,7 +111,7 @@ export class Socket {
 
     private onError = () => {
         this.onErrorCallback();
-        Dialog.notify('Problem connecting to server!');
+        Dialog.notify(['Problem connecting to server!']);
     };
 
     private onClose = () => {

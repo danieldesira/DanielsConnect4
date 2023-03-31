@@ -2,7 +2,7 @@ import { ConfirmationDialogOptions } from "./confirmation-dialog-options";
 import { DialogOptions } from "./dialog-options";
 import { DialogType } from "./enums/dialog-type";
 import { PromptDialogOptions } from "./prompt-dialog-options";
-import { PromptInput } from "./PromptInput";
+import { PromptInput } from "./prompt-input";
 
 export class Dialog {
     
@@ -27,7 +27,7 @@ export class Dialog {
                 this.appendBtn(btnContainer, 'No', () => {
                     o.noCallback();
                     this.closeModal(modal);
-                }, 'grey');
+                }, 'red');
                 break;
             }
             case DialogType.Notification: {
@@ -117,7 +117,9 @@ export class Dialog {
     }
 
     private static closeModal(modal: HTMLDivElement) {
-        document.body.removeChild(modal);
+        if (document.body.contains(modal)) {
+            document.body.removeChild(modal);
+        }
     }
 
     public static confirm(text: Array<string>, options: ConfirmationDialogOptions) {

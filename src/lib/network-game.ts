@@ -3,7 +3,11 @@ import { Dot } from "./enums/dot";
 import { Sound } from "./enums/sound";
 import { Game } from "./game";
 import { GameOptions } from "./game-options";
+import { ActionMessage } from "./models/action-message";
 import { GameMessage } from "./models/game-message";
+import { InactivityMessage } from "./models/inactivity-message";
+import { InitialMessage } from "./models/initial-message";
+import { SkipTurnMessage } from "./models/skip-turn-message";
 import { Socket } from "./socket";
 import { Utils } from "./utils";
 
@@ -48,40 +52,52 @@ export class NetworkGame extends Game {
     }
 
     private onSocketMessage = (messageData: GameMessage) => {
-        if (messageData.opponentName && this.socket && this.playerNameSection) {
-            if (this.socket.getPlayerColor() === Dot.Red) {
-                this.playerNameSection.setPlayerGreen(messageData.opponentName);
-            } else if (this.socket.getPlayerColor() === Dot.Green) {
-                this.playerNameSection.setPlayerRed(messageData.opponentName);
+        if (GameMessage.isInitialMessage(messageData)) {
+            let data = messageData as InitialMessage;
+            if (data.opponentName && this.socket && this.playerNameSection) {
+                if (this.socket.getPlayerColor() === Dot.Red) {
+                    this.playerNameSection.setPlayerGreen(data.opponentName);
+                } else if (this.socket.getPlayerColor() === Dot.Green) {
+                    this.playerNameSection.setPlayerRed(data.opponentName);
+                }
+    
+                this.setTimer();
             }
-
-            this.setTimer();
-        }
-
-        if (messageData.color && this.socket && this.playerNameSection) {
-            if (messageData.color === Dot.Red) {
-                this.playerNameSection.setPlayerRed(this.socket.getPlayerName());
-            } else if (messageData.color === Dot.Green) {
-                this.playerNameSection.setPlayerGreen(this.socket.getPlayerName());
+    
+            if (data.color && this.socket && this.playerNameSection) {
+                if (data.color === Dot.Red) {
+                    this.playerNameSection.setPlayerRed(this.socket.getPlayerName());
+                } else {
+                    this.playerNameSection.setPlayerGreen(this.socket.getPlayerName());
+                }
             }
         }
-
-        if (messageData.endGameDueToInactivity && messageData.currentTurn !== this.socket.getPlayerColor()) {
-            Dialog.notify(['You win due to opponent inactivity!']);
-            Utils.playSound(Sound.Win);
-            this.closeGameAfterWinning();
+        
+        if (GameMessage.isInactivityMessage(messageData)) {
+            let data = messageData as InactivityMessage;
+            if (data.currentTurn !== this.socket.getPlayerColor()) {
+                Dialog.notify(['You win due to opponent inactivity!']);
+                Utils.playSound(Sound.Win);
+                this.closeGameAfterWinning();
+            }
         }
-
-        if (!isNaN(messageData.column) && messageData.action === 'mousemove') {
-            this.moveDot(messageData.column);
+        
+        if (GameMessage.isActionMessage(messageData)) {
+            let data = messageData as ActionMessage;
+            if (data.action === 'mousemove') {
+                this.moveDot(data.column);
+            }
+    
+            if (data.action === 'click') {
+                this.landDot(data.column);
+            }
         }
-
-        if (!isNaN(messageData.column) && messageData.action === 'click') {
-            this.landDot(messageData.column);
-        }
-
-        if (messageData.skipTurn && messageData.currentTurn !== this.socket.getPlayerColor()) {
-            this.switchTurn();
+        
+        if (GameMessage.isSkipTurnMessage(messageData)) {
+            let data = messageData as SkipTurnMessage;
+            if (data.skipTurn && data.currentTurn !== this.socket.getPlayerColor()) {
+                this.switchTurn();
+            }
         }
     };
 
@@ -103,10 +119,7 @@ export class NetworkGame extends Game {
             let column = this.getColumnFromCursorPosition(event);
             this.moveDot(column);
 
-            let data = {
-                action: 'mousemove',
-                column: column
-            };
+            let data = new ActionMessage(column, 'mousemove');
             this.socket.send(data);
 
             this.endGameDueToInactivity = false;
@@ -117,10 +130,7 @@ export class NetworkGame extends Game {
         if (this.socket && this.turn === this.socket.getPlayerColor() && this.areBothPlayersConnected()) {
             let column = this.getColumnFromCursorPosition(event);
 
-            let data = {
-                action: 'click',
-                column: column
-            };
+            let data = new ActionMessage(column, 'click');
             this.socket.send(data);
 
             this.skipTurn = false;
@@ -182,10 +192,8 @@ export class NetworkGame extends Game {
         let playerColor: Dot = this.socket.getPlayerColor();
         if (this.turn === playerColor && this.turnCountDown <= 0 && this.socket) {
             if (this.endGameDueToInactivity) {
-                this.socket.send({
-                    endGameDueToInactivity: true,
-                    currentTurn: playerColor
-                });
+                let data = new InactivityMessage(true, playerColor);
+                this.socket.send(data);
 
                 Dialog.notify(['You lose due to inactivity!']);
                 Utils.playSound(Sound.Lose);
@@ -193,10 +201,8 @@ export class NetworkGame extends Game {
             } else if (this.skipTurn) {
                 this.switchTurn();
 
-                this.socket.send({
-                    skipTurn: true,
-                    currentTurn: playerColor
-                });
+                let data = new SkipTurnMessage(true, playerColor);
+                this.socket.send(data);
             }
         }
     }

@@ -23,8 +23,8 @@ export class SameDeviceGame extends Game {
     }
 
     private onGameDataCheck() {
-        if (this.playerNames) {
-            this.playerNames.setUpPlayerNames(this.setTimer);
+        if (this.playerNameSection) {
+            this.playerNameSection.setUpPlayerNames(this.setTimer);
         }
 
         if (this.areBothPlayersConnected()) {
@@ -39,7 +39,7 @@ export class SameDeviceGame extends Game {
         let nextTurn = localStorage.getItem('nextTurn');
         
         if (board && nextTurn) {
-            Dialog.confirm('Do you want to continue playing the previous game?', {
+            Dialog.confirm(['Do you want to continue playing the previous game?'], {
                 yesCallback: this.continuePreviousGame,
                 noCallback: this.cancelPreviousGame
             });
@@ -72,8 +72,8 @@ export class SameDeviceGame extends Game {
             this.timer.setSecondsRunningFromLocalStorage();
         }
 
-        if (this.playerNames) {
-            this.playerNames.setFromLocalStorage();
+        if (this.playerNameSection) {
+            this.playerNameSection.setFromLocalStorage();
         }
     }
 
@@ -82,8 +82,8 @@ export class SameDeviceGame extends Game {
             localStorage.setItem('nextTurn', this.turn.toString());
             localStorage.setItem('board', JSON.stringify(this.board));
 
-            if (this.playerNames) {
-                this.playerNames.saveIntoLocalStorage();
+            if (this.playerNameSection) {
+                this.playerNameSection.saveIntoLocalStorage();
             }
 
             if (this.timer) {
