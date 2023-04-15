@@ -1,5 +1,5 @@
+import { Dot } from "@danieldesira/daniels-connect4-common/lib/enums/dot";
 import { Dialog } from "./dialog/dialog";
-import { Dot } from "./enums/dot";
 import { GameMessage } from "./models/game-message";
 import { InitialMessage } from "./models/initial-message";
 import { PlayerNameMessage } from "./models/player-name-message";

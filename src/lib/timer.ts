@@ -1,7 +1,7 @@
 export class Timer {
 
     private secondsRunning: number;
-    private timeout: number;
+    private interval: number;
     private timerSpan: HTMLSpanElement;
 
     public constructor(timerId: string) {
@@ -15,23 +15,21 @@ export class Timer {
         let seconds: number = this.secondsRunning % 60;
         this.timerSpan.innerText = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
         
-        if (!this.timerSpan.classList.contains('hide')) {
-            this.timeout = window.setTimeout(this.timerCallback, 1000);
-        } else {
-            clearTimeout(this.timeout);
+        if (this.timerSpan.classList.contains('hide')) {
+            clearInterval(this.interval);
         }
     };
 
     public set() {
         if (this.timerSpan) {
             this.timerSpan.classList.remove('hide');
-            this.timerCallback();
+            this.interval = window.setInterval(this.timerCallback, 1000);
         }
     }
 
     public stop() {
-        if (this.timeout) {
-            clearTimeout(this.timeout);
+        if (this.interval) {
+            clearInterval(this.interval);
             this.timerSpan.innerText = '';
             this.timerSpan.classList.add('hide');
         }
@@ -39,9 +37,9 @@ export class Timer {
 
     public pauseWhenDocumentHidden() {
         if (document.hidden) {
-            clearTimeout(this.timeout);
+            clearInterval(this.interval);
         } else {
-            this.timeout = window.setTimeout(this.timerCallback, 1000);
+            this.interval = window.setInterval(this.timerCallback, 1000);
         }
     }
 

@@ -1,4 +1,5 @@
-import { Dot } from "../enums/dot";
+
+import { Dot } from "@danieldesira/daniels-connect4-common/lib/enums/dot";
 import { GameMessage } from "./game-message";
 
 export class InitialMessage extends GameMessage {

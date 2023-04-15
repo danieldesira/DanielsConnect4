@@ -1,12 +1,12 @@
-import { Dot } from './enums/dot';
 import { Position } from './position';
 import { Utils } from './utils';
 import { Sound } from './enums/sound';
-import { BoardLogic } from './board-logic';
 import { Timer } from './timer';
 import { PlayerNameSection } from './player-name-section';
 import { GameOptions } from './game-options';
 import { Dialog } from './dialog/dialog';
+import { BoardLogic } from '@danieldesira/daniels-connect4-common/lib/board-logic';
+import { Dot } from '@danieldesira/daniels-connect4-common/lib/enums/dot';
 
 export abstract class Game {
 
@@ -57,7 +57,7 @@ export abstract class Game {
     }
 
     protected start() {
-        this.showHideGame(true);
+        this.showGame();
 
         if (this.playerNameSection) {
             this.playerNameSection.printPlayerNames();
@@ -197,7 +197,7 @@ export abstract class Game {
 
         // Run delegate function to return to main menu, in case it is defined
         setTimeout(() => {
-            this.showHideGame(false);
+            this.hideGame();
         }, 3000);
     }
 
@@ -224,7 +224,7 @@ export abstract class Game {
 
     protected exit() {
         this.cleanUpEvents();
-        this.showHideGame(false);
+        this.hideGame();
         this.resetValues();
 
         if (this.playerNameSection) {
@@ -289,18 +289,18 @@ export abstract class Game {
         return this.playerNameSection && this.playerNameSection.areBothPlayersConnected();
     }
 
-    private showHideGame(show: boolean) {
-        if (show) {
-            this.canvas.classList.remove('hide');
-            this.exitBtn.classList.remove('hide');
-            this.gameIndicatorsContainer.classList.remove('hide');
-            this.gameMenu.classList.add('hide');
-        } else {
-            this.canvas.classList.add('hide');
-            this.exitBtn.classList.add('hide');
-            this.gameIndicatorsContainer.classList.add('hide');
-            this.gameMenu.classList.remove('hide');
-        }
+    private showGame() {
+        this.canvas.classList.remove('hide');
+        this.exitBtn.classList.remove('hide');
+        this.gameIndicatorsContainer.classList.remove('hide');
+        this.gameMenu.classList.add('hide');
+    }
+
+    private hideGame() {
+        this.canvas.classList.add('hide');
+        this.exitBtn.classList.add('hide');
+        this.gameIndicatorsContainer.classList.add('hide');
+        this.gameMenu.classList.remove('hide');
     }
 
 }
