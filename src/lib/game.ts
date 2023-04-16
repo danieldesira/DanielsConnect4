@@ -119,22 +119,11 @@ export abstract class Game {
     }
 
     protected landDot(column: number) {
-        let row: number;
-
         if (this.board[column][0] === Dot.Empty) {
-
-            // Places the circle at the buttom of the column
-            let r: number;
-            for (r = BoardLogic.rows - 1; r >= 0; r--) {
-                if (this.board[column][r] === Dot.Empty) {
-                    this.board[column][r] = this.turn;
-                    row = r;
-                    break;
-                }
-            }
+            let row = BoardLogic.putDot(this.board, this.turn, column);
             
             this.context.fillStyle = this.turn;
-            this.drawCircle(column, r);
+            this.drawCircle(column, row);
             
             let dotCount = BoardLogic.countConsecutiveDots(this.board, column, row, this.turn);
 
