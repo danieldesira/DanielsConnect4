@@ -3,13 +3,14 @@ import { Dialog } from "./dialog/dialog";
 import { Sound } from "./enums/sound";
 import { Game } from "./game";
 import { GameOptions } from "./game-options";
-import { ActionMessage } from "./models/action-message";
-import { GameMessage } from "./models/game-message";
-import { InactivityMessage } from "./models/inactivity-message";
-import { InitialMessage } from "./models/initial-message";
-import { SkipTurnMessage } from "./models/skip-turn-message";
+
 import { Socket } from "./socket";
 import { Utils } from "./utils";
+import { GameMessage } from "@danieldesira/daniels-connect4-common/lib/models/game-message";
+import { InitialMessage } from "@danieldesira/daniels-connect4-common/lib/models/initial-message";
+import { InactivityMessage } from "@danieldesira/daniels-connect4-common/lib/models/inactivity-message";
+import { ActionMessage } from "@danieldesira/daniels-connect4-common/lib/models/action-message";
+import { SkipTurnMessage } from "@danieldesira/daniels-connect4-common/lib/models/skip-turn-message";
 
 export class NetworkGame extends Game {
 

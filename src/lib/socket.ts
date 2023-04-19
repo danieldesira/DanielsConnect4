@@ -1,9 +1,9 @@
 import { Dot } from "@danieldesira/daniels-connect4-common/lib/enums/dot";
 import { Dialog } from "./dialog/dialog";
-import { GameMessage } from "./models/game-message";
-import { InitialMessage } from "./models/initial-message";
-import { PlayerNameMessage } from "./models/player-name-message";
 import { Utils } from "./utils";
+import { GameMessage } from "@danieldesira/daniels-connect4-common/lib/models/game-message";
+import { InitialMessage } from "@danieldesira/daniels-connect4-common/lib/models/initial-message";
+import { PlayerNameMessage } from "@danieldesira/daniels-connect4-common/lib/models/player-name-message";
 
 export class Socket {
     private webSocket: WebSocket;
@@ -91,7 +91,7 @@ export class Socket {
         }
     };
 
-    private onPlayerNameInput = (color: string): string => {
+    private _onPlayerNameInput = (color: string): string => {
         let playerNameField = document.getElementById(color) as HTMLInputElement;
 
         if (playerNameField) {
@@ -108,6 +108,12 @@ export class Socket {
             return 'Field not implemented! Please fix this stupid bug!';
         }
     };
+    public get onPlayerNameInput() {
+        return this._onPlayerNameInput;
+    }
+    public set onPlayerNameInput(value) {
+        this._onPlayerNameInput = value;
+    }
 
     private onError = () => {
         this.onErrorCallback();

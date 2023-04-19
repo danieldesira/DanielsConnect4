@@ -3,6 +3,7 @@ import { Game } from "./lib/game";
 import { GameOptions } from "./lib/game-options";
 import { NetworkGame } from "./lib/network-game";
 import { SameDeviceGame } from "./lib/same-device-game";
+import '../styles/style.css';
 
 let connect4: Game;
 
