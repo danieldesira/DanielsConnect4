@@ -11,6 +11,7 @@ import { InitialMessage } from "@danieldesira/daniels-connect4-common/lib/models
 import { InactivityMessage } from "@danieldesira/daniels-connect4-common/lib/models/inactivity-message";
 import { ActionMessage } from "@danieldesira/daniels-connect4-common/lib/models/action-message";
 import { SkipTurnMessage } from "@danieldesira/daniels-connect4-common/lib/models/skip-turn-message";
+import { WinnerMessage } from "@danieldesira/daniels-connect4-common/lib/models/winner-message";
 
 export class NetworkGame extends Game {
 
@@ -100,6 +101,21 @@ export class NetworkGame extends Game {
                 this.switchTurn();
             }
         }
+
+        if (GameMessage.isWinnerMessage(messageData)) {
+            let data = messageData as WinnerMessage;
+            let winner: string = null;
+            if (this.playerNameSection) {
+                if (data.winner === Dot.Red) {
+                    winner = this.playerNameSection.getPlayerRed() + ' (Red)';
+                } else {
+                    winner = this.playerNameSection.getPlayerGreen() + ' (Green)';
+                }
+            }
+            this.showWinDialog(winner);
+
+            this.closeGameAfterWinning();
+        }
     };
 
     private onSocketError = () => {
@@ -139,6 +155,22 @@ export class NetworkGame extends Game {
             this.landDot(column);
         }
     };
+
+    protected landDot(column: number): number {
+        if (this.board[column][0] === Dot.Empty) {
+            let row = super.landDot(column);
+            
+            // Assume the game is still going on
+            this.switchTurn();
+            this.context.fillStyle = this.turn;
+            this.paintDotToDrop(column);
+            Utils.playSound(Sound.LandDot);
+
+            return row;
+        } else {
+            return -1;
+        }
+    }
 
     public exit = () => {
         Dialog.confirm(['Network game in progress. Are you sure you want to quit?'], {

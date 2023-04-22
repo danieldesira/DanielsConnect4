@@ -11,7 +11,7 @@ import { Dot } from '@danieldesira/daniels-connect4-common/lib/enums/dot';
 export abstract class Game {
 
     private canvas: HTMLCanvasElement;
-    private context: CanvasRenderingContext2D;
+    protected context: CanvasRenderingContext2D;
     protected board: Array<Array<Dot>> = new Array(BoardLogic.columns);
 
     private exitBtn: HTMLButtonElement;
@@ -118,42 +118,16 @@ export abstract class Game {
         this.paintDotToDrop(column);
     }
 
-    protected landDot(column: number) {
+    protected landDot(column: number): number {
         if (this.board[column][0] === Dot.Empty) {
             let row = BoardLogic.putDot(this.board, this.turn, column);
             
             this.context.fillStyle = this.turn;
             this.drawCircle(column, row);
-            
-            let dotCount = BoardLogic.countConsecutiveDots(this.board, column, row, this.turn);
 
-            if (dotCount >= 4) {
-                let winner: string = '';
-
-                if (this.playerNameSection) {
-                    if (this.turn === Dot.Red) {
-                        winner = this.playerNameSection.getPlayerRed() + ' (Red)';
-                    } else if (this.turn === Dot.Green) {
-                        winner = this.playerNameSection.getPlayerGreen() + ' (Green)';
-                    }
-                }
-
-                this.showWinDialog(winner);
-                this.closeGameAfterWinning();
-            } else if (BoardLogic.isBoardFull(this.board)) {
-                let message: string = '';
-                if (this.playerNameSection) {
-                    message += this.playerNameSection.getPlayerRed() + ' (Red) and ' + this.playerNameSection.getPlayerGreen() + ' (Green)';
-                }
-                message += ' are tied!';
-                Dialog.notify([message]);
-                this.closeGameAfterWinning();
-            } else { // If game is still going on
-                this.switchTurn();
-                this.context.fillStyle = this.turn;
-                this.paintDotToDrop(column);
-                Utils.playSound(Sound.LandDot);
-            }
+            return row;
+        } else {
+            return -1;
         }
     }
 
@@ -190,7 +164,7 @@ export abstract class Game {
         }, 3000);
     }
 
-    private paintDotToDrop(column: number) {
+    protected paintDotToDrop(column: number) {
         this.context.beginPath();
         this.context.arc(this.colOffset + column * this.colGap, this.circleRadius, this.circleRadius, 0, 2 * Math.PI);
         this.context.closePath();

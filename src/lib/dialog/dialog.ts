@@ -71,6 +71,7 @@ export class Dialog {
         for (let i: number = 0; i < inputs.length; i++) {
             let label = document.createElement('label') as HTMLLabelElement;
             label.innerText = inputs[i].name + ': ';
+            label.htmlFor = inputs[i].name;
             label.classList.add('text');
             inputContainer.appendChild(label);
 
@@ -78,6 +79,7 @@ export class Dialog {
             input.type = inputs[i].type;
             input.id = inputs[i].name;
             input.name = inputs[i].name;
+            input.placeholder = 'Enter name for ' + inputs[i].name;
             input.classList.add('dialog-input');
             input.classList.add('text');
             inputContainer.appendChild(input);

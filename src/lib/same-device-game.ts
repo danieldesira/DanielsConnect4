@@ -2,6 +2,9 @@ import { Dot } from "@danieldesira/daniels-connect4-common/lib/enums/dot";
 import { Dialog } from "./dialog/dialog";
 import { Game } from "./game";
 import { GameOptions } from "./game-options";
+import { BoardLogic } from "@danieldesira/daniels-connect4-common/lib/board-logic";
+import { Sound } from "./enums/sound";
+import { Utils } from "./utils";
 
 export class SameDeviceGame extends Game {
 
@@ -127,6 +130,46 @@ export class SameDeviceGame extends Game {
         localStorage.clear();
 
         super.closeGameAfterWinning();
+    }
+
+    protected landDot(column: number): number {
+        if (this.board[column][0] === Dot.Empty) {
+            let row = super.landDot(column);
+            
+            let dotCount = BoardLogic.countConsecutiveDots(this.board, column, row, this.turn);
+
+            if (dotCount >= 4) {
+                let winner: string = '';
+
+                if (this.playerNameSection) {
+                    if (this.turn === Dot.Red) {
+                        winner = this.playerNameSection.getPlayerRed() + ' (Red)';
+                    } else if (this.turn === Dot.Green) {
+                        winner = this.playerNameSection.getPlayerGreen() + ' (Green)';
+                    }
+                }
+
+                this.showWinDialog(winner);
+                this.closeGameAfterWinning();
+            } else if (BoardLogic.isBoardFull(this.board)) {
+                let message: string = '';
+                if (this.playerNameSection) {
+                    message += this.playerNameSection.getPlayerRed() + ' (Red) and ' + this.playerNameSection.getPlayerGreen() + ' (Green)';
+                }
+                message += ' are tied!';
+                Dialog.notify([message]);
+                this.closeGameAfterWinning();
+            } else { // If game is still going on
+                this.switchTurn();
+                this.context.fillStyle = this.turn;
+                this.paintDotToDrop(column);
+                Utils.playSound(Sound.LandDot);
+            }
+
+            return row;
+        } else {
+            return -1;
+        }
     }
 
     protected setGameEvents() {
