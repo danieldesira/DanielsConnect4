@@ -131,7 +131,7 @@ export abstract class Game {
         }
     }
 
-    protected showWinDialog(winner: string) {
+    protected showWinDialog(winner: string, currentTurn: Dot) {
         let winMsg: Array<string> = new Array();
         winMsg.push(winner + ' wins!');
         if (this.timer) {

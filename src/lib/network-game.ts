@@ -112,8 +112,13 @@ export class NetworkGame extends Game {
                     winner = this.playerNameSection.getPlayerGreen() + ' (Green)';
                 }
             }
-            this.showWinDialog(winner);
+            this.showWinDialog(winner, data.winner);
 
+            this.closeGameAfterWinning();
+        }
+
+        if (GameMessage.isTieMessage(messageData)) {
+            Dialog.notify(['Game resulted in tie!']);
             this.closeGameAfterWinning();
         }
     };
@@ -194,13 +199,13 @@ export class NetworkGame extends Game {
         event.returnValue = false; // Required by Chrome
     };
 
-    protected showWinDialog(winner: string) {
+    protected showWinDialog(winner: string, currentTurn: Dot) {
         let winMsg: Array<string> = new Array();
         winMsg.push(winner + ' wins!');
         if (this.timer) {
             winMsg.push('Time taken: ' + this.timer.getTimeInStringFormat());
         }
-        if (this.socket && this.socket.getPlayerColor() === this.turn) {
+        if (this.socket && this.socket.getPlayerColor() === currentTurn) {
             winMsg.push('You win!');
             Utils.playSound(Sound.Win);
         } else {

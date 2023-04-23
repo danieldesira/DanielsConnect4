@@ -149,7 +149,7 @@ export class SameDeviceGame extends Game {
                     }
                 }
 
-                this.showWinDialog(winner);
+                this.showWinDialog(winner, this.turn);
                 this.closeGameAfterWinning();
             } else if (BoardLogic.isBoardFull(this.board)) {
                 let message: string = '';
