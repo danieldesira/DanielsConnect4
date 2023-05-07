@@ -77,7 +77,7 @@ export abstract class Game {
 
         for (let col = BoardLogic.columns - 1; col >= 0; col--) {
             for (let row = BoardLogic.rows - 1; row >= 0; row--) {
-                this.context.fillStyle = this.board[col][row];
+                this.context.fillStyle = Game.getColor(this.board[col][row]);
                 this.drawCircle(col, row);
             }
         }
@@ -114,7 +114,7 @@ export abstract class Game {
 
     protected moveDot(column: number) {
         this.clearUpper();
-        this.context.fillStyle = this.turn;
+        this.context.fillStyle = Game.getColor(this.turn);
         this.paintDotToDrop(column);
     }
 
@@ -122,7 +122,7 @@ export abstract class Game {
         if (this.board[column][0] === Dot.Empty) {
             let row = BoardLogic.putDot(this.board, this.turn, column);
             
-            this.context.fillStyle = this.turn;
+            this.context.fillStyle = Game.getColor(this.turn);
             this.drawCircle(column, row);
 
             return row;
@@ -264,6 +264,22 @@ export abstract class Game {
         this.exitBtn.classList.add('hide');
         this.gameIndicatorsContainer.classList.add('hide');
         this.gameMenu.classList.remove('hide');
+    }
+
+    protected static getColor(color: Dot): string {
+        let value: string = '';
+        switch (color) {
+            case Dot.Empty:
+                value = 'lightyellow';
+                break;
+            case Dot.Red:
+                value = 'red';
+                break;
+            case Dot.Green:
+                value = 'greenyellow';
+                break;
+        }
+        return value;
     }
 
 }

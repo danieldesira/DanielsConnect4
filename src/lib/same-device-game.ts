@@ -62,13 +62,7 @@ export class SameDeviceGame extends Game {
     };
 
     private restoreLastGame() {
-        let nextTurn: string = localStorage.getItem('nextTurn');
-        if (nextTurn === Dot.Red) {
-            this.turn = Dot.Red;
-        } else if (nextTurn === Dot.Green) {
-            this.turn = Dot.Green;
-        }
-        
+        this.turn = parseInt(localStorage.getItem('nextTurn'));
         this.board = JSON.parse(localStorage.getItem('board'));
 
         if (this.timer) {
@@ -161,7 +155,7 @@ export class SameDeviceGame extends Game {
                 this.closeGameAfterWinning();
             } else { // If game is still going on
                 this.switchTurn();
-                this.context.fillStyle = this.turn;
+                this.context.fillStyle = Game.getColor(this.turn);
                 this.paintDotToDrop(column);
                 Utils.playSound(Sound.LandDot);
             }

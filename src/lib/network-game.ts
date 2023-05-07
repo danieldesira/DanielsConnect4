@@ -3,7 +3,6 @@ import { Dialog } from "./dialog/dialog";
 import { Sound } from "./enums/sound";
 import { Game } from "./game";
 import { GameOptions } from "./game-options";
-
 import { Socket } from "./socket";
 import { Utils } from "./utils";
 import { GameMessage } from "@danieldesira/daniels-connect4-common/lib/models/game-message";
@@ -167,7 +166,7 @@ export class NetworkGame extends Game {
             
             // Assume the game is still going on
             this.switchTurn();
-            this.context.fillStyle = this.turn;
+            this.context.fillStyle = Game.getColor(this.turn);
             this.paintDotToDrop(column);
             Utils.playSound(Sound.LandDot);
 
@@ -243,7 +242,7 @@ export class NetworkGame extends Game {
                 this.socket.send(data);
             }
         }
-    }
+    };
 
     private adaptCountDownColor() {
         if (this.turnCountDown > NetworkGame.countDownMaxSeconds / 2) {
@@ -281,6 +280,6 @@ export class NetworkGame extends Game {
                 this.playerNameSection.setPlayerGreen(playerName);
             }
         }
-    }
+    };
     
 }
