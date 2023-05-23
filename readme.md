@@ -5,6 +5,8 @@ Link to original project: https://github.com/dannydes/blu4
 ## Debugging
 To build the TypeScript files, enter the following command:
 ` npx webpack -w `
+or simply run:
+` npm start `
 
 In order to take advantage of source map during debugging, do the following in the Chrome devtools:
 - Click the Sources tab.
@@ -13,7 +15,7 @@ In order to take advantage of source map during debugging, do the following in t
 - Reload the page and feel free to set breakpoints in the code.
 
 ## Libraries
-- Dilo World Font: https://www.fontspace.com/dilo-world-font-f72650
+- FontAwesome
 
 ## Credits
 ### Developers
