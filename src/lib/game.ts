@@ -157,8 +157,7 @@ export abstract class Game {
         }
 
         this.resetValues();
-
-        // Run delegate function to return to main menu, in case it is defined
+        
         setTimeout(() => {
             this.hideGame();
         }, 3000);

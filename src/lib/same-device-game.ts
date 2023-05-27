@@ -5,6 +5,7 @@ import { GameOptions } from "./game-options";
 import { BoardLogic } from "@danieldesira/daniels-connect4-common/lib/board-logic";
 import { Sound } from "./enums/sound";
 import { Utils } from "./utils";
+import { randomiseColor } from "@danieldesira/daniels-connect4-common/lib/randomise";
 
 export class SameDeviceGame extends Game {
 
@@ -47,6 +48,7 @@ export class SameDeviceGame extends Game {
                 noCallback: this.cancelPreviousGame
             });
         } else {
+            this.turn = randomiseColor();
             this.onGameDataCheck();
         }
     }
@@ -58,6 +60,7 @@ export class SameDeviceGame extends Game {
 
     private cancelPreviousGame = () => {
         localStorage.clear();
+        this.turn = randomiseColor();
         this.onGameDataCheck();
     };
 
