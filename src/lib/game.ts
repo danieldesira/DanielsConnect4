@@ -173,7 +173,7 @@ export default abstract class Game {
     }
 
     private resizeCanvas = () => {
-        this.canvas.height = window.innerHeight - 100;
+        this.canvas.height = window.innerHeight - 150;
         this.canvas.width = window.innerWidth;
 
         if (this.canvas.width < 1000) {
@@ -184,7 +184,7 @@ export default abstract class Game {
 
         if (this.canvas.height > this.canvas.width) {
             this.colGap = this.canvas.width / BoardLogic.columns;
-            this.rowGap = this.canvas.height / BoardLogic.rows;
+            this.rowGap = (this.canvas.height / BoardLogic.rows) - this.circleRadius;
         } else {
             this.colGap = this.canvas.width / BoardLogic.columns;
             this.rowGap = 65;
