@@ -13,7 +13,7 @@ export default class Timer {
         this.secondsRunning++;
         let minutes: number = Math.floor(this.secondsRunning / 60);
         let seconds: number = this.secondsRunning % 60;
-        this.timerSpan.innerText = minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+        this.timerSpan.innerText = `${minutes}:${(seconds < 10 ? '0' : '')}${seconds}`;
         
         if (this.timerSpan.classList.contains('hide')) {
             clearInterval(this.interval);

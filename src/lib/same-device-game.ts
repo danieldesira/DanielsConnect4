@@ -161,9 +161,9 @@ export default class SameDeviceGame extends Game {
 
                 if (this.playerNameSection) {
                     if (this.turn === Dot.Red) {
-                        winner = this.playerNameSection.getPlayerRed() + ' (Red)';
+                        winner = `${this.playerNameSection.getPlayerRed()} (Red)`;
                     } else if (this.turn === Dot.Green) {
-                        winner = this.playerNameSection.getPlayerGreen() + ' (Green)';
+                        winner = `${this.playerNameSection.getPlayerGreen()} (Green)`;
                     }
                 }
 
@@ -172,7 +172,7 @@ export default class SameDeviceGame extends Game {
             } else if (BoardLogic.isBoardFull(this.board)) {
                 let message: string = '';
                 if (this.playerNameSection) {
-                    message += this.playerNameSection.getPlayerRed() + ' (Red) and ' + this.playerNameSection.getPlayerGreen() + ' (Green)';
+                    message += `${this.playerNameSection.getPlayerRed()} (Red) and ${this.playerNameSection.getPlayerGreen()} (Green)`;
                 }
                 message += ' are tied!';
                 Dialog.notify([message]);
@@ -202,9 +202,9 @@ export default class SameDeviceGame extends Game {
 
     protected showWinDialog(winner: string, currentTurn: Dot) {
         let winMsg: Array<string> = new Array();
-        winMsg.push(winner + ' wins!');
+        winMsg.push(`${winner} wins!`);
         if (this.timer) {
-            winMsg.push('Time taken: ' + this.timer.getTimeInStringFormat());
+            winMsg.push(`Time taken: ${this.timer.getTimeInStringFormat()}`);
         }
         Utils.playSound(Sound.Win);
         Dialog.notify(winMsg);

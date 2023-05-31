@@ -104,9 +104,9 @@ export default class NetworkGame extends Game {
             let winner: string = null;
             if (this.playerNameSection) {
                 if (data.winner === Dot.Red) {
-                    winner = this.playerNameSection.getPlayerRed() + ' (Red)';
+                    winner = `${this.playerNameSection.getPlayerRed()} (Red)`;
                 } else {
-                    winner = this.playerNameSection.getPlayerGreen() + ' (Green)';
+                    winner = `${this.playerNameSection.getPlayerGreen()} (Green)`;
                 }
             }
             this.showWinDialog(winner, data.winner);
@@ -198,7 +198,7 @@ export default class NetworkGame extends Game {
 
     protected showWinDialog(winner: string, currentTurn: Dot) {
         let winMsg: Array<string> = new Array();
-        winMsg.push(winner + ' wins!');
+        winMsg.push(`${winner} wins!`);
         if (this.socket && this.socket.getPlayerColor() === currentTurn) {
             winMsg.push('You win!');
             Utils.playSound(Sound.Win);

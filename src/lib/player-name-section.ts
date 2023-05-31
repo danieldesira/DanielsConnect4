@@ -19,16 +19,18 @@ export default class PlayerNameSection {
 
     public setUpPlayerNames(action: Function) {
         if (!localStorage.getItem('playerRed') || !localStorage.getItem('playerGreen')) {
-            Dialog.prompt(['Please enter player names!'], {
+            Dialog.prompt(['Please enter player names! (Max length is 10 characters.)'], {
                 onOK: () => this.onPromptOK(action),
                 inputs: [
                     {
                         name: 'red',
-                        type: 'text'
+                        type: 'text',
+                        limit: 10
                     },
                     {
                         name: 'green',
-                        type: 'text'
+                        type: 'text',
+                        limit: 10
                     }
                 ]
             });

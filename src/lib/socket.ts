@@ -27,7 +27,7 @@ export default class Socket {
         }
 
         if (this.playerColor && !isNaN(this.gameId)) {
-            url += '?playerColor=' + this.playerColor + '&gameId=' + this.gameId + '&playerName=' + this.playerName;
+            url += `?playerColor=${this.playerColor}&gameId=${this.gameId}&playerName=${this.playerName}`;
         }
 
         this.webSocket = new WebSocket(url);
@@ -76,11 +76,12 @@ export default class Socket {
                     color = 'green';
                 }
     
-                Dialog.prompt(['You are ' + color + '. Please enter your name.'], {
+                Dialog.prompt([`You are ${color}. Please enter your name. (Max length is 10 characters.)`], {
                     onOK: () => this.onPlayerNameInput(color),
                     inputs: [{
                         name: color,
-                        type: 'text'
+                        type: 'text',
+                        limit: 10
                     }]
                 });
             }

@@ -60,7 +60,7 @@ export default class Dialog {
         btn.innerText = text;
         btn.classList.add('text');
         btn.classList.add('dialog-btn');
-        btn.classList.add('dialog-btn-' + bgColor);
+        btn.classList.add(`dialog-btn-${bgColor}`);
         btn.addEventListener('click', callback);
         container.appendChild(btn);
     }
@@ -70,7 +70,7 @@ export default class Dialog {
         inputContainer.classList.add('dialog-input-container');
         for (let i: number = 0; i < inputs.length; i++) {
             let label = document.createElement('label') as HTMLLabelElement;
-            label.innerText = inputs[i].name + ': ';
+            label.innerText = `${inputs[i].name}: `;
             label.htmlFor = inputs[i].name;
             label.classList.add('text');
             inputContainer.appendChild(label);
@@ -79,7 +79,8 @@ export default class Dialog {
             input.type = inputs[i].type;
             input.id = inputs[i].name;
             input.name = inputs[i].name;
-            input.placeholder = 'Enter name for ' + inputs[i].name;
+            input.placeholder = `Enter name for ${inputs[i].name}`;
+            input.maxLength = inputs[i].limit;
             input.classList.add('dialog-input');
             input.classList.add('text');
             inputContainer.appendChild(input);

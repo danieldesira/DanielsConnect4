@@ -9,7 +9,6 @@
         <h1>Daniel's Connect4 Version History</h1>
         <h2>0.3 (Beta release - )</h2>
         <ul>
-            <li>Network mode: Exit game in case of connection error</li>
             <li>Minor UI changes:
                 <ol>
                     <li>Improved board spacing</li>
@@ -21,11 +20,21 @@
                 </ol>
             </li>
             <li>Introduced custom dialogs</li>
-            <li>Validation preventing blank player names</li>
+            <li>Player name inputs:
+                <ol>
+                    <li>Validation preventing blank player names</li>
+                    <li>Player names restricted to 10 characters</li>
+                </ol>
+            </li>
             <li>Internal: Refactoring and code cleanup, set up <code>npm start</code> script</li>
-            <li>Network mode: Winner is now determined by server</li>
             <li>First turn (red/green) selected by random</li>
-            <li>Disabled timer in Network Play</li>
+            <li>Network mode:
+                <ol>
+                    <li>Exit game in case of connection error</li>
+                    <li>Winner is now determined by server</li>
+                    <li>Disabled timer</li>
+                </ol>
+            </li>
         </ul>
         <h2>0.2.1 (Alpha release - 27/03/2023)</h2>
         <ul>
