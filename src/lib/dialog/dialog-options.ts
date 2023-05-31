@@ -1,3 +1,3 @@
-export class DialogOptions {
+export default interface DialogOptions {
     
 }

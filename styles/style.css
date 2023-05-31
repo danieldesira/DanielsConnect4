@@ -9,6 +9,11 @@
     max-width: 500px;
 }
 
+.blue-bg strong {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
 .btn {
     height: 100px;
     background-color: darkblue;
@@ -59,4 +64,9 @@
 .text {
     font-family: Source-Sans-Pro;
     font-size: 1.75em;
+}
+
+.version {
+    font-size: small;
+    color: #000;
 }

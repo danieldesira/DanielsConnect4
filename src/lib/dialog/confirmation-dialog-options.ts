@@ -1,6 +1,6 @@
-import { DialogOptions } from "./dialog-options";
+import DialogOptions from "./dialog-options";
 
-export class ConfirmationDialogOptions extends DialogOptions {
-    public yesCallback: Function;
-    public noCallback: Function;
+export default interface ConfirmationDialogOptions extends DialogOptions {
+    yesCallback: Function;
+    noCallback: Function;
 }

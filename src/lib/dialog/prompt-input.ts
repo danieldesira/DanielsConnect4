@@ -1,4 +1,4 @@
-export class PromptInput {
-    public name: string;
-    public type: string;
+export default interface PromptInput {
+    name: string;
+    type: string;
 }

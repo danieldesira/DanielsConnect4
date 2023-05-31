@@ -1,4 +1,4 @@
-export class Timer {
+export default class Timer {
 
     private secondsRunning: number;
     private interval: number;

@@ -1,8 +1,8 @@
 import { GameMode } from "./lib/enums/game-mode";
-import { Game } from "./lib/game";
-import { GameOptions } from "./lib/game-options";
-import { NetworkGame } from "./lib/network-game";
-import { SameDeviceGame } from "./lib/same-device-game";
+import Game from "./lib/game";
+import GameOptions from "./lib/game-options";
+import NetworkGame from "./lib/network-game";
+import SameDeviceGame from "./lib/same-device-game";
 import '../styles/style.css';
 
 let connect4: Game;
@@ -27,13 +27,12 @@ function initGame(mode: GameMode) {
     clearError();
 
     try {
-        let options: GameOptions = {
+        const options: GameOptions = {
             canvasId: 'board',
             exitBtnId: 'exitBtn',
-            timerId: 'timer',
+            timerCountdownId: 'timer',
             playerRedId: 'playerRed',
             playerGreenId: 'playerGreen',
-            countdownId: 'countdown',
             menuId: 'menu',
             gameIndicatorsId: 'gameIndicators'
         };

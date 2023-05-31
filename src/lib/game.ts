@@ -1,14 +1,10 @@
-import { Position } from './position';
-import { Utils } from './utils';
-import { Sound } from './enums/sound';
-import { Timer } from './timer';
-import { PlayerNameSection } from './player-name-section';
-import { GameOptions } from './game-options';
-import { Dialog } from './dialog/dialog';
-import { BoardLogic } from '@danieldesira/daniels-connect4-common/lib/board-logic';
+import Position from './position';
+import PlayerNameSection from './player-name-section';
+import GameOptions from './game-options';
+import BoardLogic from '@danieldesira/daniels-connect4-common/lib/board-logic';
 import { Dot } from '@danieldesira/daniels-connect4-common/lib/enums/dot';
 
-export abstract class Game {
+export default abstract class Game {
 
     private canvas: HTMLCanvasElement;
     protected context: CanvasRenderingContext2D;
@@ -27,8 +23,6 @@ export abstract class Game {
     private colOffset: number;
     private static verticalOffset: number = 70;
 
-    protected timer: Timer;
-
     protected constructor(options: GameOptions) {
         this.canvas = document.getElementById(options.canvasId) as HTMLCanvasElement;
         this.context = this.canvas.getContext('2d');
@@ -37,10 +31,6 @@ export abstract class Game {
 
         if (options.exitBtnId) {
             this.exitBtn = document.getElementById(options.exitBtnId) as HTMLButtonElement;
-        }
-
-        if (options.timerId) {
-            this.timer = new Timer(options.timerId);
         }
 
         if (options.playerRedId && options.playerGreenId) {
@@ -131,25 +121,13 @@ export abstract class Game {
         }
     }
 
-    protected showWinDialog(winner: string, currentTurn: Dot) {
-        let winMsg: Array<string> = new Array();
-        winMsg.push(winner + ' wins!');
-        if (this.timer) {
-            winMsg.push('Time taken: ' + this.timer.getTimeInStringFormat());
-        }
-        Utils.playSound(Sound.Win);
-        Dialog.notify(winMsg);
-    }
+    protected abstract showWinDialog(winner: string, currentTurn: Dot);
 
     protected closeGameAfterWinning() {
         this.cleanUpEvents();
 
         if (this.playerNameSection) {
             this.playerNameSection.clear();
-        }
-
-        if (this.timer) {
-            this.timer.stop();
         }
 
         if (this.exitBtn) {
@@ -192,10 +170,6 @@ export abstract class Game {
         if (this.playerNameSection) {
             this.playerNameSection.clear();
         }
-
-        if (this.timer) {
-            this.timer.stop();
-        }
     }
 
     private resizeCanvas = () => {
@@ -228,10 +202,6 @@ export abstract class Game {
         if (this.playerNameSection) {
             this.playerNameSection.reset();
         }
-
-        if (this.timer) {
-            this.timer.reset();
-        }
     }
 
     private drawCircle(column: number, row: number) {
@@ -239,12 +209,6 @@ export abstract class Game {
         this.context.arc(this.colOffset + column * this.colGap, Game.verticalOffset * 2 + row * this.rowGap, this.circleRadius, 0, Math.PI * 2);
         this.context.closePath();
         this.context.fill();
-    }
-
-    protected setTimer = () => {
-        if (this.timer) {
-            this.timer.set();
-        }
     }
 
     protected areBothPlayersConnected(): boolean {

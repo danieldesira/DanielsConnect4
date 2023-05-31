@@ -1,7 +1,7 @@
-import { DialogOptions } from "./dialog-options";
-import { PromptInput } from "./prompt-input";
+import DialogOptions from "./dialog-options";
+import PromptInput from "./prompt-input";
 
-export class PromptDialogOptions extends DialogOptions {
-    public onOK: Function;
-    public inputs: Array<PromptInput>;
+export default interface PromptDialogOptions extends DialogOptions {
+    onOK: Function;
+    inputs: Array<PromptInput>;
 }

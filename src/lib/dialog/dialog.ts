@@ -1,10 +1,10 @@
-import { ConfirmationDialogOptions } from "./confirmation-dialog-options";
-import { DialogOptions } from "./dialog-options";
+import ConfirmationDialogOptions from "./confirmation-dialog-options";
+import DialogOptions from "./dialog-options";
 import { DialogType } from "./enums/dialog-type";
-import { PromptDialogOptions } from "./prompt-dialog-options";
-import { PromptInput } from "./prompt-input";
+import PromptDialogOptions from "./prompt-dialog-options";
+import PromptInput from "./prompt-input";
 
-export class Dialog {
+export default class Dialog {
     
     private static modal(text: Array<string>, type: DialogType, options: DialogOptions = null) {
         let modal = document.createElement('div') as HTMLDivElement;

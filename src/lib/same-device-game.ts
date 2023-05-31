@@ -1,18 +1,24 @@
 import { Dot } from "@danieldesira/daniels-connect4-common/lib/enums/dot";
-import { Dialog } from "./dialog/dialog";
-import { Game } from "./game";
-import { GameOptions } from "./game-options";
-import { BoardLogic } from "@danieldesira/daniels-connect4-common/lib/board-logic";
+import Dialog from "./dialog/dialog";
+import Game from "./game";
+import GameOptions from "./game-options";
+import BoardLogic from "@danieldesira/daniels-connect4-common/lib/board-logic";
 import { Sound } from "./enums/sound";
-import { Utils } from "./utils";
-import { randomiseColor } from "@danieldesira/daniels-connect4-common/lib/randomise";
+import Utils from "./utils";
+import randomiseColor from "@danieldesira/daniels-connect4-common/lib/randomise";
+import Timer from "./timer";
 
-export class SameDeviceGame extends Game {
+export default class SameDeviceGame extends Game {
 
     private static instance: SameDeviceGame;
+    private timer: Timer;
 
     private constructor(options: GameOptions) {
         super(options);
+
+        if (options.timerCountdownId) {
+            this.timer = new Timer(options.timerCountdownId);
+        }
     }
 
     public static getInstance(options: GameOptions): Game {
@@ -20,6 +26,12 @@ export class SameDeviceGame extends Game {
             SameDeviceGame.instance = new SameDeviceGame(options);
         }
         return SameDeviceGame.instance;
+    }
+
+    private setTimer = () => {
+        if (this.timer) {
+            this.timer.set();
+        }
     }
 
     public start() {
@@ -109,6 +121,11 @@ export class SameDeviceGame extends Game {
     public exit = () => {
         this.saveGame();
         Dialog.closeAllOpenDialogs();
+
+        if (this.timer) {
+            this.timer.stop();
+        }
+
         super.exit();
     };
 
@@ -125,6 +142,10 @@ export class SameDeviceGame extends Game {
     protected closeGameAfterWinning() {
         // Clear game data
         localStorage.clear();
+
+        if (this.timer) {
+            this.timer.stop();
+        }
 
         super.closeGameAfterWinning();
     }
@@ -177,6 +198,24 @@ export class SameDeviceGame extends Game {
     protected cleanUpEvents() {
         super.cleanUpEvents();
         document.removeEventListener('changevisibility', this.pageVisibilityChange);
+    }
+
+    protected showWinDialog(winner: string, currentTurn: Dot) {
+        let winMsg: Array<string> = new Array();
+        winMsg.push(winner + ' wins!');
+        if (this.timer) {
+            winMsg.push('Time taken: ' + this.timer.getTimeInStringFormat());
+        }
+        Utils.playSound(Sound.Win);
+        Dialog.notify(winMsg);
+    }
+
+    protected resetValues() {
+        super.resetValues();
+
+        if (this.timer) {
+            this.timer.reset();
+        }
     }
 
 }

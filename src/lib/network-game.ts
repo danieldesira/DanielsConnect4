@@ -1,18 +1,18 @@
 import { Dot } from "@danieldesira/daniels-connect4-common/lib/enums/dot";
-import { Dialog } from "./dialog/dialog";
+import Dialog from "./dialog/dialog";
 import { Sound } from "./enums/sound";
-import { Game } from "./game";
-import { GameOptions } from "./game-options";
-import { Socket } from "./socket";
-import { Utils } from "./utils";
-import { GameMessage } from "@danieldesira/daniels-connect4-common/lib/models/game-message";
-import { InitialMessage } from "@danieldesira/daniels-connect4-common/lib/models/initial-message";
-import { InactivityMessage } from "@danieldesira/daniels-connect4-common/lib/models/inactivity-message";
-import { ActionMessage } from "@danieldesira/daniels-connect4-common/lib/models/action-message";
-import { SkipTurnMessage } from "@danieldesira/daniels-connect4-common/lib/models/skip-turn-message";
-import { WinnerMessage } from "@danieldesira/daniels-connect4-common/lib/models/winner-message";
+import Game from "./game";
+import GameOptions from "./game-options";
+import Socket from "./socket";
+import Utils from "./utils";
+import GameMessage from "@danieldesira/daniels-connect4-common/lib/models/game-message";
+import InitialMessage from "@danieldesira/daniels-connect4-common/lib/models/initial-message";
+import InactivityMessage from "@danieldesira/daniels-connect4-common/lib/models/inactivity-message";
+import ActionMessage from "@danieldesira/daniels-connect4-common/lib/models/action-message";
+import SkipTurnMessage from "@danieldesira/daniels-connect4-common/lib/models/skip-turn-message";
+import WinnerMessage from "@danieldesira/daniels-connect4-common/lib/models/winner-message";
 
-export class NetworkGame extends Game {
+export default class NetworkGame extends Game {
 
     private static instance: NetworkGame;
 
@@ -27,8 +27,8 @@ export class NetworkGame extends Game {
     private constructor(options: GameOptions) {
         super(options);
 
-        if (options.countdownId) {
-            this.countdownSpan = document.getElementById(options.countdownId) as HTMLSpanElement;
+        if (options.timerCountdownId) {
+            this.countdownSpan = document.getElementById(options.timerCountdownId) as HTMLSpanElement;
         }
     }
 
@@ -61,8 +61,6 @@ export class NetworkGame extends Game {
                 } else if (this.socket.getPlayerColor() === Dot.Green) {
                     this.playerNameSection.setPlayerRed(data.opponentName);
                 }
-    
-                this.setTimer();
             }
     
             if (data.color && this.socket && this.playerNameSection) {
@@ -201,9 +199,6 @@ export class NetworkGame extends Game {
     protected showWinDialog(winner: string, currentTurn: Dot) {
         let winMsg: Array<string> = new Array();
         winMsg.push(winner + ' wins!');
-        if (this.timer) {
-            winMsg.push('Time taken: ' + this.timer.getTimeInStringFormat());
-        }
         if (this.socket && this.socket.getPlayerColor() === currentTurn) {
             winMsg.push('You win!');
             Utils.playSound(Sound.Win);

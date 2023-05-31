@@ -1,10 +1,9 @@
-export class GameOptions {
-    public canvasId: string;
-    public exitBtnId: string;
-    public timerId: string;
-    public playerRedId: string;
-    public playerGreenId: string;
-    public countdownId: string;
-    public menuId: string;
-    public gameIndicatorsId: string;
+export default interface GameOptions {
+    canvasId: string;
+    exitBtnId: string;
+    timerCountdownId: string;
+    playerRedId: string;
+    playerGreenId: string;
+    menuId: string;
+    gameIndicatorsId: string;
 }

@@ -1,7 +1,7 @@
 import { Dot } from "@danieldesira/daniels-connect4-common/lib/enums/dot";
-import { Dialog } from "./dialog/dialog";
+import Dialog from "./dialog/dialog";
 
-export class PlayerNameSection {
+export default class PlayerNameSection {
     private playerRedSpan: HTMLSpanElement;
     private playerGreenSpan: HTMLSpanElement;
     private playerRed: string;
