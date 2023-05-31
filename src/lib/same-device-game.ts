@@ -21,7 +21,7 @@ export default class SameDeviceGame extends Game {
         }
     }
 
-    public static getInstance(options: GameOptions): Game {
+    public static getInstance(options: GameOptions): SameDeviceGame {
         if (!SameDeviceGame.instance) {
             SameDeviceGame.instance = new SameDeviceGame(options);
         }

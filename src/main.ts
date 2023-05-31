@@ -1,11 +1,8 @@
 import { GameMode } from "./lib/enums/game-mode";
-import Game from "./lib/game";
 import GameOptions from "./lib/game-options";
 import NetworkGame from "./lib/network-game";
 import SameDeviceGame from "./lib/same-device-game";
 import '../styles/style.css';
-
-let connect4: Game;
 
 let samePCBtn = document.getElementById('samePC') as HTMLButtonElement;
 let networkBtn = document.getElementById('network') as HTMLButtonElement;
@@ -37,11 +34,11 @@ function initGame(mode: GameMode) {
             gameIndicatorsId: 'gameIndicators'
         };
         if (mode === GameMode.Network) {
-            connect4 = NetworkGame.getInstance(options);
-            (connect4 as NetworkGame).start();
+            const connect4 = NetworkGame.getInstance(options);
+            connect4.start();
         } else {
-            connect4 = SameDeviceGame.getInstance(options);
-            (connect4 as SameDeviceGame).start();
+            const connect4 = SameDeviceGame.getInstance(options);
+            connect4.start();
         }
     } catch (ex) {
         showError('Problem encountered!');

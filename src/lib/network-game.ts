@@ -32,7 +32,7 @@ export default class NetworkGame extends Game {
         }
     }
 
-    public static getInstance(options: GameOptions): Game {
+    public static getInstance(options: GameOptions): NetworkGame {
         if (!NetworkGame.instance) {
             NetworkGame.instance = new NetworkGame(options);
         }

@@ -127,7 +127,7 @@ export default class PlayerNameSection {
         if (turn === Dot.Red) {
             this.playerRedSpan.classList.add('currentTurn');
             this.playerGreenSpan.classList.remove('currentTurn');
-        } else if (turn === Dot.Green) {
+        } else {
             this.playerGreenSpan.classList.add('currentTurn');
             this.playerRedSpan.classList.remove('currentTurn');
         }

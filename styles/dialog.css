@@ -1,10 +1,11 @@
 .dialog {
     position: fixed;
     top: 40%;
-    left: 30%;
+    left: 10%;
     background-color: rgb(255, 190, 0);
     opacity: 0.85;
-    width: 40%;
+    width: 80%;
+    max-width: 600px;
     min-height: 20%;
     border-radius: 20px;
 }
@@ -50,4 +51,10 @@
     margin-top: 50px;
     margin-left: auto;
     margin-right: auto;
+}
+
+@media screen and (min-width: 750px) {
+    .dialog {
+        left: calc(50% - 300px);
+    }
 }

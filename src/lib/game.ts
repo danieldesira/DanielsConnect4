@@ -126,18 +126,17 @@ export default abstract class Game {
     protected closeGameAfterWinning() {
         this.cleanUpEvents();
 
-        if (this.playerNameSection) {
-            this.playerNameSection.clear();
-        }
-
         if (this.exitBtn) {
             this.exitBtn.classList.add('hide');
         }
-
-        this.resetValues();
         
         setTimeout(() => {
+            this.resetValues();
             this.hideGame();
+
+            if (this.playerNameSection) {
+                this.playerNameSection.clear();
+            }
         }, 3000);
     }
 
@@ -173,7 +172,7 @@ export default abstract class Game {
     }
 
     private resizeCanvas = () => {
-        this.canvas.height = window.innerHeight - 150;
+        this.canvas.height = window.innerHeight - 100;
         this.canvas.width = window.innerWidth;
 
         if (this.canvas.width < 1000) {
