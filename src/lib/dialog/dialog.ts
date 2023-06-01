@@ -23,11 +23,11 @@ export default class Dialog {
                 this.appendBtn(btnContainer, 'Yes', () => {
                     o.yesCallback();
                     this.closeModal(modal);
-                }, 'green');
+                }, o.yesColor);
                 this.appendBtn(btnContainer, 'No', () => {
                     o.noCallback();
                     this.closeModal(modal);
-                }, 'red');
+                }, o.noColor);
                 break;
             }
             case DialogType.Notification: {

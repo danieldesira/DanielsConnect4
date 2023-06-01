@@ -1,4 +1,3 @@
-import { Dot } from "@danieldesira/daniels-connect4-common/lib/enums/dot";
 import Dialog from "./dialog/dialog";
 import Game from "./game";
 import GameOptions from "./game-options";
@@ -7,6 +6,7 @@ import { Sound } from "./enums/sound";
 import Utils from "./utils";
 import randomiseColor from "@danieldesira/daniels-connect4-common/lib/randomise";
 import Timer from "./timer";
+import { Coin } from "@danieldesira/daniels-connect4-common/lib/enums/coin";
 
 export default class SameDeviceGame extends Game {
 
@@ -57,7 +57,9 @@ export default class SameDeviceGame extends Game {
         if (board && nextTurn) {
             Dialog.confirm(['Do you want to continue playing the previous game?'], {
                 yesCallback: this.continuePreviousGame,
-                noCallback: this.cancelPreviousGame
+                noCallback: this.cancelPreviousGame,
+                yesColor: 'green',
+                noColor: 'red'
             });
         } else {
             this.turn = randomiseColor();
@@ -107,14 +109,14 @@ export default class SameDeviceGame extends Game {
     protected canvasMousemove = (event: MouseEvent) => {
         if (this.areBothPlayersConnected()) {
             let column = this.getColumnFromCursorPosition(event);
-            this.moveDot(column);
+            this.moveCoin(column);
         }
     };
 
     protected canvasClick = (event: MouseEvent) => {
         if (this.areBothPlayersConnected()) {
             let column = this.getColumnFromCursorPosition(event);
-            this.landDot(column);
+            this.landCoin(column);
         }
     };
 
@@ -150,19 +152,19 @@ export default class SameDeviceGame extends Game {
         super.closeGameAfterWinning();
     }
 
-    protected landDot(column: number): number {
-        if (this.board[column][0] === Dot.Empty) {
-            let row = super.landDot(column);
+    protected landCoin(column: number): number {
+        if (this.board[column][0] === Coin.Empty) {
+            let row = super.landCoin(column);
             
-            let dotCount = BoardLogic.countConsecutiveDots(this.board, column, row, this.turn);
+            let coinCount = BoardLogic.countConsecutiveCoins(this.board, column, row, this.turn);
 
-            if (dotCount >= 4) {
+            if (coinCount >= 4) {
                 let winner: string = '';
 
                 if (this.playerNameSection) {
-                    if (this.turn === Dot.Red) {
+                    if (this.turn === Coin.Red) {
                         winner = `${this.playerNameSection.getPlayerRed()} (Red)`;
-                    } else if (this.turn === Dot.Green) {
+                    } else if (this.turn === Coin.Green) {
                         winner = `${this.playerNameSection.getPlayerGreen()} (Green)`;
                     }
                 }
@@ -180,8 +182,8 @@ export default class SameDeviceGame extends Game {
             } else { // If game is still going on
                 this.switchTurn();
                 this.context.fillStyle = Game.getColor(this.turn);
-                this.paintDotToDrop(column);
-                Utils.playSound(Sound.LandDot);
+                this.paintCoinToDrop(column);
+                Utils.playSound(Sound.LandCoin);
             }
 
             return row;
@@ -200,7 +202,7 @@ export default class SameDeviceGame extends Game {
         document.removeEventListener('changevisibility', this.pageVisibilityChange);
     }
 
-    protected showWinDialog(winner: string, currentTurn: Dot) {
+    protected showWinDialog(winner: string, currentTurn: Coin) {
         let winMsg: Array<string> = new Array();
         winMsg.push(`${winner} wins!`);
         if (this.timer) {

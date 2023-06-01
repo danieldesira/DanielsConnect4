@@ -1,4 +1,4 @@
-import { Dot } from "@danieldesira/daniels-connect4-common/lib/enums/dot";
+import { Coin } from "@danieldesira/daniels-connect4-common/lib/enums/coin";
 import Dialog from "./dialog/dialog";
 import { Sound } from "./enums/sound";
 import Game from "./game";
@@ -56,15 +56,15 @@ export default class NetworkGame extends Game {
         if (GameMessage.isInitialMessage(messageData)) {
             let data = messageData as InitialMessage;
             if (data.opponentName && this.socket && this.playerNameSection) {
-                if (this.socket.getPlayerColor() === Dot.Red) {
+                if (this.socket.getPlayerColor() === Coin.Red) {
                     this.playerNameSection.setPlayerGreen(data.opponentName);
-                } else if (this.socket.getPlayerColor() === Dot.Green) {
+                } else if (this.socket.getPlayerColor() === Coin.Green) {
                     this.playerNameSection.setPlayerRed(data.opponentName);
                 }
             }
     
             if (data.color && this.socket && this.playerNameSection) {
-                if (data.color === Dot.Red) {
+                if (data.color === Coin.Red) {
                     this.playerNameSection.setPlayerRed(this.socket.getPlayerName());
                 } else {
                     this.playerNameSection.setPlayerGreen(this.socket.getPlayerName());
@@ -84,11 +84,11 @@ export default class NetworkGame extends Game {
         if (GameMessage.isActionMessage(messageData)) {
             let data = messageData as ActionMessage;
             if (data.action === 'mousemove') {
-                this.moveDot(data.column);
+                this.moveCoin(data.column);
             }
     
             if (data.action === 'click') {
-                this.landDot(data.column);
+                this.landCoin(data.column);
             }
         }
         
@@ -103,7 +103,7 @@ export default class NetworkGame extends Game {
             let data = messageData as WinnerMessage;
             let winner: string = null;
             if (this.playerNameSection) {
-                if (data.winner === Dot.Red) {
+                if (data.winner === Coin.Red) {
                     winner = `${this.playerNameSection.getPlayerRed()} (Red)`;
                 } else {
                     winner = `${this.playerNameSection.getPlayerGreen()} (Green)`;
@@ -136,7 +136,7 @@ export default class NetworkGame extends Game {
     protected canvasMousemove = (event: MouseEvent) => {
         if (this.socket && this.turn === this.socket.getPlayerColor() && this.areBothPlayersConnected()) {
             let column = this.getColumnFromCursorPosition(event);
-            this.moveDot(column);
+            this.moveCoin(column);
 
             let data = new ActionMessage(column, 'mousemove');
             this.socket.send(data);
@@ -154,19 +154,19 @@ export default class NetworkGame extends Game {
 
             this.skipTurn = false;
 
-            this.landDot(column);
+            this.landCoin(column);
         }
     };
 
-    protected landDot(column: number): number {
-        if (this.board[column][0] === Dot.Empty) {
-            let row = super.landDot(column);
+    protected landCoin(column: number): number {
+        if (this.board[column][0] === Coin.Empty) {
+            let row = super.landCoin(column);
             
             // Assume the game is still going on
             this.switchTurn();
             this.context.fillStyle = Game.getColor(this.turn);
-            this.paintDotToDrop(column);
-            Utils.playSound(Sound.LandDot);
+            this.paintCoinToDrop(column);
+            Utils.playSound(Sound.LandCoin);
 
             return row;
         } else {
@@ -177,7 +177,9 @@ export default class NetworkGame extends Game {
     public exit = () => {
         Dialog.confirm(['Network game in progress. Are you sure you want to quit?'], {
             yesCallback: this.confirmExit,
-            noCallback: () => {}
+            noCallback: () => {},
+            yesColor: 'red',
+            noColor: 'green'
         });
     };
 
@@ -196,7 +198,7 @@ export default class NetworkGame extends Game {
         event.returnValue = false; // Required by Chrome
     };
 
-    protected showWinDialog(winner: string, currentTurn: Dot) {
+    protected showWinDialog(winner: string, currentTurn: Coin) {
         let winMsg: Array<string> = new Array();
         winMsg.push(`${winner} wins!`);
         if (this.socket && this.socket.getPlayerColor() === currentTurn) {
@@ -221,7 +223,7 @@ export default class NetworkGame extends Game {
             this.adaptCountDownColor();
         }
 
-        let playerColor: Dot = this.socket.getPlayerColor();
+        let playerColor: Coin = this.socket.getPlayerColor();
         if (this.turn === playerColor && this.turnCountDown <= 0 && this.socket) {
             if (this.endGameDueToInactivity) {
                 let data = new InactivityMessage(true, playerColor);
@@ -269,7 +271,7 @@ export default class NetworkGame extends Game {
 
     private onInputPlayerNameInDialog = (playerName: string) => {
         if (this.socket) {
-            if (this.socket.getPlayerColor() === Dot.Red) {
+            if (this.socket.getPlayerColor() === Coin.Red) {
                 this.playerNameSection.setPlayerRed(playerName);
             } else {
                 this.playerNameSection.setPlayerGreen(playerName);

@@ -2,20 +2,20 @@ import Position from './position';
 import PlayerNameSection from './player-name-section';
 import GameOptions from './game-options';
 import BoardLogic from '@danieldesira/daniels-connect4-common/lib/board-logic';
-import { Dot } from '@danieldesira/daniels-connect4-common/lib/enums/dot';
+import { Coin } from '@danieldesira/daniels-connect4-common/lib/enums/coin';
 
 export default abstract class Game {
 
     private canvas: HTMLCanvasElement;
     protected context: CanvasRenderingContext2D;
-    protected board: Array<Array<Dot>> = new Array(BoardLogic.columns);
+    protected board: Array<Array<Coin>> = new Array(BoardLogic.columns);
 
     private exitBtn: HTMLButtonElement;
     protected playerNameSection: PlayerNameSection;
     private gameIndicatorsContainer: HTMLDivElement;
     private gameMenu: HTMLDivElement;
 
-    protected turn: Dot = Dot.Red;
+    protected turn: Coin = Coin.Red;
 
     private circleRadius: number;
     private rowGap: number;
@@ -91,10 +91,10 @@ export default abstract class Game {
     }
 
     protected switchTurn() {
-        if (this.turn === Dot.Red) {
-            this.turn = Dot.Green;
+        if (this.turn === Coin.Red) {
+            this.turn = Coin.Green;
         } else {
-            this.turn = Dot.Red;
+            this.turn = Coin.Red;
         }
 
         if (this.playerNameSection) {
@@ -102,15 +102,15 @@ export default abstract class Game {
         }
     }
 
-    protected moveDot(column: number) {
+    protected moveCoin(column: number) {
         this.clearUpper();
         this.context.fillStyle = Game.getColor(this.turn);
-        this.paintDotToDrop(column);
+        this.paintCoinToDrop(column);
     }
 
-    protected landDot(column: number): number {
-        if (this.board[column][0] === Dot.Empty) {
-            let row = BoardLogic.putDot(this.board, this.turn, column);
+    protected landCoin(column: number): number {
+        if (this.board[column][0] === Coin.Empty) {
+            let row = BoardLogic.putCoin(this.board, this.turn, column);
             
             this.context.fillStyle = Game.getColor(this.turn);
             this.drawCircle(column, row);
@@ -121,7 +121,7 @@ export default abstract class Game {
         }
     }
 
-    protected abstract showWinDialog(winner: string, currentTurn: Dot);
+    protected abstract showWinDialog(winner: string, currentTurn: Coin);
 
     protected closeGameAfterWinning() {
         this.cleanUpEvents();
@@ -140,7 +140,7 @@ export default abstract class Game {
         }, 3000);
     }
 
-    protected paintDotToDrop(column: number) {
+    protected paintCoinToDrop(column: number) {
         this.context.beginPath();
         this.context.arc(this.colOffset + column * this.colGap, this.circleRadius, this.circleRadius, 0, 2 * Math.PI);
         this.context.closePath();
@@ -195,7 +195,7 @@ export default abstract class Game {
     };
 
     protected resetValues() {
-        this.turn = Dot.Red;
+        this.turn = Coin.Red;
         BoardLogic.initBoard(this.board);
         
         if (this.playerNameSection) {
@@ -228,16 +228,16 @@ export default abstract class Game {
         this.gameMenu.classList.remove('hide');
     }
 
-    protected static getColor(color: Dot): string {
+    protected static getColor(color: Coin): string {
         let value: string = '';
         switch (color) {
-            case Dot.Empty:
+            case Coin.Empty:
                 value = 'lightyellow';
                 break;
-            case Dot.Red:
+            case Coin.Red:
                 value = 'red';
                 break;
-            case Dot.Green:
+            case Coin.Green:
                 value = 'greenyellow';
                 break;
         }

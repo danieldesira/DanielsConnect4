@@ -1,13 +1,13 @@
-import { Dot } from "@danieldesira/daniels-connect4-common/lib/enums/dot";
 import Dialog from "./dialog/dialog";
 import Utils from "./utils";
 import GameMessage from "@danieldesira/daniels-connect4-common/lib/models/game-message";
 import InitialMessage from "@danieldesira/daniels-connect4-common/lib/models/initial-message";
 import PlayerNameMessage from "@danieldesira/daniels-connect4-common/lib/models/player-name-message";
+import { Coin } from "@danieldesira/daniels-connect4-common/lib/enums/coin";
 
 export default class Socket {
     private webSocket: WebSocket;
-    private playerColor: Dot;
+    private playerColor: Coin;
     private playerName: string;
     private gameId: number;
     public onMessageCallback: Function;
@@ -48,7 +48,7 @@ export default class Socket {
         this.webSocket.close();
     }
 
-    public getPlayerColor(): Dot {
+    public getPlayerColor(): Coin {
         return this.playerColor;
     }
 
@@ -70,7 +70,7 @@ export default class Socket {
                 this.playerColor = data.color;
     
                 let color: string;
-                if (this.playerColor === Dot.Red) {
+                if (this.playerColor === Coin.Red) {
                     color = 'red';
                 } else {
                     color = 'green';

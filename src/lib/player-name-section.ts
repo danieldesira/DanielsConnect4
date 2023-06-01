@@ -1,4 +1,4 @@
-import { Dot } from "@danieldesira/daniels-connect4-common/lib/enums/dot";
+import { Coin } from "@danieldesira/daniels-connect4-common/lib/enums/coin";
 import Dialog from "./dialog/dialog";
 
 export default class PlayerNameSection {
@@ -123,8 +123,8 @@ export default class PlayerNameSection {
         }
     }
 
-    public indicateTurn(turn: Dot) {
-        if (turn === Dot.Red) {
+    public indicateTurn(turn: Coin) {
+        if (turn === Coin.Red) {
             this.playerRedSpan.classList.add('currentTurn');
             this.playerGreenSpan.classList.remove('currentTurn');
         } else {
