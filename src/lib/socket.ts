@@ -92,7 +92,7 @@ export default class Socket {
         }
     };
 
-    private _onPlayerNameInput = (color: string): string => {
+    private onPlayerNameInput = (color: string): string => {
         let playerNameField = document.getElementById(color) as HTMLInputElement;
 
         if (playerNameField) {
@@ -109,12 +109,6 @@ export default class Socket {
             return 'Field not implemented! Please fix this stupid bug!';
         }
     };
-    public get onPlayerNameInput() {
-        return this._onPlayerNameInput;
-    }
-    public set onPlayerNameInput(value) {
-        this._onPlayerNameInput = value;
-    }
 
     private onError = () => {
         this.onErrorCallback();

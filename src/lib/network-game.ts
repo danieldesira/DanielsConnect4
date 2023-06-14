@@ -11,6 +11,7 @@ import InactivityMessage from "@danieldesira/daniels-connect4-common/lib/models/
 import ActionMessage from "@danieldesira/daniels-connect4-common/lib/models/action-message";
 import SkipTurnMessage from "@danieldesira/daniels-connect4-common/lib/models/skip-turn-message";
 import WinnerMessage from "@danieldesira/daniels-connect4-common/lib/models/winner-message";
+import CurrentTurnMessage from "@danieldesira/daniels-connect4-common/lib/models/current-turn-message";
 
 export default class NetworkGame extends Game {
 
@@ -117,6 +118,14 @@ export default class NetworkGame extends Game {
         if (GameMessage.isTieMessage(messageData)) {
             Dialog.notify(['Game resulted in tie!']);
             this.closeGameAfterWinning();
+        }
+
+        if (GameMessage.isCurrentTurnMessage(messageData)) {
+            const data = messageData as CurrentTurnMessage;
+            this.turn = data.currentTurn;
+            if (this.playerNameSection) {
+                this.playerNameSection.indicateTurn(this.turn);
+            }
         }
     };
 
