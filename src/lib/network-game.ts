@@ -127,6 +127,11 @@ export default class NetworkGame extends Game {
                 this.playerNameSection.indicateTurn(this.turn);
             }
         }
+
+        if (GameMessage.isDisconnectMessage(messageData)) {
+            Dialog.notify(['Your opponent disconnected. You win!']);
+            this.closeGameAfterWinning();
+        }
     };
 
     private onSocketError = () => {
