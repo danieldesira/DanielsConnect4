@@ -19,7 +19,6 @@ export default class NetworkGame extends Game {
 
     private socket: Socket;
     private skipTurn: boolean;
-    private endGameDueToInactivity: boolean;
     private turnCountDown: number;
     private turnCountDownInterval: number;
     private countdownSpan: HTMLSpanElement;
@@ -154,8 +153,6 @@ export default class NetworkGame extends Game {
 
             let data = new ActionMessage(column, 'mousemove');
             this.socket.send(data);
-
-            this.endGameDueToInactivity = false;
         }
     };
 
@@ -239,17 +236,10 @@ export default class NetworkGame extends Game {
 
         let playerColor: Coin = this.socket.getPlayerColor();
         if (this.turn === playerColor && this.turnCountDown <= 0 && this.socket) {
-            if (this.endGameDueToInactivity) {
-                let data = new InactivityMessage(true, playerColor);
-                this.socket.send(data);
-
-                Dialog.notify(['You lose due to inactivity!']);
-                Utils.playSound(Sound.Lose);
-                this.closeGameAfterWinning();
-            } else if (this.skipTurn) {
+            if (this.skipTurn) {
                 this.switchTurn();
 
-                let data = new SkipTurnMessage(true, playerColor);
+                const data = new SkipTurnMessage(true, playerColor);
                 this.socket.send(data);
             }
         }
@@ -267,7 +257,6 @@ export default class NetworkGame extends Game {
 
     private startCountdown() {
         this.skipTurn = true;
-        this.endGameDueToInactivity = true;
         this.turnCountDown = NetworkGame.countDownMaxSeconds;
         this.turnCountDownInterval = window.setInterval(this.turnCountDownCallback, 1000);
     }
@@ -280,7 +269,6 @@ export default class NetworkGame extends Game {
     private resetCountdown() {
         this.turnCountDown = NetworkGame.countDownMaxSeconds;
         this.skipTurn = true;
-        this.endGameDueToInactivity = true;
     }
 
     private onInputPlayerNameInDialog = (playerName: string) => {
