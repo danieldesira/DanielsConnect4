@@ -7,18 +7,18 @@ import Socket from "./socket";
 import Utils from "./utils";
 import GameMessage from "@danieldesira/daniels-connect4-common/lib/models/game-message";
 import InitialMessage from "@danieldesira/daniels-connect4-common/lib/models/initial-message";
-import InactivityMessage from "@danieldesira/daniels-connect4-common/lib/models/inactivity-message";
 import ActionMessage from "@danieldesira/daniels-connect4-common/lib/models/action-message";
 import SkipTurnMessage from "@danieldesira/daniels-connect4-common/lib/models/skip-turn-message";
 import WinnerMessage from "@danieldesira/daniels-connect4-common/lib/models/winner-message";
 import CurrentTurnMessage from "@danieldesira/daniels-connect4-common/lib/models/current-turn-message";
+import { switchTurn } from "@danieldesira/daniels-connect4-common/lib/player-turn";
+import ErrorMessage from "@danieldesira/daniels-connect4-common/lib/models/error-message";
 
 export default class NetworkGame extends Game {
 
     private static instance: NetworkGame;
 
     private socket: Socket;
-    private skipTurn: boolean;
     private turnCountDown: number;
     private turnCountDownInterval: number;
     private countdownSpan: HTMLSpanElement;
@@ -54,7 +54,7 @@ export default class NetworkGame extends Game {
 
     private onSocketMessage = (messageData: GameMessage) => {
         if (GameMessage.isInitialMessage(messageData)) {
-            let data = messageData as InitialMessage;
+            const data = messageData as InitialMessage;
             if (data.opponentName && this.socket && this.playerNameSection) {
                 if (this.socket.getPlayerColor() === Coin.Red) {
                     this.playerNameSection.setPlayerGreen(data.opponentName);
@@ -72,35 +72,28 @@ export default class NetworkGame extends Game {
             }
         }
         
-        if (GameMessage.isInactivityMessage(messageData)) {
-            let data = messageData as InactivityMessage;
-            if (data.currentTurn !== this.socket.getPlayerColor()) {
-                Dialog.notify(['You win due to opponent inactivity!']);
-                Utils.playSound(Sound.Win);
-                this.closeGameAfterWinning();
-            }
-        }
-        
         if (GameMessage.isActionMessage(messageData)) {
-            let data = messageData as ActionMessage;
+            const data = messageData as ActionMessage;
             if (data.action === 'mousemove') {
                 this.moveCoin(data.column);
             }
     
             if (data.action === 'click') {
+                this.turn = data.color;
                 this.landCoin(data.column);
             }
         }
         
         if (GameMessage.isSkipTurnMessage(messageData)) {
-            let data = messageData as SkipTurnMessage;
-            if (data.skipTurn && data.currentTurn !== this.socket.getPlayerColor()) {
-                this.switchTurn();
+            const data = messageData as SkipTurnMessage;
+            if (data.skipTurn && data.currentTurn) {
+                this.turn = data.currentTurn;
+                this.turnCountDown = NetworkGame.countDownMaxSeconds;
             }
         }
 
         if (GameMessage.isWinnerMessage(messageData)) {
-            let data = messageData as WinnerMessage;
+            const data = messageData as WinnerMessage;
             let winner: string = null;
             if (this.playerNameSection) {
                 if (data.winner === Coin.Red) {
@@ -131,6 +124,12 @@ export default class NetworkGame extends Game {
             Dialog.notify(['Your opponent disconnected. You win!']);
             this.closeGameAfterWinning();
         }
+
+        if (GameMessage.isErrorMessage(messageData)) {
+            const data = messageData as ErrorMessage;
+            Dialog.notify([data.error]);
+            this.closeGameAfterWinning();
+        }
     };
 
     private onSocketError = () => {
@@ -151,7 +150,7 @@ export default class NetworkGame extends Game {
             let column = this.getColumnFromCursorPosition(event);
             this.moveCoin(column);
 
-            let data = new ActionMessage(column, 'mousemove');
+            let data = new ActionMessage(column, 'mousemove', this.turn);
             this.socket.send(data);
         }
     };
@@ -160,11 +159,9 @@ export default class NetworkGame extends Game {
         if (this.socket && this.turn === this.socket.getPlayerColor() && this.areBothPlayersConnected()) {
             let column = this.getColumnFromCursorPosition(event);
 
-            let data = new ActionMessage(column, 'click');
+            let data = new ActionMessage(column, 'click', this.turn);
             this.socket.send(data);
-
-            this.skipTurn = false;
-
+            
             this.landCoin(column);
         }
     };
@@ -233,16 +230,6 @@ export default class NetworkGame extends Game {
             this.countdownSpan.innerText = this.turnCountDown.toString();
             this.adaptCountDownColor();
         }
-
-        let playerColor: Coin = this.socket.getPlayerColor();
-        if (this.turn === playerColor && this.turnCountDown <= 0 && this.socket) {
-            if (this.skipTurn) {
-                this.switchTurn();
-
-                const data = new SkipTurnMessage(true, playerColor);
-                this.socket.send(data);
-            }
-        }
     };
 
     private adaptCountDownColor() {
@@ -256,7 +243,6 @@ export default class NetworkGame extends Game {
     }
 
     private startCountdown() {
-        this.skipTurn = true;
         this.turnCountDown = NetworkGame.countDownMaxSeconds;
         this.turnCountDownInterval = window.setInterval(this.turnCountDownCallback, 1000);
     }
@@ -268,7 +254,6 @@ export default class NetworkGame extends Game {
 
     private resetCountdown() {
         this.turnCountDown = NetworkGame.countDownMaxSeconds;
-        this.skipTurn = true;
     }
 
     private onInputPlayerNameInDialog = (playerName: string) => {

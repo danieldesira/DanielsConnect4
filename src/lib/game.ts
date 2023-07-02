@@ -3,6 +3,7 @@ import PlayerNameSection from './player-name-section';
 import GameOptions from './game-options';
 import BoardLogic from '@danieldesira/daniels-connect4-common/lib/board-logic';
 import { Coin } from '@danieldesira/daniels-connect4-common/lib/enums/coin';
+import { switchTurn } from '@danieldesira/daniels-connect4-common/lib/player-turn';
 
 export default abstract class Game {
 
@@ -91,11 +92,7 @@ export default abstract class Game {
     }
 
     protected switchTurn() {
-        if (this.turn === Coin.Red) {
-            this.turn = Coin.Green;
-        } else {
-            this.turn = Coin.Red;
-        }
+        this.turn = switchTurn(this.turn);
 
         if (this.playerNameSection) {
             this.playerNameSection.indicateTurn(this.turn);
