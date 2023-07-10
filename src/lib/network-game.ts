@@ -11,7 +11,6 @@ import ActionMessage from "@danieldesira/daniels-connect4-common/lib/models/acti
 import SkipTurnMessage from "@danieldesira/daniels-connect4-common/lib/models/skip-turn-message";
 import WinnerMessage from "@danieldesira/daniels-connect4-common/lib/models/winner-message";
 import CurrentTurnMessage from "@danieldesira/daniels-connect4-common/lib/models/current-turn-message";
-import { switchTurn } from "@danieldesira/daniels-connect4-common/lib/player-turn";
 import ErrorMessage from "@danieldesira/daniels-connect4-common/lib/models/error-message";
 
 export default class NetworkGame extends Game {
