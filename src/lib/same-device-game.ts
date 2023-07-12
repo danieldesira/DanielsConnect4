@@ -1,12 +1,10 @@
 import Dialog from "./dialog/dialog";
 import Game from "./game";
 import GameOptions from "./game-options";
-import BoardLogic from "@danieldesira/daniels-connect4-common/lib/board-logic";
 import { Sound } from "./enums/sound";
 import Utils from "./utils";
 import Timer from "./timer";
-import { Coin } from "@danieldesira/daniels-connect4-common/lib/enums/coin";
-import { randomiseColor } from "@danieldesira/daniels-connect4-common/lib/player-turn";
+import BoardLogic, { Coin, randomiseColor } from "@danieldesira/daniels-connect4-common";
 
 export default class SameDeviceGame extends Game {
 

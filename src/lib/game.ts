@@ -1,9 +1,7 @@
 import Position from './position';
 import PlayerNameSection from './player-name-section';
 import GameOptions from './game-options';
-import BoardLogic from '@danieldesira/daniels-connect4-common/lib/board-logic';
-import { Coin } from '@danieldesira/daniels-connect4-common/lib/enums/coin';
-import { switchTurn } from '@danieldesira/daniels-connect4-common/lib/player-turn';
+import BoardLogic, { Coin, switchTurn } from '@danieldesira/daniels-connect4-common';
 
 export default abstract class Game {
 

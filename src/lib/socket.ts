@@ -1,9 +1,6 @@
 import Dialog from "./dialog/dialog";
 import Utils from "./utils";
-import GameMessage from "@danieldesira/daniels-connect4-common/lib/models/game-message";
-import InitialMessage from "@danieldesira/daniels-connect4-common/lib/models/initial-message";
-import PlayerNameMessage from "@danieldesira/daniels-connect4-common/lib/models/player-name-message";
-import { Coin } from "@danieldesira/daniels-connect4-common/lib/enums/coin";
+import { Coin, GameMessage, InitialMessage, PlayerNameMessage } from "@danieldesira/daniels-connect4-common";
 
 export default class Socket {
     private webSocket: WebSocket;

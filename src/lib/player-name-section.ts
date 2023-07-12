@@ -1,4 +1,4 @@
-import { Coin } from "@danieldesira/daniels-connect4-common/lib/enums/coin";
+import { Coin } from "@danieldesira/daniels-connect4-common";
 import Dialog from "./dialog/dialog";
 
 export default class PlayerNameSection {

@@ -5,13 +5,7 @@ import Game from "./game";
 import GameOptions from "./game-options";
 import Socket from "./socket";
 import Utils from "./utils";
-import GameMessage from "@danieldesira/daniels-connect4-common/lib/models/game-message";
-import InitialMessage from "@danieldesira/daniels-connect4-common/lib/models/initial-message";
-import ActionMessage from "@danieldesira/daniels-connect4-common/lib/models/action-message";
-import SkipTurnMessage from "@danieldesira/daniels-connect4-common/lib/models/skip-turn-message";
-import WinnerMessage from "@danieldesira/daniels-connect4-common/lib/models/winner-message";
-import CurrentTurnMessage from "@danieldesira/daniels-connect4-common/lib/models/current-turn-message";
-import ErrorMessage from "@danieldesira/daniels-connect4-common/lib/models/error-message";
+import { ActionMessage, CurrentTurnMessage, ErrorMessage, GameMessage, InitialMessage, SkipTurnMessage, WinnerMessage, skipTurnMaxWait } from "@danieldesira/daniels-connect4-common";
 
 export default class NetworkGame extends Game {
 
@@ -21,7 +15,6 @@ export default class NetworkGame extends Game {
     private turnCountDown: number;
     private turnCountDownInterval: number;
     private countdownSpan: HTMLSpanElement;
-    private static countDownMaxSeconds: number = 60;
 
     private constructor(options: GameOptions) {
         super(options);
@@ -87,7 +80,7 @@ export default class NetworkGame extends Game {
             const data = messageData as SkipTurnMessage;
             if (data.skipTurn && data.currentTurn) {
                 this.turn = data.currentTurn;
-                this.turnCountDown = NetworkGame.countDownMaxSeconds;
+                this.turnCountDown = skipTurnMaxWait;
             }
         }
 
@@ -232,7 +225,7 @@ export default class NetworkGame extends Game {
     };
 
     private adaptCountDownColor() {
-        if (this.turnCountDown > NetworkGame.countDownMaxSeconds / 2) {
+        if (this.turnCountDown > skipTurnMaxWait / 2) {
             this.countdownSpan.classList.add('green-text');
             this.countdownSpan.classList.remove('red-text');
         } else {
@@ -242,7 +235,7 @@ export default class NetworkGame extends Game {
     }
 
     private startCountdown() {
-        this.turnCountDown = NetworkGame.countDownMaxSeconds;
+        this.turnCountDown = skipTurnMaxWait;
         this.turnCountDownInterval = window.setInterval(this.turnCountDownCallback, 1000);
     }
 
@@ -252,7 +245,7 @@ export default class NetworkGame extends Game {
     }
 
     private resetCountdown() {
-        this.turnCountDown = NetworkGame.countDownMaxSeconds;
+        this.turnCountDown = skipTurnMaxWait;
     }
 
     private onInputPlayerNameInDialog = (playerName: string) => {
