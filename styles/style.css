@@ -19,6 +19,7 @@
     background-color: darkblue;
     color: whitesmoke;
     border-radius: 45px;
+    cursor: pointer;
 }
 
 .center-text {
