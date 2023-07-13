@@ -1,3 +1,4 @@
+import Dialog from "./lib/dialog/dialog";
 import { GameMode } from "./lib/enums/game-mode";
 import GameOptions from "./lib/game-options";
 import NetworkGame from "./lib/network-game";
@@ -5,6 +6,7 @@ import SameDeviceGame from "./lib/same-device-game";
 
 const samePCBtn = document.getElementById('samePC') as HTMLButtonElement;
 const networkBtn = document.getElementById('network') as HTMLButtonElement;
+const instructionsBtn = document.getElementById('instructions') as HTMLButtonElement;
 
 samePCBtn.addEventListener('click', () => {
     initGame(GameMode.SamePC);
@@ -41,7 +43,7 @@ function initGame(mode: GameMode) {
 }
 
 function showError(message: string) {
-    let errorMessageDiv = document.getElementById('errorMessage') as HTMLDivElement;
+    const errorMessageDiv = document.getElementById('errorMessage') as HTMLDivElement;
     if (errorMessageDiv) {
         errorMessageDiv.classList.remove('hide');
         errorMessageDiv.innerText = message;
@@ -49,8 +51,20 @@ function showError(message: string) {
 }
 
 function clearError() {
-    let errorMessageDiv = document.getElementById('errorMessage') as HTMLDivElement;
+    const errorMessageDiv = document.getElementById('errorMessage') as HTMLDivElement;
     if (errorMessageDiv) {
         errorMessageDiv.classList.add('hide');
     }
 }
+
+instructionsBtn.addEventListener('click', () => {
+    const text = [
+        'The principle behind Connect4 is simple:',
+        `The player who first places 4 coins next to each other, wins. These may be 
+            horizontal, vertical or diagonal.`,
+        `Furthermore, in network play, you must place your coin within 60 seconds.
+            If you fail to do so, you pass the turn to your opponent.`,
+        'Good luck and have fun playing!'
+    ];
+    Dialog.notify(text);
+}, false);
