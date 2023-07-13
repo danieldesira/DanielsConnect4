@@ -10,9 +10,13 @@ export default class Dialog {
         const modal = document.createElement('div') as HTMLDivElement;
         modal.classList.add('dialog');
 
+        const outerContainer = document.createElement('div') as HTMLDivElement;
+        outerContainer.classList.add('dialog-outer-container');
+        modal.appendChild(outerContainer);
+
         const textContainer = document.createElement('div') as HTMLDivElement;
         this.appendText(text, textContainer);
-        modal.appendChild(textContainer);
+        outerContainer.appendChild(textContainer);
 
         const btnContainer = document.createElement('div') as HTMLDivElement;
         btnContainer.classList.add('dialog-btn-container');
@@ -38,7 +42,7 @@ export default class Dialog {
             }
             case DialogType.Prompt: {
                 const o = options as PromptDialogOptions;
-                this.appendInputs(modal, o.inputs);
+                this.appendInputs(outerContainer, o.inputs);
                 this.appendBtn(btnContainer, 'OK', () => {
                     let error: string = o.onOK();
                     if (error) {
