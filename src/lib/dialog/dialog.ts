@@ -7,19 +7,19 @@ import PromptInput from "./prompt-input";
 export default class Dialog {
     
     private static modal(text: Array<string>, type: DialogType, options: DialogOptions = null) {
-        let modal = document.createElement('div') as HTMLDivElement;
+        const modal = document.createElement('div') as HTMLDivElement;
         modal.classList.add('dialog');
 
-        let textContainer = document.createElement('div') as HTMLDivElement;
+        const textContainer = document.createElement('div') as HTMLDivElement;
         this.appendText(text, textContainer);
         modal.appendChild(textContainer);
 
-        let btnContainer = document.createElement('div') as HTMLDivElement;
+        const btnContainer = document.createElement('div') as HTMLDivElement;
         btnContainer.classList.add('dialog-btn-container');
         
         switch (type) {
             case DialogType.Confirmation: {
-                let o = options as ConfirmationDialogOptions;
+                const o = options as ConfirmationDialogOptions;
                 this.appendBtn(btnContainer, 'Yes', () => {
                     o.yesCallback();
                     this.closeModal(modal);
@@ -37,7 +37,7 @@ export default class Dialog {
                 break;
             }
             case DialogType.Prompt: {
-                let o = options as PromptDialogOptions;
+                const o = options as PromptDialogOptions;
                 this.appendInputs(modal, o.inputs);
                 this.appendBtn(btnContainer, 'OK', () => {
                     let error: string = o.onOK();
@@ -92,7 +92,7 @@ export default class Dialog {
     }
 
     private static appendBrElement(container: HTMLDivElement) {
-        let br = document.createElement('br') as HTMLBRElement;
+        const br = document.createElement('br') as HTMLBRElement;
         container.appendChild(br);
     }
 
@@ -113,7 +113,7 @@ export default class Dialog {
         container.classList.add('text');
         container.classList.add('dialog-text');
         for (let i: number = 0; i < text.length; i++) {
-            let p = document.createElement('p') as HTMLParagraphElement;
+            const p = document.createElement('p') as HTMLParagraphElement;
             p.innerText = text[i];
             container.appendChild(p);
         }
