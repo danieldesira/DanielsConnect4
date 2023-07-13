@@ -2,11 +2,9 @@ import { GameMode } from "./lib/enums/game-mode";
 import GameOptions from "./lib/game-options";
 import NetworkGame from "./lib/network-game";
 import SameDeviceGame from "./lib/same-device-game";
-import '../styles/style.css';
 
-let samePCBtn = document.getElementById('samePC') as HTMLButtonElement;
-let networkBtn = document.getElementById('network') as HTMLButtonElement;
-let creditsBtn = document.getElementById('credits') as HTMLButtonElement;
+const samePCBtn = document.getElementById('samePC') as HTMLButtonElement;
+const networkBtn = document.getElementById('network') as HTMLButtonElement;
 
 samePCBtn.addEventListener('click', () => {
     initGame(GameMode.SamePC);
@@ -14,10 +12,6 @@ samePCBtn.addEventListener('click', () => {
 
 networkBtn.addEventListener('click', () => {
     initGame(GameMode.Network);
-}, false);
-
-creditsBtn.addEventListener('click', () => {
-    open('contributors.html');
 }, false);
 
 function initGame(mode: GameMode) {

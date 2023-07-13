@@ -10,8 +10,10 @@ export default class Socket {
     public onMessageCallback: Function;
     public onErrorCallback: Function;
     public onInputPlayerNameInDialog: Function;
+    private playerNameDialogOpened: boolean;
 
     public constructor() {
+        this.playerNameDialogOpened = false;
         this.connect();
     }
 
@@ -54,16 +56,16 @@ export default class Socket {
     }
 
     private onMessage = (event: MessageEvent) => {
-        let messageData: GameMessage = JSON.parse(event.data);
+        const messageData: GameMessage = JSON.parse(event.data);
 
         if (GameMessage.isInitialMessage(messageData)) {
-            let data = messageData as InitialMessage;
+            const data = messageData as InitialMessage;
 
             if (!this.gameId) {
                 this.gameId = data.gameId;
             }
             
-            if (!this.playerColor) {
+            if (!this.playerColor && !this.playerNameDialogOpened) {
                 this.playerColor = data.color;
     
                 let color: string;
@@ -81,6 +83,7 @@ export default class Socket {
                         limit: 10
                     }]
                 });
+                this.playerNameDialogOpened = true;
             }
         }
 

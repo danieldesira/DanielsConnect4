@@ -1,5 +1,12 @@
-@import '~@fortawesome/fontawesome-free/css/all.css';
 @import 'dialog.css';
+
+.align-right {
+    text-align: right;
+}
+
+.align-right a {
+    margin-right: 20px;
+}
 
 .blue-bg {
     display: inline-block;
@@ -45,6 +52,10 @@
 
 .hide {
     display: none;
+}
+
+.icon {
+    text-decoration: none;
 }
 
 .menu {
