@@ -1,4 +1,5 @@
 import Dialog from "./lib/dialog/dialog";
+import { DialogIds } from "./lib/enums/dialog-ids";
 import { GameMode } from "./lib/enums/game-mode";
 import GameOptions from "./lib/game-options";
 import NetworkGame from "./lib/network-game";
@@ -66,5 +67,5 @@ instructionsBtn.addEventListener('click', () => {
             If you fail to do so, you pass the turn to your opponent.`,
         'Good luck and have fun playing!'
     ];
-    Dialog.notify(text);
+    Dialog.notify(DialogIds.Instructions, text);
 }, false);

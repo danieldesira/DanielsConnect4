@@ -6,60 +6,63 @@ import PromptInput from "./prompt-input";
 
 export default class Dialog {
     
-    private static modal(text: Array<string>, type: DialogType, options: DialogOptions = null) {
-        const modal = document.createElement('div') as HTMLDivElement;
-        modal.classList.add('dialog');
+    private static modal(id: string, text: Array<string>, type: DialogType, options: DialogOptions = null) {
+        if (!document.getElementById(id)) {
+            const modal = document.createElement('div') as HTMLDivElement;
+            modal.id = id;
+            modal.classList.add('dialog');
 
-        const outerContainer = document.createElement('div') as HTMLDivElement;
-        outerContainer.classList.add('dialog-outer-container');
-        modal.appendChild(outerContainer);
+            const outerContainer = document.createElement('div') as HTMLDivElement;
+            outerContainer.classList.add('dialog-outer-container');
+            modal.appendChild(outerContainer);
 
-        const textContainer = document.createElement('div') as HTMLDivElement;
-        this.appendText(text, textContainer);
-        outerContainer.appendChild(textContainer);
+            const textContainer = document.createElement('div') as HTMLDivElement;
+            this.appendText(text, textContainer);
+            outerContainer.appendChild(textContainer);
 
-        const btnContainer = document.createElement('div') as HTMLDivElement;
-        btnContainer.classList.add('dialog-btn-container');
-        
-        switch (type) {
-            case DialogType.Confirmation: {
-                const o = options as ConfirmationDialogOptions;
-                this.appendBtn(btnContainer, 'Yes', () => {
-                    o.yesCallback();
-                    this.closeModal(modal);
-                }, o.yesColor);
-                this.appendBtn(btnContainer, 'No', () => {
-                    o.noCallback();
-                    this.closeModal(modal);
-                }, o.noColor);
-                break;
-            }
-            case DialogType.Notification: {
-                this.appendBtn(btnContainer, 'OK', () => {
-                    this.closeModal(modal);
-                }, 'green');
-                break;
-            }
-            case DialogType.Prompt: {
-                const o = options as PromptDialogOptions;
-                this.appendInputs(outerContainer, o.inputs);
-                this.appendBtn(btnContainer, 'OK', () => {
-                    let error: string = o.onOK();
-                    if (error) {
-                        this.appendError(modal, error);
-                    } else {
+            const btnContainer = document.createElement('div') as HTMLDivElement;
+            btnContainer.classList.add('dialog-btn-container');
+            
+            switch (type) {
+                case DialogType.Confirmation: {
+                    const o = options as ConfirmationDialogOptions;
+                    this.appendBtn(btnContainer, 'Yes', () => {
+                        o.yesCallback();
                         this.closeModal(modal);
-                    }
-                }, 'green');
-                break;
+                    }, o.yesColor);
+                    this.appendBtn(btnContainer, 'No', () => {
+                        o.noCallback();
+                        this.closeModal(modal);
+                    }, o.noColor);
+                    break;
+                }
+                case DialogType.Notification: {
+                    this.appendBtn(btnContainer, 'OK', () => {
+                        this.closeModal(modal);
+                    }, 'green');
+                    break;
+                }
+                case DialogType.Prompt: {
+                    const o = options as PromptDialogOptions;
+                    this.appendInputs(outerContainer, o.inputs);
+                    this.appendBtn(btnContainer, 'OK', () => {
+                        let error: string = o.onOK();
+                        if (error) {
+                            this.appendError(modal, error);
+                        } else {
+                            this.closeModal(modal);
+                        }
+                    }, 'green');
+                    break;
+                }
             }
+            modal.appendChild(btnContainer);
+            document.body.appendChild(modal);
         }
-        modal.appendChild(btnContainer);
-        document.body.appendChild(modal);
     }
 
     private static appendBtn(container: HTMLDivElement, text: string, callback: any, bgColor: string) {
-        let btn = document.createElement('button') as HTMLButtonElement;
+        const btn = document.createElement('button') as HTMLButtonElement;
         btn.type = 'button';
         btn.innerText = text;
         btn.classList.add('text');
@@ -70,16 +73,16 @@ export default class Dialog {
     }
 
     private static appendInputs(modal: HTMLDivElement, inputs: Array<PromptInput>) {
-        let inputContainer = document.createElement('div') as HTMLDivElement;
+        const inputContainer = document.createElement('div') as HTMLDivElement;
         inputContainer.classList.add('dialog-input-container');
         for (let i: number = 0; i < inputs.length; i++) {
-            let label = document.createElement('label') as HTMLLabelElement;
+            const label = document.createElement('label') as HTMLLabelElement;
             label.innerText = `${inputs[i].name}: `;
             label.htmlFor = inputs[i].name;
             label.classList.add('text');
             inputContainer.appendChild(label);
 
-            let input = document.createElement('input') as HTMLInputElement;
+            const input = document.createElement('input') as HTMLInputElement;
             input.type = inputs[i].type;
             input.id = inputs[i].name;
             input.name = inputs[i].name;
@@ -129,16 +132,16 @@ export default class Dialog {
         }
     }
 
-    public static confirm(text: Array<string>, options: ConfirmationDialogOptions) {
-        Dialog.modal(text, DialogType.Confirmation, options);
+    public static confirm(id: string, text: Array<string>, options: ConfirmationDialogOptions) {
+        Dialog.modal(id, text, DialogType.Confirmation, options);
     }
 
-    public static notify(text: Array<string>) {
-        Dialog.modal(text, DialogType.Notification);
+    public static notify(id: string, text: Array<string>) {
+        Dialog.modal(id, text, DialogType.Notification);
     }
 
-    public static prompt(text: Array<string>, options: PromptDialogOptions) {
-        Dialog.modal(text, DialogType.Prompt, options);
+    public static prompt(id: string, text: Array<string>, options: PromptDialogOptions) {
+        Dialog.modal(id, text, DialogType.Prompt, options);
     }
 
     public static closeAllOpenDialogs() {

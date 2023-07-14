@@ -5,6 +5,7 @@ import { Sound } from "./enums/sound";
 import Utils from "./utils";
 import Timer from "./timer";
 import BoardLogic, { Coin, randomiseColor } from "@danieldesira/daniels-connect4-common";
+import { DialogIds } from "./enums/dialog-ids";
 
 export default class SameDeviceGame extends Game {
 
@@ -53,7 +54,7 @@ export default class SameDeviceGame extends Game {
         let nextTurn = localStorage.getItem('nextTurn');
         
         if (board && nextTurn) {
-            Dialog.confirm(['Do you want to continue playing the previous game?'], {
+            Dialog.confirm(DialogIds.ContinueGame, ['Do you want to continue playing the previous game?'], {
                 yesCallback: this.continuePreviousGame,
                 noCallback: this.cancelPreviousGame,
                 yesColor: 'green',
@@ -106,14 +107,14 @@ export default class SameDeviceGame extends Game {
 
     protected canvasMousemove = (event: MouseEvent) => {
         if (this.areBothPlayersConnected()) {
-            let column = this.getColumnFromCursorPosition(event);
+            const column = this.getColumnFromCursorPosition(event);
             this.moveCoin(column);
         }
     };
 
     protected canvasClick = (event: MouseEvent) => {
         if (this.areBothPlayersConnected()) {
-            let column = this.getColumnFromCursorPosition(event);
+            const column = this.getColumnFromCursorPosition(event);
             this.landCoin(column);
         }
     };
@@ -175,7 +176,7 @@ export default class SameDeviceGame extends Game {
                     message += `${this.playerNameSection.getPlayerRed()} (Red) and ${this.playerNameSection.getPlayerGreen()} (Green)`;
                 }
                 message += ' are tied!';
-                Dialog.notify([message]);
+                Dialog.notify(DialogIds.GameEnd, [message]);
                 this.closeGameAfterWinning();
             } else { // If game is still going on
                 this.switchTurn();
@@ -207,7 +208,7 @@ export default class SameDeviceGame extends Game {
             winMsg.push(`Time taken: ${this.timer.getTimeInStringFormat()}`);
         }
         Utils.playSound(Sound.Win);
-        Dialog.notify(winMsg);
+        Dialog.notify(DialogIds.GameEnd, winMsg);
     }
 
     protected resetValues() {

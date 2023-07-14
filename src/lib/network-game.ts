@@ -6,6 +6,7 @@ import GameOptions from "./game-options";
 import Socket from "./socket";
 import Utils from "./utils";
 import { ActionMessage, CurrentTurnMessage, ErrorMessage, GameMessage, InitialMessage, SkipTurnMessage, WinnerMessage, skipTurnMaxWait } from "@danieldesira/daniels-connect4-common";
+import { DialogIds } from "./enums/dialog-ids";
 
 export default class NetworkGame extends Game {
 
@@ -100,7 +101,7 @@ export default class NetworkGame extends Game {
         }
 
         if (GameMessage.isTieMessage(messageData)) {
-            Dialog.notify(['Game resulted in tie!']);
+            Dialog.notify(DialogIds.GameEnd, ['Game resulted in tie!']);
             this.closeGameAfterWinning();
         }
 
@@ -113,13 +114,14 @@ export default class NetworkGame extends Game {
         }
 
         if (GameMessage.isDisconnectMessage(messageData)) {
-            Dialog.notify(['Your opponent disconnected. You win!']);
+            Dialog.notify(DialogIds.GameEnd, ['Your opponent disconnected. You win!']);
             this.closeGameAfterWinning();
         }
 
         if (GameMessage.isErrorMessage(messageData)) {
             const data = messageData as ErrorMessage;
-            Dialog.notify([data.error]);
+            Dialog.closeAllOpenDialogs();
+            Dialog.notify(DialogIds.ServerError, [data.error]);
             this.closeGameAfterWinning();
         }
     };
@@ -139,19 +141,19 @@ export default class NetworkGame extends Game {
 
     protected canvasMousemove = (event: MouseEvent) => {
         if (this.socket && this.turn === this.socket.getPlayerColor() && this.areBothPlayersConnected()) {
-            let column = this.getColumnFromCursorPosition(event);
+            const column = this.getColumnFromCursorPosition(event);
             this.moveCoin(column);
 
-            let data = new ActionMessage(column, 'mousemove', this.turn);
+            const data = new ActionMessage(column, 'mousemove', this.turn);
             this.socket.send(data);
         }
     };
 
     protected canvasClick = (event: MouseEvent) => {
         if (this.socket && this.turn === this.socket.getPlayerColor() && this.areBothPlayersConnected()) {
-            let column = this.getColumnFromCursorPosition(event);
+            const column = this.getColumnFromCursorPosition(event);
 
-            let data = new ActionMessage(column, 'click', this.turn);
+            const data = new ActionMessage(column, 'click', this.turn);
             this.socket.send(data);
             
             this.landCoin(column);
@@ -175,7 +177,7 @@ export default class NetworkGame extends Game {
     }
 
     public exit = () => {
-        Dialog.confirm(['Network game in progress. Are you sure you want to quit?'], {
+        Dialog.confirm(DialogIds.ExitGame, ['Network game in progress. Are you sure you want to quit?'], {
             yesCallback: this.confirmExit,
             noCallback: () => {},
             yesColor: 'red',
@@ -208,7 +210,7 @@ export default class NetworkGame extends Game {
             winMsg.push('You lose!');
             Utils.playSound(Sound.Lose);
         }
-        Dialog.notify(winMsg);
+        Dialog.notify(DialogIds.GameEnd, winMsg);
     }
 
     protected switchTurn() {

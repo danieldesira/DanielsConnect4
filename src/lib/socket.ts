@@ -1,4 +1,5 @@
 import Dialog from "./dialog/dialog";
+import { DialogIds } from "./enums/dialog-ids";
 import Utils from "./utils";
 import { Coin, GameMessage, InitialMessage, PlayerNameMessage } from "@danieldesira/daniels-connect4-common";
 
@@ -10,10 +11,8 @@ export default class Socket {
     public onMessageCallback: Function;
     public onErrorCallback: Function;
     public onInputPlayerNameInDialog: Function;
-    private playerNameDialogOpened: boolean;
 
     public constructor() {
-        this.playerNameDialogOpened = false;
         this.connect();
     }
 
@@ -65,7 +64,7 @@ export default class Socket {
                 this.gameId = data.gameId;
             }
             
-            if (!this.playerColor && !this.playerNameDialogOpened) {
+            if (!this.playerColor) {
                 this.playerColor = data.color;
     
                 let color: string;
@@ -75,7 +74,7 @@ export default class Socket {
                     color = 'green';
                 }
     
-                Dialog.prompt([`You are ${color}. Please enter your name. (Max length is 10 characters.)`], {
+                Dialog.prompt(DialogIds.PlayerNames, [`You are ${color}. Please enter your name. (Max length is 10 characters.)`], {
                     onOK: () => this.onPlayerNameInput(color),
                     inputs: [{
                         name: color,
@@ -83,7 +82,6 @@ export default class Socket {
                         limit: 10
                     }]
                 });
-                this.playerNameDialogOpened = true;
             }
         }
 
@@ -99,7 +97,7 @@ export default class Socket {
             if (playerNameField.value && playerNameField.value.trim()) {
                 this.playerName = playerNameField.value;
                 this.onInputPlayerNameInDialog(this.playerName);
-                let data = new PlayerNameMessage(this.playerName);
+                const data = new PlayerNameMessage(this.playerName);
                 this.send(data);
                 return null;
             } else {
@@ -112,7 +110,8 @@ export default class Socket {
 
     private onError = () => {
         this.onErrorCallback();
-        Dialog.notify(['Problem connecting to server!']);
+        Dialog.closeAllOpenDialogs();
+        Dialog.notify(DialogIds.ServerError, ['Problem connecting to server!']);
     };
 
     private onClose = () => {

@@ -1,5 +1,6 @@
 import { Coin } from "@danieldesira/daniels-connect4-common";
 import Dialog from "./dialog/dialog";
+import { DialogIds } from "./enums/dialog-ids";
 
 export default class PlayerNameSection {
     private playerRedSpan: HTMLSpanElement;
@@ -19,7 +20,7 @@ export default class PlayerNameSection {
 
     public setUpPlayerNames(action: Function) {
         if (!localStorage.getItem('playerRed') || !localStorage.getItem('playerGreen')) {
-            Dialog.prompt(['Please enter player names! (Max length is 10 characters.)'], {
+            Dialog.prompt(DialogIds.PlayerNames, ['Please enter player names! (Max length is 10 characters.)'], {
                 onOK: () => this.onPromptOK(action),
                 inputs: [
                     {
