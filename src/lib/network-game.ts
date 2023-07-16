@@ -43,6 +43,7 @@ export default class NetworkGame extends Game {
         this.socket.onMessageCallback = this.onSocketMessage;
         this.socket.onErrorCallback = this.onSocketError;
         this.socket.onInputPlayerNameInDialog = this.onInputPlayerNameInDialog;
+        this.socket.onGameCancel = this.confirmExit;
     }
 
     private onSocketMessage = (messageData: GameMessage) => {

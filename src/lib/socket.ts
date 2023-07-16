@@ -11,6 +11,7 @@ export default class Socket {
     public onMessageCallback: Function;
     public onErrorCallback: Function;
     public onInputPlayerNameInDialog: Function;
+    public onGameCancel: Function;
 
     public constructor() {
         this.connect();
@@ -74,12 +75,15 @@ export default class Socket {
                     color = 'green';
                 }
     
-                Dialog.prompt(DialogIds.PlayerNames, [`You are ${color}. Please enter your name. (Max length is 10 characters.)`], {
+                Dialog.prompt(DialogIds.PlayerNames, [`You are ${color}. Please enter your name. (10 characters or less.)`], {
                     onOK: () => this.onPlayerNameInput(color),
+                    onCancel: () => this.onGameCancel(),
                     inputs: [{
+                        label: `Player ${color[0].toUpperCase()}${color.substring(1)}`,
                         name: color,
                         type: 'text',
-                        limit: 10
+                        limit: 10,
+                        required: true
                     }]
                 });
             }
@@ -91,7 +95,7 @@ export default class Socket {
     };
 
     private onPlayerNameInput = (color: string): string => {
-        let playerNameField = document.getElementById(color) as HTMLInputElement;
+        const playerNameField = document.getElementById(color) as HTMLInputElement;
 
         if (playerNameField) {
             if (playerNameField.value && playerNameField.value.trim()) {
@@ -100,11 +104,7 @@ export default class Socket {
                 const data = new PlayerNameMessage(this.playerName);
                 this.send(data);
                 return null;
-            } else {
-                return 'Field may not be empty!';
             }
-        } else {
-            return 'Field not implemented! Please fix this stupid bug!';
         }
     };
 

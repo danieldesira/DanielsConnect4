@@ -20,85 +20,116 @@ export default class Dialog {
             this.appendText(text, textContainer);
             outerContainer.appendChild(textContainer);
 
-            const btnContainer = document.createElement('div') as HTMLDivElement;
-            btnContainer.classList.add('dialog-btn-container');
-            
             switch (type) {
                 case DialogType.Confirmation: {
                     const o = options as ConfirmationDialogOptions;
+                    const btnContainer = document.createElement('div') as HTMLDivElement;
+                    btnContainer.classList.add('dialog-btn-container');
+                    outerContainer.appendChild(btnContainer);
+
                     this.appendBtn(btnContainer, 'Yes', () => {
                         o.yesCallback();
                         this.closeModal(modal);
-                    }, o.yesColor);
+                    }, o.yesColor, 'button');
                     this.appendBtn(btnContainer, 'No', () => {
                         o.noCallback();
                         this.closeModal(modal);
-                    }, o.noColor);
+                    }, o.noColor, 'button');
                     break;
                 }
                 case DialogType.Notification: {
+                    const btnContainer = document.createElement('div') as HTMLDivElement;
+                    btnContainer.classList.add('dialog-btn-container');
+                    outerContainer.appendChild(btnContainer);
+
                     this.appendBtn(btnContainer, 'OK', () => {
                         this.closeModal(modal);
-                    }, 'green');
+                    }, 'green', 'button');
                     break;
                 }
                 case DialogType.Prompt: {
                     const o = options as PromptDialogOptions;
-                    this.appendInputs(outerContainer, o.inputs);
-                    this.appendBtn(btnContainer, 'OK', () => {
-                        let error: string = o.onOK();
-                        if (error) {
-                            this.appendError(modal, error);
-                        } else {
-                            this.closeModal(modal);
-                        }
-                    }, 'green');
+                    this.appendForm(modal, outerContainer, o);
                     break;
                 }
             }
-            modal.appendChild(btnContainer);
+            
             document.body.appendChild(modal);
         }
     }
 
-    private static appendBtn(container: HTMLDivElement, text: string, callback: any, bgColor: string) {
+    private static appendBtn(container: HTMLDivElement | HTMLFormElement,
+                text: string,
+                callback: any,
+                bgColor: string,
+                btnType: 'submit' | 'button' | 'reset') {
         const btn = document.createElement('button') as HTMLButtonElement;
-        btn.type = 'button';
+        btn.type = btnType;
         btn.innerText = text;
         btn.classList.add('text');
         btn.classList.add('dialog-btn');
         btn.classList.add(`dialog-btn-${bgColor}`);
-        btn.addEventListener('click', callback);
+        if (btnType === 'button') {
+            btn.addEventListener('click', callback);
+        }
         container.appendChild(btn);
     }
 
-    private static appendInputs(modal: HTMLDivElement, inputs: Array<PromptInput>) {
+    private static appendForm(modal: HTMLDivElement, container: HTMLDivElement, options: PromptDialogOptions) {
         const inputContainer = document.createElement('div') as HTMLDivElement;
         inputContainer.classList.add('dialog-input-container');
+        container.appendChild(inputContainer);
+
+        const form = document.createElement('form') as HTMLFormElement;
+        inputContainer.appendChild(form);
+        form.addEventListener('submit', () => {
+            const error: string = options.onOK();
+            if (error) {
+                this.appendError(modal, error);
+            } else {
+                this.closeModal(modal);
+            }
+        });
+
+        this.appendInputs(form, options.inputs);
+
+        const btnContainer = document.createElement('div') as HTMLDivElement;
+        btnContainer.classList.add('dialog-btn-container');
+        form.appendChild(btnContainer);
+
+        this.appendBtn(btnContainer, 'OK', null, 'green', 'submit');
+        this.appendBtn(btnContainer, 'Cancel', () => {
+            options.onCancel();
+            this.closeModal(modal);
+        }, 'red', 'button');
+    }
+
+    private static appendInputs(form: HTMLFormElement, inputs: Array<PromptInput>) {
         for (let i: number = 0; i < inputs.length; i++) {
             const label = document.createElement('label') as HTMLLabelElement;
-            label.innerText = `${inputs[i].name}: `;
+            label.innerText = `${inputs[i].label}: `;
             label.htmlFor = inputs[i].name;
             label.classList.add('text');
-            inputContainer.appendChild(label);
+            form.appendChild(label);
 
             const input = document.createElement('input') as HTMLInputElement;
             input.type = inputs[i].type;
             input.id = inputs[i].name;
             input.name = inputs[i].name;
-            input.placeholder = `Enter name for ${inputs[i].name}`;
+            input.placeholder = `Enter ${inputs[i].label}`;
             input.maxLength = inputs[i].limit;
             input.classList.add('dialog-input');
             input.classList.add('text');
-            inputContainer.appendChild(input);
+            input.required = inputs[i].required;
+            input.ariaRequired = inputs[i].required.toString();
+            form.appendChild(input);
 
-            this.appendBrElement(inputContainer);
-            this.appendBrElement(inputContainer);
+            this.appendBrElement(form);
+            this.appendBrElement(form);
         }
-        modal.appendChild(inputContainer);
     }
 
-    private static appendBrElement(container: HTMLDivElement) {
+    private static appendBrElement(container: HTMLDivElement | HTMLFormElement) {
         const br = document.createElement('br') as HTMLBRElement;
         container.appendChild(br);
     }
@@ -145,7 +176,7 @@ export default class Dialog {
     }
 
     public static closeAllOpenDialogs() {
-        let dialogs = document.getElementsByClassName('dialog') as HTMLCollectionOf<HTMLDivElement>;
+        const dialogs = document.getElementsByClassName('dialog') as HTMLCollectionOf<HTMLDivElement>;
         for (let i: number = 0; i < dialogs.length; i++) {
             this.closeModal(dialogs[i]);
         }

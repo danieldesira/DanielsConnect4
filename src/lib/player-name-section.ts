@@ -18,20 +18,25 @@ export default class PlayerNameSection {
         }
     }
 
-    public setUpPlayerNames(action: Function) {
+    public setUpPlayerNames(okAction: Function, cancelAction: Function) {
         if (!localStorage.getItem('playerRed') || !localStorage.getItem('playerGreen')) {
-            Dialog.prompt(DialogIds.PlayerNames, ['Please enter player names! (Max length is 10 characters.)'], {
-                onOK: () => this.onPromptOK(action),
+            Dialog.prompt(DialogIds.PlayerNames, ['Please enter player names! (10 characters or less.)'], {
+                onOK: () => this.onPromptOK(okAction),
+                onCancel: () => this.onPromptCancel(cancelAction),
                 inputs: [
                     {
+                        label: 'Player Red',
                         name: 'red',
                         type: 'text',
-                        limit: 10
+                        limit: 10,
+                        required: false
                     },
                     {
+                        label: 'Player Green',
                         name: 'green',
                         type: 'text',
-                        limit: 10
+                        limit: 10,
+                        required: true
                     }
                 ]
             });
@@ -39,21 +44,19 @@ export default class PlayerNameSection {
     }
 
     private onPromptOK = (action: Function): string => {
-        let redInput = document.getElementById('red') as HTMLInputElement;
-        let greenInput = document.getElementById('green') as HTMLInputElement;
-        if (redInput && greenInput) {
-            if (redInput.value && greenInput.value && redInput.value.trim() && greenInput.value.trim()) {
-                this.playerRed = redInput.value;
-                this.playerGreen = greenInput.value;
-                this.printPlayerNames();
-                action();
-                return null;
-            } else {
-                return 'No empty fields allowed!';
-            }
-        } else {
-            return 'Field not implemented! Please fix this stupid bug!';
+        const redInput = document.getElementById('red') as HTMLInputElement;
+        const greenInput = document.getElementById('green') as HTMLInputElement;
+        if (redInput.value && greenInput.value && redInput.value.trim() && greenInput.value.trim()) {
+            this.playerRed = redInput.value;
+            this.playerGreen = greenInput.value;
+            this.printPlayerNames();
+            action();
+            return null;
         }
+    };
+
+    private onPromptCancel = (action: Function) => {
+        action();
     };
 
     public printPlayerNames() {

@@ -39,7 +39,7 @@ export default class SameDeviceGame extends Game {
 
     private onGameDataCheck() {
         if (this.playerNameSection) {
-            this.playerNameSection.setUpPlayerNames(this.setTimer);
+            this.playerNameSection.setUpPlayerNames(this.setTimer, this.exit);
         }
 
         if (this.areBothPlayersConnected()) {
