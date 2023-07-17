@@ -29,7 +29,7 @@ export default class PlayerNameSection {
                         name: 'red',
                         type: 'text',
                         limit: 10,
-                        required: false
+                        required: true
                     },
                     {
                         label: 'Player Green',

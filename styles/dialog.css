@@ -6,9 +6,10 @@
     opacity: 0.85;
     width: 80%;
     max-width: 600px;
-    min-height: 30%;
-    max-height: 35%;
+    min-height: 150px;
     border-radius: 20px;
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 .dialog-btn {
@@ -18,7 +19,7 @@
 }
 
 .dialog-btn-container {
-    width: 150px;
+    width: fit-content;
     margin-left: auto;
     margin-right: auto;
 }
@@ -33,11 +34,10 @@
 
 .dialog-input {
     border-radius: 15px;
-    width: 70%;
 }
 
 .dialog-input-container {
-    width: 95%;
+    width: 70%;
     margin-left: auto;
     margin-right: auto;
 }
@@ -48,16 +48,12 @@
     margin: 5px;
 }
 
-.dialog-outer-container {
-    margin-top: 20px;
-    max-height: 20vh;
-    overflow-y: scroll;
-}
-
 .dialog-text {
     width: 90%;
+    max-height: 25vh;
     margin-left: auto;
     margin-right: auto;
+    overflow-y: auto;
 }
 
 @media screen and (min-width: 750px) {

@@ -12,20 +12,16 @@ export default class Dialog {
             modal.id = id;
             modal.classList.add('dialog');
 
-            const outerContainer = document.createElement('div') as HTMLDivElement;
-            outerContainer.classList.add('dialog-outer-container');
-            modal.appendChild(outerContainer);
-
             const textContainer = document.createElement('div') as HTMLDivElement;
             this.appendText(text, textContainer);
-            outerContainer.appendChild(textContainer);
+            modal.appendChild(textContainer);
 
             switch (type) {
                 case DialogType.Confirmation: {
                     const o = options as ConfirmationDialogOptions;
                     const btnContainer = document.createElement('div') as HTMLDivElement;
                     btnContainer.classList.add('dialog-btn-container');
-                    outerContainer.appendChild(btnContainer);
+                    modal.appendChild(btnContainer);
 
                     this.appendBtn(btnContainer, 'Yes', () => {
                         o.yesCallback();
@@ -40,7 +36,7 @@ export default class Dialog {
                 case DialogType.Notification: {
                     const btnContainer = document.createElement('div') as HTMLDivElement;
                     btnContainer.classList.add('dialog-btn-container');
-                    outerContainer.appendChild(btnContainer);
+                    modal.appendChild(btnContainer);
 
                     this.appendBtn(btnContainer, 'OK', () => {
                         this.closeModal(modal);
@@ -49,7 +45,7 @@ export default class Dialog {
                 }
                 case DialogType.Prompt: {
                     const o = options as PromptDialogOptions;
-                    this.appendForm(modal, outerContainer, o);
+                    this.appendForm(modal, o);
                     break;
                 }
             }
@@ -75,10 +71,10 @@ export default class Dialog {
         container.appendChild(btn);
     }
 
-    private static appendForm(modal: HTMLDivElement, container: HTMLDivElement, options: PromptDialogOptions) {
+    private static appendForm(modal: HTMLDivElement, options: PromptDialogOptions) {
         const inputContainer = document.createElement('div') as HTMLDivElement;
         inputContainer.classList.add('dialog-input-container');
-        container.appendChild(inputContainer);
+        modal.appendChild(inputContainer);
 
         const form = document.createElement('form') as HTMLFormElement;
         inputContainer.appendChild(form);
@@ -106,12 +102,6 @@ export default class Dialog {
 
     private static appendInputs(form: HTMLFormElement, inputs: Array<PromptInput>) {
         for (let i: number = 0; i < inputs.length; i++) {
-            const label = document.createElement('label') as HTMLLabelElement;
-            label.innerText = `${inputs[i].label}: `;
-            label.htmlFor = inputs[i].name;
-            label.classList.add('text');
-            form.appendChild(label);
-
             const input = document.createElement('input') as HTMLInputElement;
             input.type = inputs[i].type;
             input.id = inputs[i].name;

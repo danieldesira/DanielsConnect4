@@ -11,8 +11,8 @@ export default class Timer {
 
     private timerCallback = () => {
         this.secondsRunning++;
-        let minutes: number = Math.floor(this.secondsRunning / 60);
-        let seconds: number = this.secondsRunning % 60;
+        const minutes: number = Math.floor(this.secondsRunning / 60);
+        const seconds: number = this.secondsRunning % 60;
         this.timerSpan.innerText = `${minutes}:${(seconds < 10 ? '0' : '')}${seconds}`;
         
         if (this.timerSpan.classList.contains('hide')) {
