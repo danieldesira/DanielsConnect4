@@ -44,8 +44,8 @@ export default class PlayerNameSection {
     }
 
     private onPromptOK = (action: Function): string => {
-        const redInput = document.getElementById('red') as HTMLInputElement;
-        const greenInput = document.getElementById('green') as HTMLInputElement;
+        const redInput = document.getElementById('dialog-input-red') as HTMLInputElement;
+        const greenInput = document.getElementById('dialog-input-green') as HTMLInputElement;
         if (redInput.value && greenInput.value && redInput.value.trim() && greenInput.value.trim()) {
             this.playerRed = redInput.value;
             this.playerGreen = greenInput.value;

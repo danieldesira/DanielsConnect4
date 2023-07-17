@@ -104,8 +104,8 @@ export default class Dialog {
         for (let i: number = 0; i < inputs.length; i++) {
             const input = document.createElement('input') as HTMLInputElement;
             input.type = inputs[i].type;
-            input.id = inputs[i].name;
-            input.name = inputs[i].name;
+            input.id = `dialog-input-${inputs[i].name}`;
+            input.name = `dialog-input-${inputs[i].name}`;
             input.placeholder = `Enter ${inputs[i].label}`;
             input.maxLength = inputs[i].limit;
             input.classList.add('dialog-input');

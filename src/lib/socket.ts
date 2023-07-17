@@ -95,7 +95,7 @@ export default class Socket {
     };
 
     private onPlayerNameInput = (color: string): string => {
-        const playerNameField = document.getElementById(color) as HTMLInputElement;
+        const playerNameField = document.getElementById(`dialog-input-${color}`) as HTMLInputElement;
 
         if (playerNameField) {
             if (playerNameField.value && playerNameField.value.trim()) {
