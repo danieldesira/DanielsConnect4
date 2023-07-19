@@ -29,10 +29,6 @@
     cursor: pointer;
 }
 
-.busy {
-    cursor: progress;
-}
-
 .center-text {
     text-align: center;
 }
@@ -81,6 +77,10 @@
 .text {
     font-family: Source-Sans-Pro;
     font-size: 1.75em;
+}
+
+.waiting {
+    cursor: progress;
 }
 
 .version {

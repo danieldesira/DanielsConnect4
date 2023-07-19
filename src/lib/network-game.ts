@@ -36,6 +36,7 @@ export default class NetworkGame extends Game {
         this.defineSocket();
         this.startCountdown();
         super.start();
+        document.body.classList.add('waiting');
     }
 
     private defineSocket() {
@@ -50,6 +51,7 @@ export default class NetworkGame extends Game {
         if (GameMessage.isInitialMessage(messageData)) {
             const data = messageData as InitialMessage;
             if (data.opponentName && this.socket && this.playerNameSection) {
+                this.toggleWaitingClass();
                 if (this.socket.getPlayerColor() === Coin.Red) {
                     this.playerNameSection.setPlayerGreen(data.opponentName);
                 } else if (this.socket.getPlayerColor() === Coin.Green) {
@@ -83,6 +85,7 @@ export default class NetworkGame extends Game {
             if (data.skipTurn && data.currentTurn) {
                 this.turn = data.currentTurn;
                 this.turnCountDown = skipTurnMaxWait;
+                this.toggleWaitingClass();
             }
         }
 
@@ -99,16 +102,19 @@ export default class NetworkGame extends Game {
             this.showWinDialog(winner, data.winner);
 
             this.closeGameAfterWinning();
+            document.body.classList.remove('waiting');
         }
 
         if (GameMessage.isTieMessage(messageData)) {
             Dialog.notify(DialogIds.GameEnd, ['Game resulted in tie!']);
+            document.body.classList.remove('waiting');
             this.closeGameAfterWinning();
         }
 
         if (GameMessage.isCurrentTurnMessage(messageData)) {
             const data = messageData as CurrentTurnMessage;
             this.turn = data.currentTurn;
+            this.toggleWaitingClass();
             if (this.playerNameSection) {
                 this.playerNameSection.indicateTurn(this.turn);
             }
@@ -116,6 +122,7 @@ export default class NetworkGame extends Game {
 
         if (GameMessage.isDisconnectMessage(messageData)) {
             Dialog.notify(DialogIds.GameEnd, ['Your opponent disconnected. You win!']);
+            document.body.classList.remove('waiting');
             this.closeGameAfterWinning();
         }
 
@@ -123,6 +130,7 @@ export default class NetworkGame extends Game {
             const data = messageData as ErrorMessage;
             Dialog.closeAllOpenDialogs();
             Dialog.notify(DialogIds.ServerError, [data.error]);
+            document.body.classList.remove('waiting');
             this.closeGameAfterWinning();
         }
     };
@@ -163,17 +171,26 @@ export default class NetworkGame extends Game {
 
     protected landCoin(column: number): number {
         if (this.board[column][0] === Coin.Empty) {
-            let row = super.landCoin(column);
+            const row = super.landCoin(column);
             
             // Assume the game is still going on
             this.switchTurn();
             this.context.fillStyle = Game.getColor(this.turn);
             this.paintCoinToDrop(column);
             Utils.playSound(Sound.LandCoin);
+            this.toggleWaitingClass();
 
             return row;
         } else {
             return -1;
+        }
+    }
+
+    private toggleWaitingClass() {
+        if (this.socket.getPlayerColor() === this.turn) {
+            document.body.classList.remove('waiting');
+        } else {
+            document.body.classList.add('waiting');
         }
     }
 
@@ -191,6 +208,7 @@ export default class NetworkGame extends Game {
             this.socket.close();
         }
         Dialog.closeAllOpenDialogs();
+        document.body.classList.remove('waiting');
 
         super.exit();
     };

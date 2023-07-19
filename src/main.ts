@@ -78,6 +78,7 @@ shareBtn.addEventListener('click', (event: MouseEvent) => {
             url: location.href,
             title: `Daniel's Connect4`
         };
-        navigator.share(shareData).catch((err) => console.error());
+        navigator.share(shareData)
+            .catch((err) => console.error(`Problem while sharing: ${err}`));
     }
 });

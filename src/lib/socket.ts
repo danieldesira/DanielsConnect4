@@ -47,13 +47,8 @@ export default class Socket {
         this.webSocket.close();
     }
 
-    public getPlayerColor(): Coin {
-        return this.playerColor;
-    }
-
-    public getPlayerName(): string {
-        return this.playerName;
-    }
+    public getPlayerColor = (): Coin => this.playerColor;
+    public getPlayerName = (): string => this.playerName;
 
     private onMessage = (event: MessageEvent) => {
         const messageData: GameMessage = JSON.parse(event.data);
@@ -112,6 +107,8 @@ export default class Socket {
         this.onErrorCallback();
         Dialog.closeAllOpenDialogs();
         Dialog.notify(DialogIds.ServerError, ['Problem connecting to server!']);
+
+        document.body.classList.remove('waiting');
     };
 
     private onClose = () => {
