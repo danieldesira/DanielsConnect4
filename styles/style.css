@@ -29,6 +29,10 @@
     cursor: pointer;
 }
 
+.busy {
+    cursor: progress;
+}
+
 .center-text {
     text-align: center;
 }

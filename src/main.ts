@@ -69,3 +69,15 @@ instructionsBtn.addEventListener('click', () => {
     ];
     Dialog.notify(DialogIds.Instructions, text);
 }, false);
+
+const shareBtn = document.getElementById('shareBtn') as HTMLAnchorElement;
+shareBtn.addEventListener('click', (event: MouseEvent) => {
+    event.preventDefault();
+    if (navigator.canShare) {
+        const shareData = {
+            url: location.href,
+            title: `Daniel's Connect4`
+        };
+        navigator.share(shareData).catch((err) => console.error());
+    }
+});
