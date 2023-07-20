@@ -71,12 +71,14 @@ export default class NetworkGame extends Game {
         if (GameMessage.isActionMessage(messageData)) {
             const data = messageData as ActionMessage;
             if (data.action === 'mousemove') {
-                this.moveCoin(data.column);
+                this.currentCoinColumn = data.column;
+                this.moveCoin();
             }
     
             if (data.action === 'click') {
                 this.turn = data.color;
-                this.landCoin(data.column);
+                this.currentCoinColumn = data.column;
+                this.landCoin();
             }
         }
         
@@ -150,33 +152,33 @@ export default class NetworkGame extends Game {
 
     protected canvasMousemove = (event: MouseEvent) => {
         if (this.socket && this.turn === this.socket.getPlayerColor() && this.areBothPlayersConnected()) {
-            const column = this.getColumnFromCursorPosition(event);
-            this.moveCoin(column);
+            this.currentCoinColumn = this.getColumnFromCursorPosition(event);
+            this.moveCoin();
 
-            const data = new ActionMessage(column, 'mousemove', this.turn);
+            const data = new ActionMessage(this.currentCoinColumn, 'mousemove', this.turn);
             this.socket.send(data);
         }
     };
 
     protected canvasClick = (event: MouseEvent) => {
         if (this.socket && this.turn === this.socket.getPlayerColor() && this.areBothPlayersConnected()) {
-            const column = this.getColumnFromCursorPosition(event);
+            this.currentCoinColumn = this.getColumnFromCursorPosition(event);
 
-            const data = new ActionMessage(column, 'click', this.turn);
+            const data = new ActionMessage(this.currentCoinColumn, 'click', this.turn);
             this.socket.send(data);
             
-            this.landCoin(column);
+            this.landCoin();
         }
     };
 
-    protected landCoin(column: number): number {
-        if (this.board[column][0] === Coin.Empty) {
-            const row = super.landCoin(column);
+    protected landCoin(): number {
+        if (this.board[this.currentCoinColumn][0] === Coin.Empty) {
+            const row = super.landCoin();
             
             // Assume the game is still going on
             this.switchTurn();
             this.context.fillStyle = Game.getColor(this.turn);
-            this.paintCoinToDrop(column);
+            this.paintCoinToDrop(this.currentCoinColumn);
             Utils.playSound(Sound.LandCoin);
             this.toggleWaitingClass();
 

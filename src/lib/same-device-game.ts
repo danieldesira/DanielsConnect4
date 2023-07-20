@@ -107,15 +107,15 @@ export default class SameDeviceGame extends Game {
 
     protected canvasMousemove = (event: MouseEvent) => {
         if (this.areBothPlayersConnected()) {
-            const column = this.getColumnFromCursorPosition(event);
-            this.moveCoin(column);
+            this.currentCoinColumn = this.getColumnFromCursorPosition(event);
+            this.moveCoin();
         }
     };
 
     protected canvasClick = (event: MouseEvent) => {
         if (this.areBothPlayersConnected()) {
-            const column = this.getColumnFromCursorPosition(event);
-            this.landCoin(column);
+            this.currentCoinColumn = this.getColumnFromCursorPosition(event);
+            this.landCoin();
         }
     };
 
@@ -151,11 +151,11 @@ export default class SameDeviceGame extends Game {
         super.closeGameAfterWinning();
     }
 
-    protected landCoin(column: number): number {
-        if (this.board[column][0] === Coin.Empty) {
-            let row = super.landCoin(column);
+    protected landCoin(): number {
+        if (this.board[this.currentCoinColumn][0] === Coin.Empty) {
+            const row = super.landCoin();
             
-            let coinCount = BoardLogic.countConsecutiveCoins(this.board, column, row, this.turn);
+            const coinCount = BoardLogic.countConsecutiveCoins(this.board, this.currentCoinColumn, row, this.turn);
 
             if (coinCount >= 4) {
                 let winner: string = '';
@@ -181,7 +181,7 @@ export default class SameDeviceGame extends Game {
             } else { // If game is still going on
                 this.switchTurn();
                 this.context.fillStyle = Game.getColor(this.turn);
-                this.paintCoinToDrop(column);
+                this.paintCoinToDrop(this.currentCoinColumn);
                 Utils.playSound(Sound.LandCoin);
             }
 
