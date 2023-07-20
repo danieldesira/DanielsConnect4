@@ -22,6 +22,10 @@ export default abstract class Game {
     private colOffset: number;
     private static verticalOffset: number = 70;
 
+    protected currentCoinColumn: number = 4;
+    protected static moveLeftKeys: Array<string> = ['a', 'A', 'ArrowLeft'];
+    protected static moveRightKeys: Array<string> = ['d', 'D', 'ArrowRight'];
+
     protected constructor(options: GameOptions) {
         this.canvas = document.getElementById(options.canvasId) as HTMLCanvasElement;
         this.context = this.canvas.getContext('2d');
@@ -58,7 +62,7 @@ export default abstract class Game {
     }
 
     private paintBoard() {
-        let boardGradient = this.context.createLinearGradient(0, 0, this.canvas.width, 0);
+        const boardGradient = this.context.createLinearGradient(0, 0, this.canvas.width, 0);
         boardGradient.addColorStop(0, 'blue');
         boardGradient.addColorStop(1, 'aqua');
         this.context.fillStyle = boardGradient;
@@ -78,14 +82,16 @@ export default abstract class Game {
         window.addEventListener('beforeunload', this.beforeUnload);
         window.addEventListener('resize', this.resizeCanvas);
         this.exitBtn.addEventListener('click', this.exit);
+        document.body.addEventListener('keydown', this.handleKeyDown);
     }
 
     protected abstract canvasMousemove(event: MouseEvent): void;
     protected abstract canvasClick(event: MouseEvent): void;
+    protected abstract handleKeyDown(event: KeyboardEvent): void;
 
     protected getColumnFromCursorPosition(event: MouseEvent): number {
-        let position = Position.getCursorPosition(event, this.canvas);
-        let column = Math.round((position.x - this.colOffset) / this.colGap);
+        const position = Position.getCursorPosition(event, this.canvas);
+        const column = Math.round((position.x - this.colOffset) / this.colGap);
         return column;
     }
 
@@ -97,18 +103,18 @@ export default abstract class Game {
         }
     }
 
-    protected moveCoin(column: number) {
+    protected moveCoin() {
         this.clearUpper();
         this.context.fillStyle = Game.getColor(this.turn);
-        this.paintCoinToDrop(column);
+        this.paintCoinToDrop(this.currentCoinColumn);
     }
 
-    protected landCoin(column: number): number {
-        if (this.board[column][0] === Coin.Empty) {
-            let row = BoardLogic.putCoin(this.board, this.turn, column);
+    protected landCoin(): number {
+        if (this.board[this.currentCoinColumn][0] === Coin.Empty) {
+            const row = BoardLogic.putCoin(this.board, this.turn, this.currentCoinColumn);
             
             this.context.fillStyle = Game.getColor(this.turn);
-            this.drawCircle(column, row);
+            this.drawCircle(this.currentCoinColumn, row);
 
             return row;
         } else {
@@ -154,6 +160,7 @@ export default abstract class Game {
         window.removeEventListener('beforeunload', this.beforeUnload);
         window.removeEventListener('resize', this.resizeCanvas);
         this.exitBtn.removeEventListener('click', this.exit);
+        document.body.removeEventListener('keydown', this.handleKeyDown);
     }
 
     protected exit() {
