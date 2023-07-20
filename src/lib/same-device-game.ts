@@ -219,4 +219,30 @@ export default class SameDeviceGame extends Game {
         }
     }
 
+    protected handleKeyDown = (event: KeyboardEvent) => {
+        if (this.areBothPlayersConnected()) {
+            if (Game.moveLeftKeys.includes(event.key)) {
+                if (this.currentCoinColumn > 0) {
+                    this.currentCoinColumn--;
+                    this.moveCoin();
+                }
+            }
+    
+            if (Game.moveRightKeys.includes(event.key)) {
+                if (this.currentCoinColumn < 10) {
+                    this.currentCoinColumn++;
+                    this.moveCoin();
+                }
+            }
+    
+            if (event.key === ' ') {
+                this.landCoin();
+            }
+        }
+
+        if (event.key === 'Escape') {
+            this.exit();
+        }
+    };
+
 }

@@ -280,5 +280,44 @@ export default class NetworkGame extends Game {
             }
         }
     };
+
+    protected handleKeyDown = (event: KeyboardEvent) => {
+        if (this.socket && this.turn === this.socket.getPlayerColor() && this.areBothPlayersConnected()) {
+            let data: GameMessage;
+
+            if (Game.moveLeftKeys.includes(event.key)) {
+                if (this.currentCoinColumn > 0) {
+                    this.currentCoinColumn--;
+
+                    data = new ActionMessage(this.currentCoinColumn, 'mousemove', this.turn);
+                    this.socket.send(data);
+
+                    this.moveCoin();
+                }
+            }
+    
+            if (Game.moveRightKeys.includes(event.key)) {
+                if (this.currentCoinColumn < 10) {
+                    this.currentCoinColumn++;
+
+                    data = new ActionMessage(this.currentCoinColumn, 'mousemove', this.turn);
+                    this.socket.send(data);
+
+                    this.moveCoin();
+                }
+            }
+    
+            if (event.key === ' ') {
+                data = new ActionMessage(this.currentCoinColumn, 'click', this.turn);
+                this.socket.send(data);
+
+                this.landCoin();
+            }
+        }
+
+        if (event.key === 'Escape') {
+            this.exit();
+        }
+    };
     
 }

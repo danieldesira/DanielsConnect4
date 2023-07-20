@@ -23,6 +23,8 @@ export default abstract class Game {
     private static verticalOffset: number = 70;
 
     protected currentCoinColumn: number = 4;
+    protected static moveLeftKeys: Array<string> = ['a', 'A', 'ArrowLeft'];
+    protected static moveRightKeys: Array<string> = ['d', 'D', 'ArrowRight'];
 
     protected constructor(options: GameOptions) {
         this.canvas = document.getElementById(options.canvasId) as HTMLCanvasElement;
@@ -85,6 +87,7 @@ export default abstract class Game {
 
     protected abstract canvasMousemove(event: MouseEvent): void;
     protected abstract canvasClick(event: MouseEvent): void;
+    protected abstract handleKeyDown(event: KeyboardEvent): void;
 
     protected getColumnFromCursorPosition(event: MouseEvent): number {
         const position = Position.getCursorPosition(event, this.canvas);
@@ -242,25 +245,5 @@ export default abstract class Game {
         }
         return value;
     }
-
-    private handleKeyDown = (event: KeyboardEvent) => {
-        if (event.key === 'a' || event.key === 'A' || event.key === 'ArrowLeft') {
-            if (this.currentCoinColumn > 0) {
-                this.currentCoinColumn--;
-                this.moveCoin();
-            }
-        }
-
-        if (event.key === 'd' || event.key === 'D' || event.key === 'ArrowRight') {
-            if (this.currentCoinColumn < 10) {
-                this.currentCoinColumn++;
-                this.moveCoin();
-            }
-        }
-
-        if (event.key === ' ') {
-            this.landCoin();
-        }
-    };
 
 }
