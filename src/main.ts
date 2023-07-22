@@ -61,10 +61,14 @@ function clearError() {
 instructionsBtn.addEventListener('click', () => {
     const text = [
         'The principle behind Connect4 is simple:',
-        `The player who first places 4 coins next to each other, wins. These may be 
-            horizontal, vertical or diagonal.`,
-        `Furthermore, in network play, you must place your coin within 60 seconds.
-            If you fail to do so, you pass the turn to your opponent.`,
+        'The player who first places 4 coins next to each other, wins. You may ' +
+            'match horizontally, vertically or diagonally.',
+        'Furthermore, in Network Play, you must place your coin within 60 seconds. ' +
+            'If you fail to do so, you pass the turn to your opponent.',
+        'Further note that exiting in Same Device Play, saves game progress. You ' +
+            'will be presented with the option to continue the same game the next ' +
+            'time. This does not work for Network Play because your opponent might ' +
+            'not be available the next time and you might not even know him/her/them.',
         'Good luck and have fun playing!'
     ];
     Dialog.notify({
@@ -77,12 +81,18 @@ instructionsBtn.addEventListener('click', () => {
 const shareBtn = document.getElementById('shareBtn') as HTMLAnchorElement;
 shareBtn.addEventListener('click', (event: MouseEvent) => {
     event.preventDefault();
+    clearError();
     if (navigator.canShare) {
         const shareData = {
             url: location.href,
             title: `Daniel's Connect4`
         };
         navigator.share(shareData)
-            .catch((err) => console.error(`Problem while sharing: ${err}`));
+            .catch((err) => {
+                console.error(`Problem while sharing: ${err}`);
+                showError('Problem opening share menu!');
+            });
+    } else {
+        showError('Problem opening share menu!');
     }
 });

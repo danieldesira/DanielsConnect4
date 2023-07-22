@@ -9,6 +9,7 @@ export default class Dialog {
     private static modal(type: DialogType, options: DialogOptions) {
         if (!document.getElementById(options.id)) {
             const modal = document.createElement('div') as HTMLDivElement;
+            modal.tabIndex = 1;
             modal.id = options.id;
             modal.classList.add('dialog');
 
@@ -49,6 +50,13 @@ export default class Dialog {
                     this.appendBtn(btnContainer, 'OK', () => {
                         this.closeModal(modal);
                     }, 'green', 'button');
+
+                    modal.addEventListener('keydown', (event: KeyboardEvent) => {
+                        if (event.key === 'Escape' || event.key === 'Enter') {
+                            this.closeModal(modal);
+                        }
+                    });
+
                     break;
                 }
                 case DialogType.Prompt: {
