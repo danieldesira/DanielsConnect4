@@ -56,6 +56,12 @@
     overflow-y: auto;
 }
 
+.dialog-title {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 @media screen and (min-width: 750px) {
     .dialog {
         left: calc(50% - 300px);

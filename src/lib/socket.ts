@@ -72,6 +72,7 @@ export default class Socket {
     
                 Dialog.prompt({
                     id: DialogIds.PlayerNames,
+                    title: 'Player Input',
                     text: [`You are ${color}. Please enter your name. (10 characters or less.)`],
                     onOK: () => this.onPlayerNameInput(color),
                     onCancel: () => this.onGameCancel(),
@@ -110,7 +111,8 @@ export default class Socket {
         Dialog.closeAllOpenDialogs();
         Dialog.notify({
             id: DialogIds.ServerError,
-            text: ['Problem connecting to server!']
+            text: ['Problem connecting to server!'],
+            title: 'Error'
         });
 
         document.body.classList.remove('waiting');

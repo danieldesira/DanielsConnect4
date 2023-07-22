@@ -69,7 +69,8 @@ instructionsBtn.addEventListener('click', () => {
     ];
     Dialog.notify({
         id: DialogIds.Instructions,
-        text
+        text,
+        title: 'Instructions'
     });
 }, false);
 

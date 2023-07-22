@@ -56,6 +56,7 @@ export default class SameDeviceGame extends Game {
         if (board && nextTurn) {
             Dialog.confirm({
                 id: DialogIds.ContinueGame,
+                title: null,
                 text: ['Do you want to continue playing the previous game?'],
                 yesCallback: this.continuePreviousGame,
                 noCallback: this.cancelPreviousGame,
@@ -180,6 +181,7 @@ export default class SameDeviceGame extends Game {
                 message += ' are tied!';
                 Dialog.notify({
                     id: DialogIds.GameEnd,
+                    title: 'Tie',
                     text: [message]
                 });
                 this.closeGameAfterWinning();
@@ -215,7 +217,8 @@ export default class SameDeviceGame extends Game {
         Utils.playSound(Sound.Win);
         Dialog.notify({
             id: DialogIds.GameEnd,
-            text: winMsg
+            text: winMsg,
+            title: 'We have a winner!'
         });
     }
 

@@ -1,5 +1,9 @@
 @import 'dialog.css';
 
+a {
+    color: #000;
+}
+
 .align-right {
     text-align: right;
 }
@@ -85,5 +89,4 @@
 
 .version {
     font-size: small;
-    color: #000;
 }

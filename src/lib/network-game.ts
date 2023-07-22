@@ -111,7 +111,8 @@ export default class NetworkGame extends Game {
         if (GameMessage.isTieMessage(messageData)) {
             Dialog.notify({
                 id: DialogIds.GameEnd,
-                text: ['Game resulted in tie!']
+                text: ['Game resulted in tie!'],
+                title: null
             });
             document.body.classList.remove('waiting');
             this.closeGameAfterWinning();
@@ -129,7 +130,8 @@ export default class NetworkGame extends Game {
         if (GameMessage.isDisconnectMessage(messageData)) {
             Dialog.notify({
                 id: DialogIds.GameEnd,
-                text: ['Your opponent disconnected. You win!']
+                text: ['Your opponent disconnected. You win!'],
+                title: 'We have a winner!'
             });
             document.body.classList.remove('waiting');
             this.closeGameAfterWinning();
@@ -140,7 +142,8 @@ export default class NetworkGame extends Game {
             Dialog.closeAllOpenDialogs();
             Dialog.notify({
                 id: DialogIds.ServerError,
-                text: [data.error]
+                text: [data.error],
+                title: 'Error'
             });
             document.body.classList.remove('waiting');
             this.closeGameAfterWinning();
@@ -209,6 +212,7 @@ export default class NetworkGame extends Game {
     public exit = () => {
         Dialog.confirm({
             id: DialogIds.ExitGame,
+            title: null,
             text: ['Network game in progress. Are you sure you want to quit?'],
             yesCallback: this.confirmExit,
             noCallback: () => {},
@@ -245,7 +249,8 @@ export default class NetworkGame extends Game {
         }
         Dialog.notify({
             id: DialogIds.GameEnd,
-            text: winMsg
+            text: winMsg,
+            title: 'Game Ends'
         });
     }
 

@@ -12,6 +12,14 @@ export default class Dialog {
             modal.id = options.id;
             modal.classList.add('dialog');
 
+            if (options.title) {
+                const h1 = document.createElement('h1') as HTMLHeadingElement;
+                h1.innerText = options.title;
+                h1.classList.add('dialog-title');
+                modal.appendChild(h1);
+                modal.appendChild(document.createElement('hr'));
+            }
+
             const textContainer = document.createElement('div') as HTMLDivElement;
             this.appendText(options.text, textContainer);
             modal.appendChild(textContainer);

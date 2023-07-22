@@ -22,6 +22,7 @@ export default class PlayerNameSection {
         if (!localStorage.getItem('playerRed') || !localStorage.getItem('playerGreen')) {
             Dialog.prompt({
                 id: DialogIds.PlayerNames,
+                title: 'Input Players',
                 text: ['Please enter player names! (10 characters or less.)'],
                 onOK: () => this.onPromptOK(okAction),
                 onCancel: () => this.onPromptCancel(cancelAction),
