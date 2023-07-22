@@ -54,7 +54,9 @@ export default class SameDeviceGame extends Game {
         let nextTurn = localStorage.getItem('nextTurn');
         
         if (board && nextTurn) {
-            Dialog.confirm(DialogIds.ContinueGame, ['Do you want to continue playing the previous game?'], {
+            Dialog.confirm({
+                id: DialogIds.ContinueGame,
+                text: ['Do you want to continue playing the previous game?'],
                 yesCallback: this.continuePreviousGame,
                 noCallback: this.cancelPreviousGame,
                 yesColor: 'green',
@@ -176,7 +178,10 @@ export default class SameDeviceGame extends Game {
                     message += `${this.playerNameSection.getPlayerRed()} (Red) and ${this.playerNameSection.getPlayerGreen()} (Green)`;
                 }
                 message += ' are tied!';
-                Dialog.notify(DialogIds.GameEnd, [message]);
+                Dialog.notify({
+                    id: DialogIds.GameEnd,
+                    text: [message]
+                });
                 this.closeGameAfterWinning();
             } else { // If game is still going on
                 this.switchTurn();
@@ -208,7 +213,10 @@ export default class SameDeviceGame extends Game {
             winMsg.push(`Time taken: ${this.timer.getTimeInStringFormat()}`);
         }
         Utils.playSound(Sound.Win);
-        Dialog.notify(DialogIds.GameEnd, winMsg);
+        Dialog.notify({
+            id: DialogIds.GameEnd,
+            text: winMsg
+        });
     }
 
     protected resetValues() {

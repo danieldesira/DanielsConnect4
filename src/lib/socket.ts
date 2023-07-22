@@ -70,7 +70,9 @@ export default class Socket {
                     color = 'green';
                 }
     
-                Dialog.prompt(DialogIds.PlayerNames, [`You are ${color}. Please enter your name. (10 characters or less.)`], {
+                Dialog.prompt({
+                    id: DialogIds.PlayerNames,
+                    text: [`You are ${color}. Please enter your name. (10 characters or less.)`],
                     onOK: () => this.onPlayerNameInput(color),
                     onCancel: () => this.onGameCancel(),
                     inputs: [{
@@ -106,7 +108,10 @@ export default class Socket {
     private onError = () => {
         this.onErrorCallback();
         Dialog.closeAllOpenDialogs();
-        Dialog.notify(DialogIds.ServerError, ['Problem connecting to server!']);
+        Dialog.notify({
+            id: DialogIds.ServerError,
+            text: ['Problem connecting to server!']
+        });
 
         document.body.classList.remove('waiting');
     };

@@ -108,7 +108,10 @@ export default class NetworkGame extends Game {
         }
 
         if (GameMessage.isTieMessage(messageData)) {
-            Dialog.notify(DialogIds.GameEnd, ['Game resulted in tie!']);
+            Dialog.notify({
+                id: DialogIds.GameEnd,
+                text: ['Game resulted in tie!']
+            });
             document.body.classList.remove('waiting');
             this.closeGameAfterWinning();
         }
@@ -123,7 +126,10 @@ export default class NetworkGame extends Game {
         }
 
         if (GameMessage.isDisconnectMessage(messageData)) {
-            Dialog.notify(DialogIds.GameEnd, ['Your opponent disconnected. You win!']);
+            Dialog.notify({
+                id: DialogIds.GameEnd,
+                text: ['Your opponent disconnected. You win!']
+            });
             document.body.classList.remove('waiting');
             this.closeGameAfterWinning();
         }
@@ -131,7 +137,10 @@ export default class NetworkGame extends Game {
         if (GameMessage.isErrorMessage(messageData)) {
             const data = messageData as ErrorMessage;
             Dialog.closeAllOpenDialogs();
-            Dialog.notify(DialogIds.ServerError, [data.error]);
+            Dialog.notify({
+                id: DialogIds.ServerError,
+                text: [data.error]
+            });
             document.body.classList.remove('waiting');
             this.closeGameAfterWinning();
         }
@@ -197,7 +206,9 @@ export default class NetworkGame extends Game {
     }
 
     public exit = () => {
-        Dialog.confirm(DialogIds.ExitGame, ['Network game in progress. Are you sure you want to quit?'], {
+        Dialog.confirm({
+            id: DialogIds.ExitGame,
+            text: ['Network game in progress. Are you sure you want to quit?'],
             yesCallback: this.confirmExit,
             noCallback: () => {},
             yesColor: 'red',
@@ -231,7 +242,10 @@ export default class NetworkGame extends Game {
             winMsg.push('You lose!');
             Utils.playSound(Sound.Lose);
         }
-        Dialog.notify(DialogIds.GameEnd, winMsg);
+        Dialog.notify({
+            id: DialogIds.GameEnd,
+            text: winMsg
+        });
     }
 
     protected switchTurn() {

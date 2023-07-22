@@ -67,7 +67,10 @@ instructionsBtn.addEventListener('click', () => {
             If you fail to do so, you pass the turn to your opponent.`,
         'Good luck and have fun playing!'
     ];
-    Dialog.notify(DialogIds.Instructions, text);
+    Dialog.notify({
+        id: DialogIds.Instructions,
+        text
+    });
 }, false);
 
 const shareBtn = document.getElementById('shareBtn') as HTMLAnchorElement;

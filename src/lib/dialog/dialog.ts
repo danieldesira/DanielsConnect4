@@ -6,14 +6,14 @@ import PromptInput from "./prompt-input";
 
 export default class Dialog {
     
-    private static modal(id: string, text: Array<string>, type: DialogType, options: DialogOptions = null) {
-        if (!document.getElementById(id)) {
+    private static modal(type: DialogType, options: DialogOptions) {
+        if (!document.getElementById(options.id)) {
             const modal = document.createElement('div') as HTMLDivElement;
-            modal.id = id;
+            modal.id = options.id;
             modal.classList.add('dialog');
 
             const textContainer = document.createElement('div') as HTMLDivElement;
-            this.appendText(text, textContainer);
+            this.appendText(options.text, textContainer);
             modal.appendChild(textContainer);
 
             switch (type) {
@@ -153,16 +153,16 @@ export default class Dialog {
         }
     }
 
-    public static confirm(id: string, text: Array<string>, options: ConfirmationDialogOptions) {
-        Dialog.modal(id, text, DialogType.Confirmation, options);
+    public static confirm(options: ConfirmationDialogOptions) {
+        Dialog.modal(DialogType.Confirmation, options);
     }
 
-    public static notify(id: string, text: Array<string>) {
-        Dialog.modal(id, text, DialogType.Notification);
+    public static notify(options: DialogOptions) {
+        Dialog.modal(DialogType.Notification, options);
     }
 
-    public static prompt(id: string, text: Array<string>, options: PromptDialogOptions) {
-        Dialog.modal(id, text, DialogType.Prompt, options);
+    public static prompt(options: PromptDialogOptions) {
+        Dialog.modal(DialogType.Prompt, options);
     }
 
     public static closeAllOpenDialogs() {
