@@ -7,6 +7,7 @@ import Socket from "./socket";
 import Utils from "./utils";
 import { ActionMessage, CurrentTurnMessage, ErrorMessage, GameMessage, InitialMessage, SkipTurnMessage, WinnerMessage, skipTurnMaxWait } from "@danieldesira/daniels-connect4-common";
 import { DialogIds } from "./enums/dialog-ids";
+import { BoardLogic } from "@danieldesira/daniels-connect4-common/lib/board-logic";
 
 export default class NetworkGame extends Game {
 
@@ -311,7 +312,7 @@ export default class NetworkGame extends Game {
             }
     
             if (Game.moveRightKeys.includes(event.key)) {
-                if (this.currentCoinColumn < 10) {
+                if (this.currentCoinColumn < BoardLogic.columns - 1) {
                     this.currentCoinColumn++;
 
                     data = new ActionMessage(this.currentCoinColumn, 'mousemove', this.turn);

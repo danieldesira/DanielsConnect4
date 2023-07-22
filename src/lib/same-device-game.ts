@@ -206,7 +206,7 @@ export default class SameDeviceGame extends Game {
         document.removeEventListener('changevisibility', this.pageVisibilityChange);
     }
 
-    protected showWinDialog(winner: string, currentTurn: Coin) {
+    protected showWinDialog(winner: string, _: Coin) {
         let winMsg: Array<string> = new Array();
         winMsg.push(`${winner} wins!`);
         if (this.timer) {
@@ -237,7 +237,7 @@ export default class SameDeviceGame extends Game {
             }
     
             if (Game.moveRightKeys.includes(event.key)) {
-                if (this.currentCoinColumn < 10) {
+                if (this.currentCoinColumn < BoardLogic.columns - 1) {
                     this.currentCoinColumn++;
                     this.moveCoin();
                 }

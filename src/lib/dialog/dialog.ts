@@ -78,7 +78,8 @@ export default class Dialog {
 
         const form = document.createElement('form') as HTMLFormElement;
         inputContainer.appendChild(form);
-        form.addEventListener('submit', () => {
+        form.addEventListener('submit', (event: SubmitEvent) => {
+            event.preventDefault();
             const error: string = options.onOK();
             if (error) {
                 this.appendError(modal, error);
