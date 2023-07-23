@@ -34,6 +34,7 @@
 
 .dialog-input {
     border-radius: 15px;
+    width: 100%;
 }
 
 .dialog-input-container {
@@ -57,9 +58,7 @@
 }
 
 .dialog-title {
-    width: 90%;
-    margin-left: auto;
-    margin-right: auto;
+    text-align: center;
 }
 
 @media screen and (min-width: 750px) {

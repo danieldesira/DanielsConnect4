@@ -88,10 +88,7 @@ shareBtn.addEventListener('click', (event: MouseEvent) => {
             title: `Daniel's Connect4`
         };
         navigator.share(shareData)
-            .catch((err) => {
-                console.error(`Problem while sharing: ${err}`);
-                showError('Problem opening share menu!');
-            });
+            .catch((err) => console.error(`Problem while sharing: ${err}`));
     } else {
         showError('Problem opening share menu!');
     }
