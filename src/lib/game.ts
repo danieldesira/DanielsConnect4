@@ -83,13 +83,15 @@ export default abstract class Game {
         window.addEventListener('resize', this.resizeCanvas);
         this.exitBtn.addEventListener('click', this.exit);
         document.body.addEventListener('keydown', this.handleKeyDown);
+        this.canvas.addEventListener('touchmove', this.canvasTouchmove);
     }
 
     protected abstract canvasMousemove(event: MouseEvent): void;
     protected abstract canvasClick(event: MouseEvent): void;
     protected abstract handleKeyDown(event: KeyboardEvent): void;
+    protected abstract canvasTouchmove(event: TouchEvent): void;
 
-    protected getColumnFromCursorPosition(event: MouseEvent): number {
+    protected getColumnFromCursorPosition(event: MouseEvent | Touch): number {
         const position = Position.getCursorPosition(event, this.canvas);
         const column = Math.round((position.x - this.colOffset) / this.colGap);
         return column;
@@ -161,6 +163,7 @@ export default abstract class Game {
         window.removeEventListener('resize', this.resizeCanvas);
         this.exitBtn.removeEventListener('click', this.exit);
         document.body.removeEventListener('keydown', this.handleKeyDown);
+        this.canvas.removeEventListener('touchmove', this.canvasTouchmove);
     }
 
     protected exit() {

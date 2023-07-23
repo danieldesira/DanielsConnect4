@@ -184,6 +184,17 @@ export default class NetworkGame extends Game {
         }
     };
 
+    protected canvasTouchmove = (event: TouchEvent) => {
+        if (this.socket && this.turn === this.socket.getPlayerColor() && this.areBothPlayersConnected()) {
+            const firstTouch = event.changedTouches[0];
+            this.currentCoinColumn = this.getColumnFromCursorPosition(firstTouch);
+            this.moveCoin();
+
+            const data = new ActionMessage(this.currentCoinColumn, 'mousemove', this.turn);
+            this.socket.send(data);
+        }
+    };
+
     protected landCoin(): number {
         if (this.board[this.currentCoinColumn][0] === Coin.Empty) {
             const row = super.landCoin();

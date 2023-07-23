@@ -7,7 +7,7 @@ export default class Position {
         this.y = y;
     }
 
-    public static getCursorPosition(event, canvas): Position {
+    public static getCursorPosition(event: MouseEvent | Touch, canvas: HTMLCanvasElement): Position {
         let x: number;
         let y: number;
         if (event.pageX !== undefined || event.pageY !== undefined) {

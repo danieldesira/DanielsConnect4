@@ -122,6 +122,14 @@ export default class SameDeviceGame extends Game {
         }
     };
 
+    protected canvasTouchmove = (event: TouchEvent) => {
+        if (this.areBothPlayersConnected()) {
+            const firstTouch = event.changedTouches[0];
+            this.currentCoinColumn = this.getColumnFromCursorPosition(firstTouch);
+            this.moveCoin();
+        }
+    };
+
     public exit = () => {
         this.saveGame();
         Dialog.closeAllOpenDialogs();
