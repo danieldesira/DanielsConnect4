@@ -18,8 +18,6 @@ networkBtn.addEventListener('click', () => {
 }, false);
 
 function initGame(mode: GameMode) {
-    clearError();
-
     try {
         const options: GameOptions = {
             canvasId: 'board',
@@ -38,23 +36,12 @@ function initGame(mode: GameMode) {
             connect4.start();
         }
     } catch (ex) {
-        showError('Problem encountered!');
-        // To-do: include logging
-    }
-}
-
-function showError(message: string) {
-    const errorMessageDiv = document.getElementById('errorMessage') as HTMLDivElement;
-    if (errorMessageDiv) {
-        errorMessageDiv.classList.remove('hide');
-        errorMessageDiv.innerText = message;
-    }
-}
-
-function clearError() {
-    const errorMessageDiv = document.getElementById('errorMessage') as HTMLDivElement;
-    if (errorMessageDiv) {
-        errorMessageDiv.classList.add('hide');
+        Dialog.notify({
+            id: DialogIds.ServerError,
+            title: 'Error',
+            text: ['Problem encountered!']
+        });
+        console.error(ex);
     }
 }
 
@@ -81,7 +68,6 @@ instructionsBtn.addEventListener('click', () => {
 const shareBtn = document.getElementById('shareBtn') as HTMLAnchorElement;
 shareBtn.addEventListener('click', (event: MouseEvent) => {
     event.preventDefault();
-    clearError();
     if (navigator.canShare) {
         const shareData = {
             url: location.href,
@@ -90,6 +76,10 @@ shareBtn.addEventListener('click', (event: MouseEvent) => {
         navigator.share(shareData)
             .catch((err) => console.error(`Problem while sharing: ${err}`));
     } else {
-        showError('Problem opening share menu!');
+        Dialog.notify({
+            id: DialogIds.ServerError,
+            title: 'Error',
+            text: ['Problem opening share menu!']
+        });
     }
 });
