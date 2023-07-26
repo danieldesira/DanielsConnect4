@@ -1,3 +1,4 @@
+import { processGoogleToken, storeGoogleToken } from "./lib/authentication";
 import Dialog from "./lib/dialog/dialog";
 import { DialogIds } from "./lib/enums/dialog-ids";
 import { GameMode } from "./lib/enums/game-mode";
@@ -83,3 +84,8 @@ shareBtn.addEventListener('click', (event: MouseEvent) => {
         });
     }
 });
+
+export function handleGoogleSignon(token: string) {
+    storeGoogleToken(token);
+    processGoogleToken(token);
+}

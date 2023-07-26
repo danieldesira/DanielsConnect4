@@ -9,6 +9,13 @@
         <meta property="og:image" content="images/snapshot.png" />
         <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="styles/style.css" />
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
+        <script>
+            function googleSignon(response) {
+                const {credential} = response;
+                sessionStorage.setItem('googleToken', credential);
+            }
+        </script>
     </head>
     <body>
         <noscript class="text red-text">
@@ -23,6 +30,21 @@
                 <strong id="timer"></strong>|
                 <strong id="playerRed" class="red-text"></strong>|
                 <strong id="playerGreen" class="green-text"></strong>
+            </div>
+            <div id="g_id_onload"
+                data-client_id="966331594657-sjtp3m7ooigjma726j7aa4kcf5qdu2v7.apps.googleusercontent.com"
+                data-context="signin"
+                data-ux_mode="popup"
+                data-itp_support="true"
+                data-callback="googleSignon">
+            </div>
+            <div class="g_id_signin"
+                data-type="standard"
+                data-shape="rectangular"
+                data-theme="outline"
+                data-text="signin_with"
+                data-size="medium"
+                data-logo_alignment="left">
             </div>
         </div>
         <div id="menu" class="menu">
