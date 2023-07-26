@@ -1,4 +1,4 @@
-import { processGoogleToken, storeGoogleToken } from "./lib/authentication";
+import { handleGoogleSignon } from "./lib/authentication";
 import Dialog from "./lib/dialog/dialog";
 import { DialogIds } from "./lib/enums/dialog-ids";
 import { GameMode } from "./lib/enums/game-mode";
@@ -85,7 +85,12 @@ shareBtn.addEventListener('click', (event: MouseEvent) => {
     }
 });
 
-export function handleGoogleSignon(token: string) {
-    storeGoogleToken(token);
-    processGoogleToken(token);
-}
+window.google.accounts.id.initialize({
+    client_id: '966331594657-sjtp3m7ooigjma726j7aa4kcf5qdu2v7.apps.googleusercontent.com',
+    callback: handleGoogleSignon
+});
+
+const googleSignonBtn = document.getElementById('googleSignon') as HTMLButtonElement;
+googleSignonBtn.addEventListener('click', () => {
+    window.google.accounts.id.prompt();
+});

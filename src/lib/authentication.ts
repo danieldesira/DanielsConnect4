@@ -1,8 +1,20 @@
-export function storeGoogleToken(token: string) {
+declare global {
+    interface Window {
+        google: any;
+    }
+}
+
+export function handleGoogleSignon(response: any) {
+    const {credential} = response;
+    storeGoogleToken(credential);
+    processGoogleToken(credential);
+}
+
+function storeGoogleToken(token: string) {
     sessionStorage.setItem('googleToken', token);
 }
 
-export function processGoogleToken(token: string) {
+function processGoogleToken(token: string) {
     //to-do: send request to server to process google token
     //const response = await fetch()
 }
