@@ -1,5 +1,6 @@
 import Dialog from "./dialog/dialog";
 import { DialogIds } from "./enums/dialog-ids";
+import { AuthenticationModel } from "./models/authentication-model";
 import Utils from "./utils";
 import { Coin, GameMessage, InitialMessage, PlayerNameMessage } from "@danieldesira/daniels-connect4-common";
 
@@ -13,11 +14,11 @@ export default class Socket {
     public onInputPlayerNameInDialog: Function;
     public onGameCancel: Function;
 
-    public constructor() {
-        this.connect();
+    public constructor(auth: AuthenticationModel) {
+        this.connect(auth);
     }
 
-    private connect() {
+    private connect(auth: AuthenticationModel = null) {
         let url: string;
         if (Utils.isLocal()) {
             url = 'ws://localhost:3000/';
@@ -25,8 +26,12 @@ export default class Socket {
             url = 'wss://daniels-connect4-server.adaptable.app/';
         }
 
+        if (auth) {
+            url += `?token=${auth.token}&service=${auth.service}`;
+        }
+
         if (this.playerColor && !isNaN(this.gameId)) {
-            url += `?playerColor=${this.playerColor}&gameId=${this.gameId}&playerName=${this.playerName}`;
+            url += `&playerColor=${this.playerColor}&gameId=${this.gameId}&playerName=${this.playerName}`;
         }
 
         this.webSocket = new WebSocket(url);

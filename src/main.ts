@@ -1,4 +1,4 @@
-import { handleGoogleSignon } from "./lib/authentication";
+import { handleGoogleSignon, logout, showLoginLogout } from "./lib/authentication";
 import Dialog from "./lib/dialog/dialog";
 import { DialogIds } from "./lib/enums/dialog-ids";
 import { GameMode } from "./lib/enums/game-mode";
@@ -94,3 +94,8 @@ const googleSignonBtn = document.getElementById('googleSignon') as HTMLButtonEle
 googleSignonBtn.addEventListener('click', () => {
     window.google.accounts.id.prompt();
 });
+
+showLoginLogout();
+
+const logoutBtn = document.getElementById('logout') as HTMLButtonElement;
+logoutBtn.addEventListener('click', logout);

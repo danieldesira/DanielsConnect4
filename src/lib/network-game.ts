@@ -8,6 +8,8 @@ import Utils from "./utils";
 import { ActionMessage, CurrentTurnMessage, ErrorMessage, GameMessage, InitialMessage, SkipTurnMessage, WinnerMessage, skipTurnMaxWait } from "@danieldesira/daniels-connect4-common";
 import { DialogIds } from "./enums/dialog-ids";
 import { BoardLogic } from "@danieldesira/daniels-connect4-common/lib/board-logic";
+import { getToken } from "./authentication";
+import { AuthenticationModel } from "./models/authentication-model";
 
 export default class NetworkGame extends Game {
 
@@ -34,14 +36,23 @@ export default class NetworkGame extends Game {
     }
 
     public start() {
-        this.defineSocket();
-        this.startCountdown();
-        super.start();
-        document.body.classList.add('waiting');
+        const auth = getToken();
+        if (auth) {
+            this.defineSocket(auth);
+            this.startCountdown();
+            super.start();
+            document.body.classList.add('waiting');
+        } else {
+            Dialog.notify({
+                title: 'Error',
+                text: ['User not logged in!'],
+                id: DialogIds.ServerError
+            });
+        }
     }
 
-    private defineSocket() {
-        this.socket = new Socket();
+    private defineSocket(auth: AuthenticationModel) {
+        this.socket = new Socket(auth);
         this.socket.onMessageCallback = this.onSocketMessage;
         this.socket.onErrorCallback = this.onSocketError;
         this.socket.onInputPlayerNameInDialog = this.onInputPlayerNameInDialog;
