@@ -55,27 +55,36 @@ export default class NetworkGame extends Game {
         this.socket = new Socket(auth);
         this.socket.onMessageCallback = this.onSocketMessage;
         this.socket.onErrorCallback = this.onSocketError;
-        this.socket.onInputPlayerNameInDialog = this.onInputPlayerNameInDialog;
         this.socket.onGameCancel = this.confirmExit;
     }
 
     private onSocketMessage = (messageData: GameMessage) => {
         if (GameMessage.isInitialMessage(messageData)) {
             const data = messageData as InitialMessage;
-            if (data.opponentName && this.socket && this.playerNameSection) {
-                this.toggleWaitingClass();
-                if (this.socket.getPlayerColor() === Coin.Red) {
-                    this.playerNameSection.setPlayerGreen(data.opponentName);
-                } else if (this.socket.getPlayerColor() === Coin.Green) {
-                    this.playerNameSection.setPlayerRed(data.opponentName);
+            if (this.socket && this.playerNameSection) {
+                if (data.opponentName) {
+                    this.toggleWaitingClass();
+                    if (this.socket.getPlayerColor() === Coin.Red) {
+                        this.playerNameSection.setPlayerGreen(data.opponentName);
+                    } else if (this.socket.getPlayerColor() === Coin.Green) {
+                        this.playerNameSection.setPlayerRed(data.opponentName);
+                    }
                 }
-            }
     
-            if (data.color && this.socket && this.playerNameSection) {
-                if (data.color === Coin.Red) {
-                    this.playerNameSection.setPlayerRed(this.socket.getPlayerName());
-                } else {
-                    this.playerNameSection.setPlayerGreen(this.socket.getPlayerName());
+                if (data.playerName) {
+                    if (this.socket.getPlayerColor() === Coin.Red) {
+                        this.playerNameSection.setPlayerRed(data.playerName);
+                    } else if (this.socket.getPlayerColor() === Coin.Green) {
+                        this.playerNameSection.setPlayerGreen(data.playerName);
+                    }
+                }
+        
+                if (data.color) {
+                    if (data.color === Coin.Red) {
+                        this.playerNameSection.setPlayerRed(this.socket.getPlayerName());
+                    } else {
+                        this.playerNameSection.setPlayerGreen(this.socket.getPlayerName());
+                    }
                 }
             }
         }

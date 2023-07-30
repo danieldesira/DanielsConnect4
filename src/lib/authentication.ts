@@ -15,7 +15,7 @@ export function handleGoogleSignon(response: any) {
 
 function storeGoogleToken(token: string) {
     const data = {
-        token: token,
+        token,
         service: 'google'
     } as AuthenticationModel;
     sessionStorage.setItem('auth', JSON.stringify(data));
