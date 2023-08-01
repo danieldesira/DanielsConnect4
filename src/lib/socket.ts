@@ -1,3 +1,4 @@
+import config from "./config";
 import Dialog from "./dialog/dialog";
 import { DialogIds } from "./enums/dialog-ids";
 import { AuthenticationModel } from "./models/authentication-model";
@@ -18,12 +19,7 @@ export default class Socket {
     }
 
     private connect(auth: AuthenticationModel = null) {
-        let url: string;
-        if (Utils.isLocal()) {
-            url = 'ws://localhost:3000/';
-        } else {
-            url = 'wss://daniels-connect4-server.adaptable.app/';
-        }
+        let url: string = config.wsServer;
 
         if (auth) {
             url += `?token=${auth.token}&service=${auth.service}`;

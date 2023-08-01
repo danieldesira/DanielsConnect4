@@ -95,7 +95,9 @@ googleSignonBtn.addEventListener('click', () => {
     window.google.accounts.id.prompt();
 });
 
-showLoginLogout();
+(async () => {
+    await showLoginLogout();
+});
 
 const logoutBtn = document.getElementById('logout') as HTMLButtonElement;
 logoutBtn.addEventListener('click', logout);
