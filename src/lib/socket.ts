@@ -1,8 +1,8 @@
+import { getToken } from "./authentication";
 import config from "./config";
 import Dialog from "./dialog/dialog";
 import { DialogIds } from "./enums/dialog-ids";
 import { AuthenticationModel } from "./models/authentication-model";
-import Utils from "./utils";
 import { Coin, GameMessage, InitialMessage } from "@danieldesira/daniels-connect4-common";
 
 export default class Socket {
@@ -18,15 +18,11 @@ export default class Socket {
         this.connect(auth);
     }
 
-    private connect(auth: AuthenticationModel = null) {
-        let url: string = config.wsServer;
-
-        if (auth) {
-            url += `?token=${auth.token}&service=${auth.service}`;
-        }
+    private connect(auth: AuthenticationModel) {
+        let url: string = `${config.wsServer}?token=${auth.token}&service=${auth.service}`;
 
         if (this.playerColor && !isNaN(this.gameId)) {
-            url += `?playerColor=${this.playerColor}&gameId=${this.gameId}&playerName=${this.playerName}`;
+            url += `&playerColor=${this.playerColor}&gameId=${this.gameId}`;
         }
 
         this.webSocket = new WebSocket(url);
@@ -36,9 +32,7 @@ export default class Socket {
         this.webSocket.onclose = this.onClose;
     }
 
-    public send(data: GameMessage) {
-        this.webSocket.send(JSON.stringify(data));
-    }
+    public send = (data: GameMessage) => this.webSocket.send(JSON.stringify(data));
 
     public close() {
         this.webSocket.onclose = null;
@@ -87,6 +81,9 @@ export default class Socket {
     };
 
     private onClose = () => {
-        this.connect();
+        const auth = getToken();
+        if (auth) {
+            this.connect(auth);
+        }
     };
 }
