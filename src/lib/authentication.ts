@@ -48,6 +48,6 @@ async function loadUserName() {
     const auth = getToken();
     const response = await fetch(`${config.httpServer}/auth?token=${auth.token}&service=${auth.service}`);
     const data = await response.json();
-    const userMenu = document.getElementById('userMenu') as HTMLButtonElement;
-    userMenu.innerText = data.user;
+    const userName = document.getElementById('authPlayerName') as HTMLButtonElement;
+    userName.innerText = data.user;
 }

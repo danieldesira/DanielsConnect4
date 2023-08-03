@@ -101,3 +101,9 @@ googleSignonBtn.addEventListener('click', () => {
 
 const logoutBtn = document.getElementById('logout') as HTMLButtonElement;
 logoutBtn.addEventListener('click', logout);
+
+const userMenu = document.getElementById('userMenu') as HTMLButtonElement;
+userMenu.addEventListener('click', () => {
+    const slidebar = document.getElementById('slidebar') as HTMLDivElement;
+    slidebar.classList.toggle('hide');
+})
