@@ -23,14 +23,16 @@ function storeGoogleToken(token: string) {
 
 export async function showLoginLogout() {
     const loginBtns = document.getElementById('login-btns') as HTMLDivElement;
-    const loggedInArea = document.getElementById('logged-in-area') as HTMLDivElement;
+    const loggedInArea = document.getElementById('slidebar') as HTMLDivElement;
     if (sessionStorage.getItem('auth')) {
         loginBtns.classList.add('hide');
         loggedInArea.classList.remove('hide');
-        await loadUserName();
+        await loadUserData();
     } else {
         loginBtns.classList.remove('hide');
         loggedInArea.classList.add('hide');
+        const statsContainer = document.getElementById('statsContainer') as HTMLDivElement;
+        statsContainer.innerText = '';
     }
 }
 
@@ -44,10 +46,20 @@ export function getToken(): AuthenticationModel | null {
     return val ? JSON.parse(val) as AuthenticationModel : null;
 }
 
-async function loadUserName() {
+async function loadUserData() {
     const auth = getToken();
     const response = await fetch(`${config.httpServer}/auth?token=${auth.token}&service=${auth.service}`);
     const data = await response.json();
     const userName = document.getElementById('authPlayerName') as HTMLButtonElement;
     userName.innerText = data.user;
+    const authPlayerPicture = document.getElementById('authPlayerPicture') as HTMLImageElement;
+    authPlayerPicture.src = data.picUrl;
+}
+
+export async function loadStats() {
+    const auth = getToken();
+    const response = await fetch(`${config.httpServer}/stats?token=${auth.token}&service=${auth.service}`);
+    const data = await response.json();
+    const statsContainer = document.getElementById('statsContainer') as HTMLDivElement;
+    statsContainer.innerText = `Wins: ${data.wins} - ${data.winPercent.toFixed(2)}%\nLosses: ${data.losses} - ${data.lossPercent.toFixed(2)}%`;
 }

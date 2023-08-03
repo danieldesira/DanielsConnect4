@@ -1,4 +1,4 @@
-import { handleGoogleSignon, logout, showLoginLogout } from "./lib/authentication";
+import { handleGoogleSignon, loadStats, logout, showLoginLogout } from "./lib/authentication";
 import Dialog from "./lib/dialog/dialog";
 import { DialogIds } from "./lib/enums/dialog-ids";
 import { GameMode } from "./lib/enums/game-mode";
@@ -102,8 +102,7 @@ googleSignonBtn.addEventListener('click', () => {
 const logoutBtn = document.getElementById('logout') as HTMLButtonElement;
 logoutBtn.addEventListener('click', logout);
 
-const userMenu = document.getElementById('userMenu') as HTMLButtonElement;
-userMenu.addEventListener('click', () => {
-    const slidebar = document.getElementById('slidebar') as HTMLDivElement;
-    slidebar.classList.toggle('hide');
-})
+const statsBtn = document.getElementById('stats') as HTMLButtonElement;
+statsBtn.addEventListener('click', async () => {
+    await loadStats();
+});
