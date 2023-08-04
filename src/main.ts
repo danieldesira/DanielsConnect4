@@ -27,7 +27,8 @@ function initGame(mode: GameMode) {
             playerRedId: 'playerRed',
             playerGreenId: 'playerGreen',
             menuId: 'menu',
-            gameIndicatorsId: 'gameIndicators'
+            gameIndicatorsId: 'gameIndicators',
+            logoutBtnId: 'logout'
         };
         if (mode === GameMode.Network) {
             const connect4 = NetworkGame.getInstance(options);
