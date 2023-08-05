@@ -1,3 +1,4 @@
+import { handleGoogleSignon, loadStats, logout, showLoginLogout } from "./lib/authentication";
 import Dialog from "./lib/dialog/dialog";
 import { DialogIds } from "./lib/enums/dialog-ids";
 import { GameMode } from "./lib/enums/game-mode";
@@ -26,7 +27,8 @@ function initGame(mode: GameMode) {
             playerRedId: 'playerRed',
             playerGreenId: 'playerGreen',
             menuId: 'menu',
-            gameIndicatorsId: 'gameIndicators'
+            gameIndicatorsId: 'gameIndicators',
+            logoutBtnId: 'logout'
         };
         if (mode === GameMode.Network) {
             const connect4 = NetworkGame.getInstance(options);
@@ -82,4 +84,26 @@ shareBtn.addEventListener('click', (event: MouseEvent) => {
             text: ['Problem opening share menu!']
         });
     }
+});
+
+window.google.accounts.id.initialize({
+    client_id: '966331594657-sjtp3m7ooigjma726j7aa4kcf5qdu2v7.apps.googleusercontent.com',
+    callback: handleGoogleSignon
+});
+
+const googleSignonBtn = document.getElementById('googleSignon') as HTMLButtonElement;
+googleSignonBtn.addEventListener('click', () => {
+    window.google.accounts.id.prompt();
+});
+
+(async () => {
+    await showLoginLogout();
+});
+
+const logoutBtn = document.getElementById('logout') as HTMLButtonElement;
+logoutBtn.addEventListener('click', logout);
+
+const statsBtn = document.getElementById('stats') as HTMLButtonElement;
+statsBtn.addEventListener('click', async () => {
+    await loadStats();
 });

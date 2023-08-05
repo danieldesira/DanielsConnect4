@@ -11,20 +11,10 @@ module.exports = {
         use: 'ts-loader',
         exclude: /node_modules/,
       },
-      {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader']
-      },
     ],
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
-    alias: {
-      '@fortawesome/fontawesome-free$': path.resolve(
-        __dirname,
-        'node_modules/@fortawesome/fontawesome-free/css/all.css'
-      )
-    },
   },
   output: {
     filename: 'bundle.js',

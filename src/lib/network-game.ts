@@ -8,6 +8,8 @@ import Utils from "./utils";
 import { ActionMessage, CurrentTurnMessage, ErrorMessage, GameMessage, InitialMessage, SkipTurnMessage, WinnerMessage, skipTurnMaxWait } from "@danieldesira/daniels-connect4-common";
 import { DialogIds } from "./enums/dialog-ids";
 import { BoardLogic } from "@danieldesira/daniels-connect4-common/lib/board-logic";
+import { getToken } from "./authentication";
+import { AuthenticationModel } from "./models/authentication-model";
 
 export default class NetworkGame extends Game {
 
@@ -17,6 +19,7 @@ export default class NetworkGame extends Game {
     private turnCountDown: number;
     private turnCountDownInterval: number;
     private countdownSpan: HTMLSpanElement;
+    private logoutBtn: HTMLButtonElement;
 
     private constructor(options: GameOptions) {
         super(options);
@@ -24,6 +27,8 @@ export default class NetworkGame extends Game {
         if (options.timerCountdownId) {
             this.countdownSpan = document.getElementById(options.timerCountdownId) as HTMLSpanElement;
         }
+
+        this.logoutBtn = document.getElementById(options.logoutBtnId) as HTMLButtonElement;
     }
 
     public static getInstance(options: GameOptions): NetworkGame {
@@ -34,37 +39,56 @@ export default class NetworkGame extends Game {
     }
 
     public start() {
-        this.defineSocket();
-        this.startCountdown();
-        super.start();
-        document.body.classList.add('waiting');
+        const auth = getToken();
+        if (auth) {
+            this.defineSocket(auth);
+            this.startCountdown();
+            super.start();
+            document.body.classList.add('waiting');
+            this.disableLogoutBtn();
+        } else {
+            Dialog.notify({
+                title: 'Error',
+                text: ['User not logged in!'],
+                id: DialogIds.ServerError
+            });
+        }
     }
 
-    private defineSocket() {
-        this.socket = new Socket();
+    private defineSocket(auth: AuthenticationModel) {
+        this.socket = new Socket(auth);
         this.socket.onMessageCallback = this.onSocketMessage;
         this.socket.onErrorCallback = this.onSocketError;
-        this.socket.onInputPlayerNameInDialog = this.onInputPlayerNameInDialog;
         this.socket.onGameCancel = this.confirmExit;
     }
 
     private onSocketMessage = (messageData: GameMessage) => {
         if (GameMessage.isInitialMessage(messageData)) {
             const data = messageData as InitialMessage;
-            if (data.opponentName && this.socket && this.playerNameSection) {
-                this.toggleWaitingClass();
-                if (this.socket.getPlayerColor() === Coin.Red) {
-                    this.playerNameSection.setPlayerGreen(data.opponentName);
-                } else if (this.socket.getPlayerColor() === Coin.Green) {
-                    this.playerNameSection.setPlayerRed(data.opponentName);
+            if (this.socket && this.playerNameSection) {
+                if (data.opponentName) {
+                    this.toggleWaitingClass();
+                    if (this.socket.getPlayerColor() === Coin.Red) {
+                        this.playerNameSection.setPlayerGreen(data.opponentName);
+                    } else if (this.socket.getPlayerColor() === Coin.Green) {
+                        this.playerNameSection.setPlayerRed(data.opponentName);
+                    }
                 }
-            }
     
-            if (data.color && this.socket && this.playerNameSection) {
-                if (data.color === Coin.Red) {
-                    this.playerNameSection.setPlayerRed(this.socket.getPlayerName());
-                } else {
-                    this.playerNameSection.setPlayerGreen(this.socket.getPlayerName());
+                if (data.playerName) {
+                    if (this.socket.getPlayerColor() === Coin.Red) {
+                        this.playerNameSection.setPlayerRed(data.playerName);
+                    } else if (this.socket.getPlayerColor() === Coin.Green) {
+                        this.playerNameSection.setPlayerGreen(data.playerName);
+                    }
+                }
+        
+                if (data.color) {
+                    if (data.color === Coin.Red) {
+                        this.playerNameSection.setPlayerRed(this.socket.getPlayerName());
+                    } else {
+                        this.playerNameSection.setPlayerGreen(this.socket.getPlayerName());
+                    }
                 }
             }
         }
@@ -106,6 +130,7 @@ export default class NetworkGame extends Game {
 
             this.closeGameAfterWinning();
             document.body.classList.remove('waiting');
+            this.enableLogoutBtn();
         }
 
         if (GameMessage.isTieMessage(messageData)) {
@@ -115,6 +140,7 @@ export default class NetworkGame extends Game {
                 title: null
             });
             document.body.classList.remove('waiting');
+            this.enableLogoutBtn();
             this.closeGameAfterWinning();
         }
 
@@ -134,6 +160,7 @@ export default class NetworkGame extends Game {
                 title: 'We have a winner!'
             });
             document.body.classList.remove('waiting');
+            this.enableLogoutBtn();
             this.closeGameAfterWinning();
         }
 
@@ -146,6 +173,7 @@ export default class NetworkGame extends Game {
                 title: 'Error'
             });
             document.body.classList.remove('waiting');
+            this.enableLogoutBtn();
             this.closeGameAfterWinning();
         }
     };
@@ -238,6 +266,7 @@ export default class NetworkGame extends Game {
         }
         Dialog.closeAllOpenDialogs();
         document.body.classList.remove('waiting');
+        this.enableLogoutBtn();
 
         super.exit();
     };
@@ -249,7 +278,7 @@ export default class NetworkGame extends Game {
     };
 
     protected showWinDialog(winner: string, currentTurn: Coin) {
-        let winMsg: Array<string> = new Array();
+        const winMsg: Array<string> = [];
         winMsg.push(`${winner} wins!`);
         if (this.socket && this.socket.getPlayerColor() === currentTurn) {
             winMsg.push('You win!');
@@ -302,16 +331,6 @@ export default class NetworkGame extends Game {
         this.turnCountDown = skipTurnMaxWait;
     }
 
-    private onInputPlayerNameInDialog = (playerName: string) => {
-        if (this.socket) {
-            if (this.socket.getPlayerColor() === Coin.Red) {
-                this.playerNameSection.setPlayerRed(playerName);
-            } else {
-                this.playerNameSection.setPlayerGreen(playerName);
-            }
-        }
-    };
-
     protected handleKeyDown = (event: KeyboardEvent) => {
         if (this.socket && this.turn === this.socket.getPlayerColor() && this.areBothPlayersConnected()) {
             let data: GameMessage;
@@ -350,5 +369,15 @@ export default class NetworkGame extends Game {
             this.exit();
         }
     };
+
+    private disableLogoutBtn() {
+        this.logoutBtn.disabled = true;
+        this.logoutBtn.ariaDisabled = 'true';
+    }
+
+    private enableLogoutBtn() {
+        this.logoutBtn.disabled = false;
+        this.logoutBtn.ariaDisabled = 'false';
+    }
     
 }

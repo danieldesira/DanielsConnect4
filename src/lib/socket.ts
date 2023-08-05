@@ -1,7 +1,9 @@
+import { getToken } from "./authentication";
+import config from "./config";
 import Dialog from "./dialog/dialog";
 import { DialogIds } from "./enums/dialog-ids";
-import Utils from "./utils";
-import { Coin, GameMessage, InitialMessage, PlayerNameMessage } from "@danieldesira/daniels-connect4-common";
+import { AuthenticationModel } from "./models/authentication-model";
+import { Coin, GameMessage, InitialMessage } from "@danieldesira/daniels-connect4-common";
 
 export default class Socket {
     private webSocket: WebSocket;
@@ -10,23 +12,17 @@ export default class Socket {
     private gameId: number;
     public onMessageCallback: Function;
     public onErrorCallback: Function;
-    public onInputPlayerNameInDialog: Function;
     public onGameCancel: Function;
 
-    public constructor() {
-        this.connect();
+    public constructor(auth: AuthenticationModel) {
+        this.connect(auth);
     }
 
-    private connect() {
-        let url: string;
-        if (Utils.isLocal()) {
-            url = 'ws://localhost:3000/';
-        } else {
-            url = 'wss://daniels-connect4-server.adaptable.app/';
-        }
+    private connect(auth: AuthenticationModel) {
+        let url: string = `${config.wsServer}?token=${auth.token}&service=${auth.service}`;
 
         if (this.playerColor && !isNaN(this.gameId)) {
-            url += `?playerColor=${this.playerColor}&gameId=${this.gameId}&playerName=${this.playerName}`;
+            url += `&playerColor=${this.playerColor}&gameId=${this.gameId}`;
         }
 
         this.webSocket = new WebSocket(url);
@@ -36,9 +32,7 @@ export default class Socket {
         this.webSocket.onclose = this.onClose;
     }
 
-    public send(data: GameMessage) {
-        this.webSocket.send(JSON.stringify(data));
-    }
+    public send = (data: GameMessage) => this.webSocket.send(JSON.stringify(data));
 
     public close() {
         this.webSocket.onclose = null;
@@ -59,50 +53,18 @@ export default class Socket {
             if (!this.gameId) {
                 this.gameId = data.gameId;
             }
+
+            if (!this.playerName) {
+                this.playerName = data.playerName;
+            }
             
             if (!this.playerColor) {
                 this.playerColor = data.color;
-    
-                let color: string;
-                if (this.playerColor === Coin.Red) {
-                    color = 'red';
-                } else {
-                    color = 'green';
-                }
-    
-                Dialog.prompt({
-                    id: DialogIds.PlayerNames,
-                    title: 'Player Input',
-                    text: [`You are ${color}. Please enter your name. (10 characters or less.)`],
-                    onOK: () => this.onPlayerNameInput(color),
-                    onCancel: () => this.onGameCancel(),
-                    inputs: [{
-                        label: `Player ${color[0].toUpperCase()}${color.substring(1)}`,
-                        name: color,
-                        type: 'text',
-                        limit: 10,
-                        required: true
-                    }]
-                });
             }
         }
 
         if (this.onMessageCallback) {
             this.onMessageCallback(messageData);
-        }
-    };
-
-    private onPlayerNameInput = (color: string): string => {
-        const playerNameField = document.getElementById(`dialog-input-${color}`) as HTMLInputElement;
-
-        if (playerNameField) {
-            if (playerNameField.value && playerNameField.value.trim()) {
-                this.playerName = playerNameField.value;
-                this.onInputPlayerNameInDialog(this.playerName);
-                const data = new PlayerNameMessage(this.playerName);
-                this.send(data);
-                return null;
-            }
         }
     };
 
@@ -119,6 +81,9 @@ export default class Socket {
     };
 
     private onClose = () => {
-        this.connect();
+        const auth = getToken();
+        if (auth) {
+            this.connect(auth);
+        }
     };
 }
