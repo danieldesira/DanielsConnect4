@@ -19,13 +19,13 @@ function storeGoogleToken(token: string) {
         token,
         service: 'google'
     } as AuthenticationModel;
-    sessionStorage.setItem('auth', JSON.stringify(data));
+    localStorage.setItem('auth', JSON.stringify(data));
 }
 
 export async function showLoginLogout() {
     const loginBtns = document.getElementById('login-btns') as HTMLDivElement;
     const loggedInArea = document.getElementById('slidebar') as HTMLDivElement;
-    if (sessionStorage.getItem('auth')) {
+    if (localStorage.getItem('auth')) {
         loginBtns.classList.add('hide');
         loggedInArea.classList.remove('hide');
         await loadUserData();
@@ -38,12 +38,12 @@ export async function showLoginLogout() {
 }
 
 export function logout() {
-    sessionStorage.removeItem('auth');
+    localStorage.removeItem('auth');
     showLoginLogout();
 }
 
 export function getToken(): AuthenticationModel | null {
-    const val = sessionStorage.getItem('auth');
+    const val = localStorage.getItem('auth');
     return val ? JSON.parse(val) as AuthenticationModel : null;
 }
 
@@ -63,4 +63,12 @@ export async function loadStats() {
     const data = await response.json() as PlayerStats;
     const statsContainer = document.getElementById('statsContainer') as HTMLDivElement;
     statsContainer.innerText = `Wins: ${data.wins} - ${data.winPercent.toFixed(2)}%\nLosses: ${data.losses} - ${data.lossPercent.toFixed(2)}%`;
+}
+
+export function initGoogleSSO() {
+    window.google.accounts.id.initialize({
+        client_id: '966331594657-sjtp3m7ooigjma726j7aa4kcf5qdu2v7.apps.googleusercontent.com',
+        callback: handleGoogleSignon
+    });
+    window.google.accounts.id.prompt();
 }

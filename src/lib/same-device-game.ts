@@ -6,6 +6,7 @@ import Utils from "./utils";
 import Timer from "./timer";
 import BoardLogic, { Coin, randomiseColor } from "@danieldesira/daniels-connect4-common";
 import { DialogIds } from "./enums/dialog-ids";
+import PreviousGameData from "./models/previous-game-data";
 
 export default class SameDeviceGame extends Game {
 
@@ -50,10 +51,9 @@ export default class SameDeviceGame extends Game {
     }
 
     private checkGameData() {
-        let board = localStorage.getItem('board');
-        let nextTurn = localStorage.getItem('nextTurn');
+        const gameData = localStorage.getItem('gameData');
         
-        if (board && nextTurn) {
+        if (gameData) {
             Dialog.confirm({
                 id: DialogIds.ContinueGame,
                 title: null,
@@ -75,36 +75,36 @@ export default class SameDeviceGame extends Game {
     };
 
     private cancelPreviousGame = () => {
-        localStorage.clear();
+        localStorage.removeItem('gameData');
         this.turn = randomiseColor();
         this.onGameDataCheck();
     };
 
     private restoreLastGame() {
-        this.turn = parseInt(localStorage.getItem('nextTurn'));
-        this.board = JSON.parse(localStorage.getItem('board'));
+        const gameData = JSON.parse(localStorage.getItem('gameData')) as PreviousGameData;
+        this.turn = gameData.nextTurn;
+        this.board = gameData.board;
 
         if (this.timer) {
-            this.timer.setSecondsRunningFromLocalStorage();
+            this.timer.setSecondsRunning(gameData.secondsRunning);
         }
 
         if (this.playerNameSection) {
-            this.playerNameSection.setFromLocalStorage();
+            this.playerNameSection.setPlayerGreen(gameData.playerGreen);
+            this.playerNameSection.setPlayerRed(gameData.playerRed);
         }
     }
 
     private saveGame() {
         if (this.areBothPlayersConnected()) {
-            localStorage.setItem('nextTurn', this.turn.toString());
-            localStorage.setItem('board', JSON.stringify(this.board));
-
-            if (this.playerNameSection) {
-                this.playerNameSection.saveIntoLocalStorage();
-            }
-
-            if (this.timer) {
-                this.timer.saveSecondsRunningToLocalStorage();
-            }
+            const gameData: PreviousGameData = {
+                nextTurn: this.turn,
+                board: this.board,
+                secondsRunning: this.timer?.getSecondsRunning(),
+                playerRed: this.playerNameSection?.getPlayerRed(),
+                playerGreen: this.playerNameSection?.getPlayerGreen()
+            };
+            localStorage.setItem('gameData', JSON.stringify(gameData));
         }
     }
 
@@ -152,8 +152,7 @@ export default class SameDeviceGame extends Game {
     };
 
     protected closeGameAfterWinning() {
-        // Clear game data
-        localStorage.clear();
+        localStorage.removeItem('gameData');
 
         if (this.timer) {
             this.timer.stop();
@@ -217,7 +216,7 @@ export default class SameDeviceGame extends Game {
     }
 
     protected showWinDialog(winner: string, _: Coin) {
-        let winMsg: Array<string> = new Array();
+        const winMsg: Array<string> = new Array();
         winMsg.push(`${winner} wins!`);
         if (this.timer) {
             winMsg.push(`Time taken: ${this.timer.getTimeInStringFormat()}`);

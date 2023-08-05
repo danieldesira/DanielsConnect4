@@ -19,7 +19,7 @@ export default class PlayerNameSection {
     }
 
     public setUpPlayerNames(okAction: Function, cancelAction: Function) {
-        if (!localStorage.getItem('playerRed') || !localStorage.getItem('playerGreen')) {
+        if (!localStorage.getItem('gameData')) {
             Dialog.prompt({
                 id: DialogIds.PlayerNames,
                 title: 'Input Players',
@@ -104,16 +104,6 @@ export default class PlayerNameSection {
 
     public areBothPlayersConnected(): boolean {
         return !!this.playerRed && !!this.playerGreen;
-    }
-
-    public saveIntoLocalStorage() {
-        localStorage.setItem('playerRed', this.playerRed);
-        localStorage.setItem('playerGreen', this.playerGreen);
-    }
-
-    public setFromLocalStorage() {
-        this.playerRed = localStorage.getItem('playerRed');
-        this.playerGreen = localStorage.getItem('playerGreen');
     }
 
     public setPlayerRed(playerName: string) {

@@ -180,6 +180,7 @@ export default class NetworkGame extends Game {
 
     private onSocketError = () => {
         super.exit();
+        this.enableLogoutBtn();
     };
 
     protected resetValues() {
