@@ -50,14 +50,12 @@ export default class Timer {
             return '';
         }
     }
-
-    public saveSecondsRunningToLocalStorage() {
-        localStorage.setItem('secondsRunning', this.secondsRunning.toString());
+    
+    public setSecondsRunning(secondsRunning: number) {
+        this.secondsRunning = secondsRunning;
     }
 
-    public setSecondsRunningFromLocalStorage() {
-        this.secondsRunning = parseInt(localStorage.getItem('secondsRunning'));
-    }
+    public getSecondsRunning = () => this.secondsRunning;   
 
     public reset() {
         this.secondsRunning = 0;
