@@ -225,7 +225,7 @@ export default class NetworkGame extends Game {
     };
 
     protected landCoin(): number {
-        if (this.board[this.currentCoinColumn][0] === Coin.Empty) {
+        if (this.board.getBoard()[this.currentCoinColumn][0] === Coin.Empty) {
             const row = super.landCoin();
             
             // Assume the game is still going on
@@ -348,7 +348,7 @@ export default class NetworkGame extends Game {
             }
     
             if (Game.moveRightKeys.includes(event.key)) {
-                if (this.currentCoinColumn < BoardLogic.columns - 1) {
+                if (this.currentCoinColumn < this.board.getColumns() - 1) {
                     this.currentCoinColumn++;
 
                     data = new ActionMessage(this.currentCoinColumn, 'mousemove', this.turn);

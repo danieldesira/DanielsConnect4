@@ -83,7 +83,7 @@ export default class SameDeviceGame extends Game {
     private restoreLastGame() {
         const gameData = JSON.parse(localStorage.getItem('gameData')) as PreviousGameData;
         this.turn = gameData.nextTurn;
-        this.board = gameData.board;
+        this.board.setBoard(gameData.board);
 
         if (this.timer) {
             this.timer.setSecondsRunning(gameData.secondsRunning);
@@ -99,7 +99,7 @@ export default class SameDeviceGame extends Game {
         if (this.areBothPlayersConnected()) {
             const gameData: PreviousGameData = {
                 nextTurn: this.turn,
-                board: this.board,
+                board: this.board.getBoard(),
                 secondsRunning: this.timer?.getSecondsRunning(),
                 playerRed: this.playerNameSection?.getPlayerRed(),
                 playerGreen: this.playerNameSection?.getPlayerGreen()
@@ -162,10 +162,10 @@ export default class SameDeviceGame extends Game {
     }
 
     protected landCoin(): number {
-        if (this.board[this.currentCoinColumn][0] === Coin.Empty) {
+        if (this.board.getBoard()[this.currentCoinColumn][0] === Coin.Empty) {
             const row = super.landCoin();
             
-            const coinCount = BoardLogic.countConsecutiveCoins(this.board, this.currentCoinColumn, row, this.turn);
+            const coinCount = this.board.countConsecutiveCoins(this.currentCoinColumn, row, this.turn);
 
             if (coinCount >= 4) {
                 let winner: string = '';
@@ -180,7 +180,7 @@ export default class SameDeviceGame extends Game {
 
                 this.showWinDialog(winner, this.turn);
                 this.closeGameAfterWinning();
-            } else if (BoardLogic.isBoardFull(this.board)) {
+            } else if (this.board.isBoardFull()) {
                 let message: string = '';
                 if (this.playerNameSection) {
                     message += `${this.playerNameSection.getPlayerRed()} (Red) and ${this.playerNameSection.getPlayerGreen()} (Green)`;
@@ -247,7 +247,7 @@ export default class SameDeviceGame extends Game {
             }
     
             if (Game.moveRightKeys.includes(event.key)) {
-                if (this.currentCoinColumn < BoardLogic.columns - 1) {
+                if (this.currentCoinColumn < this.board.getColumns() - 1) {
                     this.currentCoinColumn++;
                     this.moveCoin();
                 }

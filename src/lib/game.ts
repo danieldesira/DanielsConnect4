@@ -1,13 +1,13 @@
 import Position from './position';
 import PlayerNameSection from './player-name-section';
 import GameOptions from './game-options';
-import BoardLogic, { Coin, switchTurn } from '@danieldesira/daniels-connect4-common';
+import BoardLogic, { Coin, dimensions, switchTurn } from '@danieldesira/daniels-connect4-common';
 
 export default abstract class Game {
 
     private canvas: HTMLCanvasElement;
     protected context: CanvasRenderingContext2D;
-    protected board: Array<Array<Coin>> = new Array(BoardLogic.columns);
+    protected board: BoardLogic;
 
     private exitBtn: HTMLButtonElement;
     protected playerNameSection: PlayerNameSection;
@@ -30,7 +30,7 @@ export default abstract class Game {
         this.canvas = document.getElementById(options.canvasId) as HTMLCanvasElement;
         this.context = this.canvas.getContext('2d');
 
-        BoardLogic.initBoard(this.board);
+        this.board = new BoardLogic(dimensions.large.columns, dimensions.large.rows);
 
         if (options.exitBtnId) {
             this.exitBtn = document.getElementById(options.exitBtnId) as HTMLButtonElement;
@@ -68,9 +68,9 @@ export default abstract class Game {
         this.context.fillStyle = boardGradient;
         this.context.fillRect(0, Game.verticalOffset, this.canvas.width, this.canvas.height);
 
-        for (let col = BoardLogic.columns - 1; col >= 0; col--) {
-            for (let row = BoardLogic.rows - 1; row >= 0; row--) {
-                this.context.fillStyle = Game.getColor(this.board[col][row]);
+        for (let col = this.board.getColumns() - 1; col >= 0; col--) {
+            for (let row = this.board.getRows() - 1; row >= 0; row--) {
+                this.context.fillStyle = Game.getColor(this.board.getBoard()[col][row]);
                 this.drawCircle(col, row);
             }
         }
@@ -112,8 +112,8 @@ export default abstract class Game {
     }
 
     protected landCoin(): number {
-        if (this.board[this.currentCoinColumn][0] === Coin.Empty) {
-            const row = BoardLogic.putCoin(this.board, this.turn, this.currentCoinColumn);
+        if (this.board.getBoard()[this.currentCoinColumn][0] === Coin.Empty) {
+            const row = this.board.putCoin(this.turn, this.currentCoinColumn);
             
             this.context.fillStyle = Game.getColor(this.turn);
             this.drawCircle(this.currentCoinColumn, row);
@@ -187,10 +187,10 @@ export default abstract class Game {
         }
 
         if (this.canvas.height > this.canvas.width) {
-            this.colGap = this.canvas.width / BoardLogic.columns;
-            this.rowGap = (this.canvas.height / BoardLogic.rows) - this.circleRadius;
+            this.colGap = this.canvas.width / this.board.getColumns();
+            this.rowGap = (this.canvas.height / this.board.getRows()) - this.circleRadius;
         } else {
-            this.colGap = this.canvas.width / BoardLogic.columns;
+            this.colGap = this.canvas.width / this.board.getColumns();
             this.rowGap = 65;
         }
 
@@ -201,7 +201,7 @@ export default abstract class Game {
 
     protected resetValues() {
         this.turn = Coin.Red;
-        BoardLogic.initBoard(this.board);
+        this.board.resetBoard();
         
         if (this.playerNameSection) {
             this.playerNameSection.reset();
