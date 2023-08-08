@@ -1,7 +1,7 @@
 import Position from './position';
 import PlayerNameSection from './player-name-section';
 import GameOptions from './game-options';
-import BoardLogic, { Coin, dimensions, switchTurn } from '@danieldesira/daniels-connect4-common';
+import BoardLogic, { BoardDimensions, Coin, dimensions, switchTurn } from '@danieldesira/daniels-connect4-common';
 
 export default abstract class Game {
 
@@ -30,7 +30,7 @@ export default abstract class Game {
         this.canvas = document.getElementById(options.canvasId) as HTMLCanvasElement;
         this.context = this.canvas.getContext('2d');
 
-        this.board = new BoardLogic(dimensions.large.columns, dimensions.large.rows);
+        this.board = new BoardLogic(options.dimensions);
 
         if (options.exitBtnId) {
             this.exitBtn = document.getElementById(options.exitBtnId) as HTMLButtonElement;

@@ -7,7 +7,6 @@ import Socket from "./socket";
 import Utils from "./utils";
 import { ActionMessage, CurrentTurnMessage, ErrorMessage, GameMessage, InitialMessage, SkipTurnMessage, WinnerMessage, skipTurnMaxWait } from "@danieldesira/daniels-connect4-common";
 import { DialogIds } from "./enums/dialog-ids";
-import { BoardLogic } from "@danieldesira/daniels-connect4-common/lib/board-logic";
 import { getToken } from "./authentication";
 import { AuthenticationModel } from "./models/authentication-model";
 

@@ -4,7 +4,7 @@ import GameOptions from "./game-options";
 import { Sound } from "./enums/sound";
 import Utils from "./utils";
 import Timer from "./timer";
-import BoardLogic, { Coin, randomiseColor } from "@danieldesira/daniels-connect4-common";
+import { Coin, randomiseColor } from "@danieldesira/daniels-connect4-common";
 import { DialogIds } from "./enums/dialog-ids";
 import PreviousGameData from "./models/previous-game-data";
 

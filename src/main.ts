@@ -1,3 +1,4 @@
+import { BoardDimensions } from "@danieldesira/daniels-connect4-common";
 import { initGoogleSSO, loadStats, logout, showLoginLogout } from "./lib/authentication";
 import Dialog from "./lib/dialog/dialog";
 import { DialogIds } from "./lib/enums/dialog-ids";
@@ -20,6 +21,9 @@ networkBtn.addEventListener('click', () => {
 
 function initGame(mode: GameMode) {
     try {
+        const dimensionsSelect = document.getElementById('dimensions') as HTMLSelectElement;
+        const dimensions = parseInt(dimensionsSelect.options[dimensionsSelect.selectedIndex].value) as BoardDimensions;
+
         const options: GameOptions = {
             canvasId: 'board',
             exitBtnId: 'exitBtn',
@@ -28,7 +32,8 @@ function initGame(mode: GameMode) {
             playerGreenId: 'playerGreen',
             menuId: 'menu',
             gameIndicatorsId: 'gameIndicators',
-            logoutBtnId: 'logout'
+            logoutBtnId: 'logout',
+            dimensions
         };
         if (mode === GameMode.Network) {
             const connect4 = NetworkGame.getInstance(options);
