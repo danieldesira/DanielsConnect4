@@ -4,14 +4,15 @@ import GameOptions from "./game-options";
 import { Sound } from "./enums/sound";
 import Utils from "./utils";
 import Timer from "./timer";
-import { Coin, randomiseColor } from "@danieldesira/daniels-connect4-common";
+import { BoardDimensions, Coin, randomiseColor } from "@danieldesira/daniels-connect4-common";
 import { DialogIds } from "./enums/dialog-ids";
-import PreviousGameData from "./models/previous-game-data";
+import PreviousGameData, { MainGameDataModel } from "./models/previous-game-data";
 
 export default class SameDeviceGame extends Game {
 
     private static instance: SameDeviceGame;
     private timer: Timer;
+    private dimensions: BoardDimensions;
 
     private constructor(options: GameOptions) {
         super(options);
@@ -34,7 +35,8 @@ export default class SameDeviceGame extends Game {
         }
     }
 
-    public start() {
+    public start(dimensions: BoardDimensions = BoardDimensions.Large) {
+        this.dimensions = dimensions;
         this.checkGameData();
     }
 
@@ -47,13 +49,14 @@ export default class SameDeviceGame extends Game {
             this.setTimer();
         }
 
-        super.start();
+        super.start(this.dimensions);
     }
 
     private checkGameData() {
-        const gameData = localStorage.getItem('gameData');
+        const gameData = JSON.parse(localStorage.getItem('gameData')) as MainGameDataModel;
+        const dimensionData = this.getGameDimensionData(gameData);
         
-        if (gameData) {
+        if (dimensionData) {
             Dialog.confirm({
                 id: DialogIds.ContinueGame,
                 title: null,
@@ -81,29 +84,50 @@ export default class SameDeviceGame extends Game {
     };
 
     private restoreLastGame() {
-        const gameData = JSON.parse(localStorage.getItem('gameData')) as PreviousGameData;
-        this.turn = gameData.nextTurn;
-        this.board.setBoard(gameData.board);
+        const gameData = JSON.parse(localStorage.getItem('gameData')) as MainGameDataModel;
+        const dimensionData = this.getGameDimensionData(gameData);
+        
+        this.turn = dimensionData.nextTurn;
+        this.board.setBoard(dimensionData.board);
 
         if (this.timer) {
-            this.timer.setSecondsRunning(gameData.secondsRunning);
+            this.timer.setSecondsRunning(dimensionData.secondsRunning);
         }
 
         if (this.playerNameSection) {
-            this.playerNameSection.setPlayerGreen(gameData.playerGreen);
-            this.playerNameSection.setPlayerRed(gameData.playerRed);
+            this.playerNameSection.setPlayerGreen(dimensionData.playerGreen);
+            this.playerNameSection.setPlayerRed(dimensionData.playerRed);
         }
     }
 
     private saveGame() {
         if (this.areBothPlayersConnected()) {
-            const gameData: PreviousGameData = {
+            let gameData = JSON.parse(localStorage.getItem('gameData')) as MainGameDataModel;
+            if (!gameData) {
+                gameData = {
+                    small: null,
+                    medium: null,
+                    large: null
+                };
+            }
+            const dimensionData: PreviousGameData = {
                 nextTurn: this.turn,
                 board: this.board.getBoard(),
                 secondsRunning: this.timer?.getSecondsRunning(),
                 playerRed: this.playerNameSection?.getPlayerRed(),
                 playerGreen: this.playerNameSection?.getPlayerGreen()
             };
+            switch (this.dimensions) {
+                case BoardDimensions.Small:
+                    gameData.small = dimensionData;
+                    break;
+                case BoardDimensions.Medium:
+                    gameData.medium = dimensionData;
+                    break;
+                case BoardDimensions.Large:
+                    gameData.large = dimensionData;
+                    break;
+            }
             localStorage.setItem('gameData', JSON.stringify(gameData));
         }
     }
@@ -152,7 +176,7 @@ export default class SameDeviceGame extends Game {
     };
 
     protected closeGameAfterWinning() {
-        localStorage.removeItem('gameData');
+        this.clearGameData();
 
         if (this.timer) {
             this.timer.stop();
@@ -262,5 +286,39 @@ export default class SameDeviceGame extends Game {
             this.exit();
         }
     };
+
+    private clearGameData() {
+        const gameData = JSON.parse(localStorage.getItem('gameData')) as MainGameDataModel;
+        switch (this.dimensions) {
+            case BoardDimensions.Small:
+                gameData.small = null;
+                break;
+            case BoardDimensions.Medium:
+                gameData.medium = null;
+                break;
+            case BoardDimensions.Large:
+                gameData.large = null;
+                break;
+        }
+        localStorage.setItem('gameData', JSON.stringify(gameData));
+    }
+
+    private getGameDimensionData(gameData: MainGameDataModel): PreviousGameData | null {
+        let dimensionData: PreviousGameData = null;
+        if (gameData) {
+            switch (this.dimensions) {
+                case BoardDimensions.Small:
+                    dimensionData = gameData.small;
+                    break;
+                case BoardDimensions.Medium:
+                    dimensionData = gameData.medium;
+                    break;
+                case BoardDimensions.Large:
+                    dimensionData = gameData.large;
+                    break;
+            }
+        }
+        return dimensionData;
+    }
 
 }

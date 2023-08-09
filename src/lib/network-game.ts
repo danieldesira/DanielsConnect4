@@ -5,7 +5,7 @@ import Game from "./game";
 import GameOptions from "./game-options";
 import Socket from "./socket";
 import Utils from "./utils";
-import { ActionMessage, CurrentTurnMessage, ErrorMessage, GameMessage, InitialMessage, SkipTurnMessage, WinnerMessage, skipTurnMaxWait } from "@danieldesira/daniels-connect4-common";
+import { ActionMessage, BoardDimensions, CurrentTurnMessage, ErrorMessage, GameMessage, InitialMessage, SkipTurnMessage, WinnerMessage, skipTurnMaxWait } from "@danieldesira/daniels-connect4-common";
 import { DialogIds } from "./enums/dialog-ids";
 import { getToken } from "./authentication";
 import { AuthenticationModel } from "./models/authentication-model";
@@ -37,12 +37,12 @@ export default class NetworkGame extends Game {
         return NetworkGame.instance;
     }
 
-    public start() {
+    public start(dimensions: BoardDimensions = BoardDimensions.Large) {
         const auth = getToken();
         if (auth) {
             this.defineSocket(auth);
             this.startCountdown();
-            super.start();
+            super.start(dimensions);
             document.body.classList.add('waiting');
             this.disableLogoutBtn();
         } else {

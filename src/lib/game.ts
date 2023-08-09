@@ -30,8 +30,6 @@ export default abstract class Game {
         this.canvas = document.getElementById(options.canvasId) as HTMLCanvasElement;
         this.context = this.canvas.getContext('2d');
 
-        this.board = new BoardLogic(options.dimensions);
-
         if (options.exitBtnId) {
             this.exitBtn = document.getElementById(options.exitBtnId) as HTMLButtonElement;
         }
@@ -49,7 +47,8 @@ export default abstract class Game {
         }
     }
 
-    protected start() {
+    protected start(dimensions: BoardDimensions) {
+        this.board = new BoardLogic(dimensions);
         this.showGame();
 
         if (this.playerNameSection) {

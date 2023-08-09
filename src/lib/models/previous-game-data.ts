@@ -7,3 +7,9 @@ export default interface PreviousGameData {
     playerRed: string;
     playerGreen: string;
 }
+
+export interface MainGameDataModel {
+    small: PreviousGameData;
+    medium: PreviousGameData;
+    large: PreviousGameData;
+}

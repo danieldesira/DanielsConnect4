@@ -32,15 +32,14 @@ function initGame(mode: GameMode) {
             playerGreenId: 'playerGreen',
             menuId: 'menu',
             gameIndicatorsId: 'gameIndicators',
-            logoutBtnId: 'logout',
-            dimensions
+            logoutBtnId: 'logout'
         };
         if (mode === GameMode.Network) {
             const connect4 = NetworkGame.getInstance(options);
-            connect4.start();
+            connect4.start(dimensions);
         } else {
             const connect4 = SameDeviceGame.getInstance(options);
-            connect4.start();
+            connect4.start(dimensions);
         }
     } catch (ex) {
         Dialog.notify({
