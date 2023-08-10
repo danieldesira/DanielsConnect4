@@ -1,6 +1,4 @@
 import { Coin } from "@danieldesira/daniels-connect4-common";
-import Dialog from "./dialog/dialog";
-import { DialogIds } from "./enums/dialog-ids";
 
 export default class PlayerNameSection {
     private playerRedSpan: HTMLSpanElement;
@@ -17,50 +15,6 @@ export default class PlayerNameSection {
             this.playerGreenSpan = document.getElementById(playerGreenId);
         }
     }
-
-    public setUpPlayerNames(okAction: Function, cancelAction: Function) {
-        if (!localStorage.getItem('gameData')) {
-            Dialog.prompt({
-                id: DialogIds.PlayerNames,
-                title: 'Input Players',
-                text: ['Please enter player names! (10 characters or less.)'],
-                onOK: () => this.onPromptOK(okAction),
-                onCancel: () => this.onPromptCancel(cancelAction),
-                inputs: [
-                    {
-                        label: 'Player Red',
-                        name: 'red',
-                        type: 'text',
-                        limit: 10,
-                        required: true
-                    },
-                    {
-                        label: 'Player Green',
-                        name: 'green',
-                        type: 'text',
-                        limit: 10,
-                        required: true
-                    }
-                ]
-            });
-        }
-    }
-
-    private onPromptOK = (action: Function): string => {
-        const redInput = document.getElementById('dialog-input-red') as HTMLInputElement;
-        const greenInput = document.getElementById('dialog-input-green') as HTMLInputElement;
-        if (redInput.value && greenInput.value && redInput.value.trim() && greenInput.value.trim()) {
-            this.playerRed = redInput.value;
-            this.playerGreen = greenInput.value;
-            this.printPlayerNames();
-            action();
-            return null;
-        }
-    };
-
-    private onPromptCancel = (action: Function) => {
-        action();
-    };
 
     public printPlayerNames() {
         const waiting = 'Waiting to connect...';

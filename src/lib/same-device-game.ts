@@ -41,15 +41,57 @@ export default class SameDeviceGame extends Game {
     }
 
     private onGameDataCheck() {
-        if (this.playerNameSection) {
-            this.playerNameSection.setUpPlayerNames(this.setTimer, this.exit);
-        }
-
+        this.setUpPlayerNames(this.setTimer, this.exit);
+        
         if (this.areBothPlayersConnected()) {
             this.setTimer();
         }
 
         super.start(this.dimensions);
+    }
+
+    private setUpPlayerNames(okAction: Function, cancelAction: Function) {
+        const gameData = JSON.parse(localStorage.getItem('gameData')) as MainGameDataModel;
+        const dimensionData = this.getGameDimensionData(gameData);
+
+        const onPromptOK = (): string => {
+            const redInput = document.getElementById('dialog-input-red') as HTMLInputElement;
+            const greenInput = document.getElementById('dialog-input-green') as HTMLInputElement;
+            if (redInput.value && greenInput.value && redInput.value.trim()
+                    && greenInput.value.trim() && this.playerNameSection) {
+                this.playerNameSection.setPlayerRed(redInput.value);
+                this.playerNameSection.setPlayerGreen(greenInput.value);
+                this.playerNameSection.printPlayerNames();
+                okAction();
+                return null;
+            }
+        };
+
+        if (!dimensionData) {
+            Dialog.prompt({
+                id: DialogIds.PlayerNames,
+                title: 'Input Players',
+                text: ['Please enter player names! (10 characters or less.)'],
+                onOK: () => onPromptOK(),
+                onCancel: cancelAction,
+                inputs: [
+                    {
+                        label: 'Player Red',
+                        name: 'red',
+                        type: 'text',
+                        limit: 10,
+                        required: true
+                    },
+                    {
+                        label: 'Player Green',
+                        name: 'green',
+                        type: 'text',
+                        limit: 10,
+                        required: true
+                    }
+                ]
+            });
+        }
     }
 
     private checkGameData() {
