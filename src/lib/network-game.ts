@@ -9,6 +9,7 @@ import { ActionMessage, BoardDimensions, CurrentTurnMessage, ErrorMessage, GameM
 import { DialogIds } from "./enums/dialog-ids";
 import { getToken } from "./authentication";
 import { AuthenticationModel } from "./models/authentication-model";
+import { BoardLogic } from "@danieldesira/daniels-connect4-common/lib/board-logic";
 
 export default class NetworkGame extends Game {
 
@@ -38,11 +39,12 @@ export default class NetworkGame extends Game {
     }
 
     public start(dimensions: BoardDimensions = BoardDimensions.Large) {
+        this.board = new BoardLogic(dimensions);
         const auth = getToken();
         if (auth) {
             this.defineSocket(auth);
             this.startCountdown();
-            super.start(dimensions);
+            super.start();
             document.body.classList.add('waiting');
             this.disableLogoutBtn();
         } else {

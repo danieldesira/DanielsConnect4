@@ -47,12 +47,11 @@ export default abstract class Game {
         }
     }
 
-    protected start(dimensions: BoardDimensions) {
-        this.board = new BoardLogic(dimensions);
+    protected start() {
         this.showGame();
 
         if (this.playerNameSection) {
-            this.playerNameSection.printPlayerNames();
+            this.playerNameSection.initPlayerNames();
             this.playerNameSection.indicateTurn(this.turn);
         }
 

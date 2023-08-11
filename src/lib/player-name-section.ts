@@ -16,21 +16,13 @@ export default class PlayerNameSection {
         }
     }
 
-    public printPlayerNames() {
+    public initPlayerNames() {
         const waiting = 'Waiting to connect...';
         if (this.playerGreenSpan) {
-            if (!this.playerGreen) {
-                this.playerGreenSpan.innerText = waiting;
-            } else {
-                this.playerGreenSpan.innerText = this.playerGreen;
-            }
+            this.playerGreenSpan.innerText = waiting;
         }
         if (this.playerRedSpan) {
-            if (!this.playerRed) {
-                this.playerRedSpan.innerText = waiting;
-            } else {
-                this.playerRedSpan.innerText = this.playerRed;
-            }
+            this.playerRedSpan.innerText = waiting;
         }
     }
 

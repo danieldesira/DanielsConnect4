@@ -7,6 +7,7 @@ import Timer from "./timer";
 import { BoardDimensions, Coin, randomiseColor } from "@danieldesira/daniels-connect4-common";
 import { DialogIds } from "./enums/dialog-ids";
 import PreviousGameData, { MainGameDataModel } from "./models/previous-game-data";
+import { BoardLogic } from "@danieldesira/daniels-connect4-common/lib/board-logic";
 
 export default class SameDeviceGame extends Game {
 
@@ -37,6 +38,7 @@ export default class SameDeviceGame extends Game {
 
     public start(dimensions: BoardDimensions = BoardDimensions.Large) {
         this.dimensions = dimensions;
+        this.board = new BoardLogic(dimensions);
         this.checkGameData();
     }
 
@@ -47,7 +49,7 @@ export default class SameDeviceGame extends Game {
             this.setTimer();
         }
 
-        super.start(this.dimensions);
+        super.start();
     }
 
     private setUpPlayerNames(okAction: Function, cancelAction: Function) {
@@ -61,7 +63,6 @@ export default class SameDeviceGame extends Game {
                     && greenInput.value.trim() && this.playerNameSection) {
                 this.playerNameSection.setPlayerRed(redInput.value);
                 this.playerNameSection.setPlayerGreen(greenInput.value);
-                this.playerNameSection.printPlayerNames();
                 okAction();
                 return null;
             }
@@ -120,7 +121,7 @@ export default class SameDeviceGame extends Game {
     };
 
     private cancelPreviousGame = () => {
-        localStorage.removeItem('gameData');
+        this.clearGameData();
         this.turn = randomiseColor();
         this.onGameDataCheck();
     };
