@@ -18,10 +18,10 @@ export default class PlayerNameSection {
 
     public initPlayerNames() {
         const waiting = 'Waiting to connect...';
-        if (this.playerGreenSpan) {
+        if (this.playerGreenSpan && !this.playerGreen) {
             this.playerGreenSpan.innerText = waiting;
         }
-        if (this.playerRedSpan) {
+        if (this.playerRedSpan && !this.playerRed) {
             this.playerRedSpan.innerText = waiting;
         }
     }
@@ -40,17 +40,9 @@ export default class PlayerNameSection {
         this.playerGreen = null;
     }
 
-    public getPlayerRed(): string {
-        return this.playerRed;
-    }
-
-    public getPlayerGreen(): string {
-        return this.playerGreen;
-    }
-
-    public areBothPlayersConnected(): boolean {
-        return !!this.playerRed && !!this.playerGreen;
-    }
+    public getPlayerRed = (): string => this.playerRed;
+    public getPlayerGreen = (): string => this.playerGreen;
+    public areBothPlayersConnected = (): boolean => !!this.playerRed && !!this.playerGreen;
 
     public setPlayerRed(playerName: string) {
         this.playerRed = playerName;
