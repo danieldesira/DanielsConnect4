@@ -21,7 +21,6 @@ networkBtn.addEventListener('click', () => {
 
 function initGame(mode: GameMode) {
     try {
-        const dimensionsSelect = document.getElementById('dimensions') as HTMLSelectElement;
         const dimensions = parseInt(dimensionsSelect.options[dimensionsSelect.selectedIndex].value) as BoardDimensions;
 
         const options: GameOptions = {
@@ -103,4 +102,9 @@ logoutBtn.addEventListener('click', logout);
 const statsBtn = document.getElementById('stats') as HTMLButtonElement;
 statsBtn.addEventListener('click', async () => {
     await loadStats();
+});
+
+const dimensionsSelect = document.getElementById('dimensions') as HTMLSelectElement;
+dimensionsSelect.addEventListener('change', () => {
+    // to-do: call player dimensions endpoint (POST)
 });

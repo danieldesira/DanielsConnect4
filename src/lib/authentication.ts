@@ -24,7 +24,7 @@ function storeGoogleToken(token: string) {
 
 export async function showLoginLogout() {
     const loginBtns = document.getElementById('login-btns') as HTMLDivElement;
-    const loggedInArea = document.getElementById('slidebar') as HTMLDivElement;
+    const loggedInArea = document.getElementById('authPlayerArea') as HTMLDivElement;
     if (localStorage.getItem('auth')) {
         loginBtns.classList.add('hide');
         loggedInArea.classList.remove('hide');

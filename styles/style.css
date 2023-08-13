@@ -102,6 +102,12 @@ a {
     color: red;
 }
 
+.select {
+    width: 90%;
+    height: 25px;
+    border-radius: 6px;
+}
+
 .slidebar {
     position: fixed;
     top: 0;
