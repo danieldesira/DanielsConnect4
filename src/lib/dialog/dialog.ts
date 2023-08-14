@@ -96,12 +96,8 @@ export default class Dialog {
         inputContainer.appendChild(form);
         form.addEventListener('submit', (event: SubmitEvent) => {
             event.preventDefault();
-            const error: string = options.onOK();
-            if (error) {
-                this.appendError(modal, error);
-            } else {
-                this.closeModal(modal);
-            }
+            options.onOK();
+            this.closeModal(modal);
         });
 
         this.appendInputs(form, options.inputs);
@@ -139,19 +135,6 @@ export default class Dialog {
     private static appendBrElement(container: HTMLDivElement | HTMLFormElement) {
         const br = document.createElement('br') as HTMLBRElement;
         container.appendChild(br);
-    }
-
-    private static appendError(container: HTMLDivElement, text: string) {
-        let errorDiv = document.getElementById('dialogError') as HTMLDivElement;
-        if (!errorDiv) {
-            errorDiv = document.createElement('div');
-            errorDiv.id = 'dialogError';
-            errorDiv.classList.add('red-text');
-            errorDiv.classList.add('text');
-            errorDiv.classList.add('dialog-error');
-            container.appendChild(errorDiv);
-        }
-        errorDiv.innerText = text;
     }
 
     private static appendText(text: Array<string>, container: HTMLDivElement) {

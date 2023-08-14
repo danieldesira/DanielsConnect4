@@ -29,6 +29,7 @@ a {
     height: 100px;
     background-color: darkblue;
     color: whitesmoke;
+    border-color: transparent;
     border-radius: 45px;
     cursor: pointer;
 }
@@ -106,6 +107,9 @@ a {
     width: 90%;
     height: 25px;
     border-radius: 6px;
+    border-width: 1px;
+    border-color: #000;
+    border-style: solid;
 }
 
 .slidebar {

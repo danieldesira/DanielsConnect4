@@ -1,7 +1,7 @@
 import Position from './position';
 import PlayerNameSection from './player-name-section';
 import GameOptions from './game-options';
-import BoardLogic, { BoardDimensions, Coin, dimensions, switchTurn } from '@danieldesira/daniels-connect4-common';
+import BoardLogic, { Coin, switchTurn } from '@danieldesira/daniels-connect4-common';
 
 export default abstract class Game {
 
@@ -16,7 +16,7 @@ export default abstract class Game {
 
     protected turn: Coin = Coin.Red;
 
-    private circleRadius: number;
+    private coinRadius: number;
     private rowGap: number;
     private colGap: number;
     private colOffset: number;
@@ -69,7 +69,7 @@ export default abstract class Game {
         for (let col = this.board.getColumns() - 1; col >= 0; col--) {
             for (let row = this.board.getRows() - 1; row >= 0; row--) {
                 this.context.fillStyle = Game.getColor(this.board.getBoard()[col][row]);
-                this.drawCircle(col, row);
+                this.drawCoin(col, row);
             }
         }
     }
@@ -114,7 +114,7 @@ export default abstract class Game {
             const row = this.board.putCoin(this.turn, this.currentCoinColumn);
             
             this.context.fillStyle = Game.getColor(this.turn);
-            this.drawCircle(this.currentCoinColumn, row);
+            this.drawCoin(this.currentCoinColumn, row);
 
             return row;
         } else {
@@ -143,7 +143,7 @@ export default abstract class Game {
 
     protected paintCoinToDrop(column: number) {
         this.context.beginPath();
-        this.context.arc(this.colOffset + column * this.colGap, this.circleRadius, this.circleRadius, 0, 2 * Math.PI);
+        this.context.arc(this.colOffset + column * this.colGap, this.coinRadius, this.coinRadius, 0, 2 * Math.PI);
         this.context.closePath();
         this.context.fill();
     }
@@ -175,22 +175,19 @@ export default abstract class Game {
     }
 
     private resizeCanvas = () => {
-        this.canvas.height = window.innerHeight - 100;
+        const topHeight = 100;
+
+        this.canvas.height = window.innerHeight - topHeight;
         this.canvas.width = window.innerWidth;
 
         if (this.canvas.width < 1000) {
-            this.circleRadius = 20; // Mobile/tablet
+            this.coinRadius = 20; // Mobile/tablet
         } else {
-            this.circleRadius = 30; // Desktop
+            this.coinRadius = 30; // Desktop
         }
 
-        if (this.canvas.height > this.canvas.width) {
-            this.colGap = this.canvas.width / this.board.getColumns();
-            this.rowGap = (this.canvas.height / this.board.getRows()) - this.circleRadius;
-        } else {
-            this.colGap = this.canvas.width / this.board.getColumns();
-            this.rowGap = 65;
-        }
+        this.colGap = this.canvas.width / this.board.getColumns();
+        this.rowGap = (this.canvas.height - topHeight) / this.board.getRows();
 
         this.colOffset = this.colGap / 2;
 
@@ -206,9 +203,9 @@ export default abstract class Game {
         }
     }
 
-    private drawCircle(column: number, row: number) {
+    private drawCoin(column: number, row: number) {
         this.context.beginPath();
-        this.context.arc(this.colOffset + column * this.colGap, Game.verticalOffset * 2 + row * this.rowGap, this.circleRadius, 0, Math.PI * 2);
+        this.context.arc(this.colOffset + column * this.colGap, Game.verticalOffset * 2 + row * this.rowGap, this.coinRadius, 0, Math.PI * 2);
         this.context.closePath();
         this.context.fill();
     }

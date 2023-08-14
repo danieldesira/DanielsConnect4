@@ -43,7 +43,7 @@ export default class SameDeviceGame extends Game {
     }
 
     private onGameDataCheck() {
-        this.setUpPlayerNames(this.setTimer, this.exit);
+        this.setUpPlayerNames();
         
         if (this.areBothPlayersConnected()) {
             this.setTimer();
@@ -52,19 +52,18 @@ export default class SameDeviceGame extends Game {
         super.start();
     }
 
-    private setUpPlayerNames(okAction: Function, cancelAction: Function) {
+    private setUpPlayerNames() {
         const gameData = JSON.parse(localStorage.getItem('gameData')) as MainGameDataModel;
         const dimensionData = this.getGameDimensionData(gameData);
 
-        const onPromptOK = (): string => {
+        const onPromptOK = () => {
             const redInput = document.getElementById('dialog-input-red') as HTMLInputElement;
             const greenInput = document.getElementById('dialog-input-green') as HTMLInputElement;
             if (redInput.value && greenInput.value && redInput.value.trim()
                     && greenInput.value.trim() && this.playerNameSection) {
                 this.playerNameSection.setPlayerRed(redInput.value);
                 this.playerNameSection.setPlayerGreen(greenInput.value);
-                okAction();
-                return null;
+                this.setTimer();
             }
         };
 
@@ -74,7 +73,7 @@ export default class SameDeviceGame extends Game {
                 title: 'Input Players',
                 text: ['Please enter player names! (10 characters or less.)'],
                 onOK: () => onPromptOK(),
-                onCancel: cancelAction,
+                onCancel: this.exit,
                 inputs: [
                     {
                         label: 'Player Red',
