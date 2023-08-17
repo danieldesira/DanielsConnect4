@@ -1,6 +1,8 @@
 import { BoardDimensions, PlayerInfo, PlayerStats } from "@danieldesira/daniels-connect4-common";
 import config from "./config";
 import { AuthenticationModel } from "./models/authentication-model";
+import Dialog from "./dialog/dialog";
+import { DialogIds } from "./enums/dialog-ids";
 
 declare global {
     interface Window {
@@ -55,6 +57,9 @@ async function loadUserData() {
     userName.innerText = data.user;
     const authPlayerPicture = document.getElementById('authPlayerPicture') as HTMLImageElement;
     authPlayerPicture.src = data.picUrl;
+    const dimensionOption = document.querySelector(`#dimensions option[value='${data.dimensions}']`) as HTMLOptionElement;
+    dimensionOption.ariaSelected = 'true';
+    dimensionOption.selected = true;
 }
 
 export async function loadStats() {
@@ -89,6 +94,11 @@ export async function updatePlayerDimensions(dimensionsSelect: HTMLSelectElement
         },
         body: JSON.stringify(params)
     });
-    const data = await response.json();
-    
+    if (response.status === 200) {
+        Dialog.notify({
+            title: 'Dimensions',
+            text: ['Dimensions updated successfully!'],
+            id: DialogIds.Saved
+        });
+    }
 }
