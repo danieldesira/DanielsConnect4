@@ -1,4 +1,4 @@
-import { PlayerInfo, PlayerStats } from "@danieldesira/daniels-connect4-common";
+import { BoardDimensions, PlayerInfo, PlayerStats } from "@danieldesira/daniels-connect4-common";
 import config from "./config";
 import { AuthenticationModel } from "./models/authentication-model";
 
@@ -71,4 +71,24 @@ export function initGoogleSSO() {
         callback: handleGoogleSignon
     });
     window.google.accounts.id.prompt();
+}
+
+export async function updatePlayerDimensions(dimensionsSelect: HTMLSelectElement) {
+    const {token, service} = getToken();
+    const params = {
+        token,
+        service,
+        dimensions: parseInt(dimensionsSelect.value) as BoardDimensions
+    };
+    const response = await fetch(`${config.httpServer}/update-dimensions`, {
+        method: 'post',
+        mode: 'cors',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(params)
+    });
+    const data = await response.json();
+    
 }

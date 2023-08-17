@@ -1,5 +1,5 @@
 import { BoardDimensions } from "@danieldesira/daniels-connect4-common";
-import { initGoogleSSO, loadStats, logout, showLoginLogout } from "./lib/authentication";
+import { initGoogleSSO, loadStats, logout, showLoginLogout, updatePlayerDimensions } from "./lib/authentication";
 import Dialog from "./lib/dialog/dialog";
 import { DialogIds } from "./lib/enums/dialog-ids";
 import { GameMode } from "./lib/enums/game-mode";
@@ -105,6 +105,6 @@ statsBtn.addEventListener('click', async () => {
 });
 
 const dimensionsSelect = document.getElementById('dimensions') as HTMLSelectElement;
-dimensionsSelect.addEventListener('change', () => {
-    // to-do: call player dimensions endpoint (POST)
+dimensionsSelect.addEventListener('change', async () => {
+    await updatePlayerDimensions(dimensionsSelect);
 });
