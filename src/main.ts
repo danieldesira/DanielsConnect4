@@ -106,5 +106,6 @@ statsBtn.addEventListener('click', async () => {
 
 const dimensionsSelect = document.getElementById('dimensions') as HTMLSelectElement;
 dimensionsSelect.addEventListener('change', async () => {
-    await updatePlayerDimensions(dimensionsSelect);
+    const dimensions = parseInt(dimensionsSelect.value) as BoardDimensions;
+    await updatePlayerDimensions(dimensions);
 });

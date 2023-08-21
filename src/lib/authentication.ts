@@ -53,13 +53,17 @@ async function loadUserData() {
     const auth = getToken();
     const response = await fetch(`${config.httpServer}/auth?token=${auth.token}&service=${auth.service}`);
     const data = await response.json() as PlayerInfo;
-    const userName = document.getElementById('authPlayerName') as HTMLButtonElement;
-    userName.innerText = data.user;
-    const authPlayerPicture = document.getElementById('authPlayerPicture') as HTMLImageElement;
-    authPlayerPicture.src = data.picUrl;
-    const dimensionOption = document.querySelector(`#dimensions option[value='${data.dimensions}']`) as HTMLOptionElement;
-    dimensionOption.ariaSelected = 'true';
-    dimensionOption.selected = true;
+    if (data.isTokenValid) {
+        const userName = document.getElementById('authPlayerName') as HTMLButtonElement;
+        userName.innerText = data.user;
+        const authPlayerPicture = document.getElementById('authPlayerPicture') as HTMLImageElement;
+        authPlayerPicture.src = data.picUrl;
+        const dimensionOption = document.querySelector(`#dimensions option[value='${data.dimensions}']`) as HTMLOptionElement;
+        dimensionOption.ariaSelected = 'true';
+        dimensionOption.selected = true;
+    } else {
+        logout();
+    }
 }
 
 export async function loadStats() {
@@ -78,16 +82,15 @@ export function initGoogleSSO() {
     window.google.accounts.id.prompt();
 }
 
-export async function updatePlayerDimensions(dimensionsSelect: HTMLSelectElement) {
+export async function updatePlayerDimensions(dimensions: BoardDimensions) {
     const {token, service} = getToken();
     const params = {
         token,
         service,
-        dimensions: parseInt(dimensionsSelect.value) as BoardDimensions
+        dimensions
     };
     const response = await fetch(`${config.httpServer}/update-dimensions`, {
         method: 'post',
-        mode: 'cors',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
