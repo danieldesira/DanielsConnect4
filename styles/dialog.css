@@ -1,7 +1,7 @@
 .dialog {
     position: fixed;
     top: 30%;
-    left: 10%;
+    left: max(10%, calc(50% - 300px));
     background-color: rgb(255, 190, 0);
     opacity: 0.85;
     width: 80%;
@@ -55,10 +55,4 @@
 
 .dialog-title {
     text-align: center;
-}
-
-@media screen and (min-width: 750px) {
-    .dialog {
-        left: calc(50% - 300px);
-    }
 }
