@@ -34,8 +34,6 @@ export async function showLoginLogout() {
     } else {
         loginBtns.classList.remove('hide');
         loggedInArea.classList.add('hide');
-        const statsContainer = document.getElementById('statsContainer') as HTMLDivElement;
-        statsContainer.innerText = '';
     }
 }
 
@@ -52,8 +50,8 @@ export function getToken(): AuthenticationModel | null {
 async function loadUserData() {
     const auth = getToken();
     const response = await fetch(`${config.httpServer}/auth?token=${auth.token}&service=${auth.service}`);
-    const data = await response.json() as PlayerInfo;
-    if (data.isTokenValid) {
+    if (response.status === 200) {
+        const data = await response.json() as PlayerInfo;
         const userName = document.getElementById('authPlayerName') as HTMLButtonElement;
         userName.innerText = data.user;
         const authPlayerPicture = document.getElementById('authPlayerPicture') as HTMLImageElement;
@@ -69,9 +67,17 @@ async function loadUserData() {
 export async function loadStats() {
     const auth = getToken();
     const response = await fetch(`${config.httpServer}/stats?token=${auth.token}&service=${auth.service}`);
-    const data = await response.json() as PlayerStats;
-    const statsContainer = document.getElementById('statsContainer') as HTMLDivElement;
-    statsContainer.innerText = `Wins: ${data.wins} - ${data.winPercent.toFixed(2)}%\nLosses: ${data.losses} - ${data.lossPercent.toFixed(2)}%`;
+    if (response.status === 200) {
+        const data = await response.json() as PlayerStats;
+        Dialog.notify({
+            id: DialogIds.PlayerStats,
+            title: 'Stats',
+            text: [
+                    `Wins: ${data.wins} - ${data.winPercent.toFixed(2)}%`,
+                    `Losses: ${data.losses} - ${data.lossPercent.toFixed(2)}%`
+                ]
+        });
+    }
 }
 
 export function initGoogleSSO() {

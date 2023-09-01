@@ -6,4 +6,5 @@ export enum DialogIds {
     ExitGame = 'exit-game-dialog',
     ContinueGame = 'continue-game-dialog',
     Saved = 'saved-notification-dialog',
+    PlayerStats = 'player-stats-dialog',
 }
