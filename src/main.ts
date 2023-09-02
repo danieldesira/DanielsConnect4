@@ -20,7 +20,7 @@ networkBtn.addEventListener('click', () => {
 }, false);
 
 function initGame(mode: GameMode) {
-    try {
+    try {const dimensionsSelect = document.getElementById('dimensions') as HTMLSelectElement;
         const dimensions = parseInt(dimensionsSelect.options[dimensionsSelect.selectedIndex].value) as BoardDimensions;
 
         const options: GameOptions = {
@@ -104,8 +104,38 @@ statsBtn.addEventListener('click', async () => {
     await loadStats();
 });
 
-const dimensionsSelect = document.getElementById('dimensions') as HTMLSelectElement;
-dimensionsSelect.addEventListener('change', async () => {
-    const dimensions = parseInt(dimensionsSelect.value) as BoardDimensions;
-    await updatePlayerDimensions(dimensions);
+const settingsBtn = document.getElementById('settings') as HTMLButtonElement;
+settingsBtn.addEventListener('click', () => {
+    Dialog.prompt({
+        id: DialogIds.Settings,
+        title: 'Settings',
+        text: ['Configure as desired'],
+        inputs: [],
+        selects: [{
+            name: 'dimensions',
+            label: 'Dimensions',
+            required: true,
+            options: [
+                {
+                    text: 'Small (6x5)',
+                    value: BoardDimensions.Small.toString()
+                },
+                {
+                    text: 'Medium (7x6)',
+                    value: BoardDimensions.Medium.toString()
+                },
+                {
+                    text: 'Large (9x8)',
+                    value: BoardDimensions.Large.toString()
+                }
+            ],
+            default: 3
+        }],
+        onOK: async () => {
+            const dimensionsSelect = document.getElementById('dimensions') as HTMLSelectElement;
+            const dimensions = parseInt(dimensionsSelect.value) as BoardDimensions;
+            await updatePlayerDimensions(dimensions);
+        },
+        onCancel: null
+    });
 });

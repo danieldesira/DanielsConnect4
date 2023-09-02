@@ -89,7 +89,8 @@ export default class SameDeviceGame extends Game {
                         limit: 10,
                         required: true
                     }
-                ]
+                ],
+                selects: []
             });
         }
     }

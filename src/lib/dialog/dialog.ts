@@ -2,7 +2,7 @@ import ConfirmationDialogOptions from "./confirmation-dialog-options";
 import DialogOptions from "./dialog-options";
 import { DialogType } from "./enums/dialog-type";
 import PromptDialogOptions from "./prompt-dialog-options";
-import PromptInput from "./prompt-input";
+import PromptInput, { PromptSelect } from "./prompt-input";
 
 export default class Dialog {
     
@@ -101,6 +101,7 @@ export default class Dialog {
         });
 
         this.appendInputs(form, options.inputs);
+        this.appendSelects(form, options.selects);
 
         const btnContainer = document.createElement('div') as HTMLDivElement;
         btnContainer.classList.add('dialog-btn-container');
@@ -115,10 +116,11 @@ export default class Dialog {
 
     private static appendInputs(form: HTMLFormElement, inputs: Array<PromptInput>) {
         for (let i: number = 0; i < inputs.length; i++) {
-            const input = document.createElement('input') as HTMLInputElement;
+            const input = document.createElement('input');
             input.type = inputs[i].type;
             input.id = `dialog-input-${inputs[i].name}`;
             input.name = `dialog-input-${inputs[i].name}`;
+            input.ariaPlaceholder = `Enter ${inputs[i].label}`;
             input.placeholder = `Enter ${inputs[i].label}`;
             input.maxLength = inputs[i].limit;
             input.classList.add('dialog-input');
@@ -126,6 +128,32 @@ export default class Dialog {
             input.required = inputs[i].required;
             input.ariaRequired = inputs[i].required.toString();
             form.appendChild(input);
+
+            this.appendBrElement(form);
+            this.appendBrElement(form);
+        }
+    }
+
+    private static appendSelects(form: HTMLFormElement, selects: Array<PromptSelect>) {
+        for (let i: number = 0; i < selects.length; i++) {
+            const select = document.createElement('select');
+            select.name = selects[i].name;
+            select.ariaPlaceholder = selects[i].label;
+            select.classList.add('select');
+            select.required = selects[i].required;
+            select.ariaRequired = selects[i].required.toString();
+            form.appendChild(select);
+
+            for (let j = 0; j < selects[i].options.length; j++) {
+                const option = document.createElement('option');
+                option.innerText = selects[i].options[j].text;
+                option.value = selects[i].options[j].value;
+                if (selects[i].default === parseInt(selects[i].options[j].value)) {
+                    option.selected = true;
+                    option.ariaSelected = "true";
+                }
+                select.appendChild(option);
+            }
 
             this.appendBrElement(form);
             this.appendBrElement(form);

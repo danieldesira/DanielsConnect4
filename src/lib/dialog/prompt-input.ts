@@ -1,7 +1,20 @@
-export default interface PromptInput {
+interface PromptEntry {
     name: string;
-    type: string;
-    limit: number;
     label: string;
     required: boolean;
+}
+
+export default interface PromptInput extends PromptEntry {
+    type: string;
+    limit: number;
+}
+
+export interface PromptSelect extends PromptEntry {
+    options: Array<PromptSelectOption>;
+    default: number;
+}
+
+interface PromptSelectOption {
+    text: string;
+    value: string;
 }

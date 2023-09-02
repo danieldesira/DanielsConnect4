@@ -7,4 +7,5 @@ export enum DialogIds {
     ContinueGame = 'continue-game-dialog',
     Saved = 'saved-notification-dialog',
     PlayerStats = 'player-stats-dialog',
+    Settings = 'settings-dialog',
 }
