@@ -26,7 +26,7 @@ function storeGoogleToken(token: string) {
 
 export async function showLoginLogout() {
     const loginBtns = document.getElementById('login-btns') as HTMLDivElement;
-    const loggedInArea = document.getElementById('authPlayerArea') as HTMLDivElement;
+    const loggedInArea = document.getElementById('slidebar') as HTMLDivElement;
     if (localStorage.getItem('auth')) {
         loginBtns.classList.add('hide');
         loggedInArea.classList.remove('hide');
@@ -56,9 +56,6 @@ async function loadUserData() {
         userName.innerText = data.user;
         const authPlayerPicture = document.getElementById('authPlayerPicture') as HTMLImageElement;
         authPlayerPicture.src = data.picUrl;
-        const dimensionOption = document.querySelector(`#dimensions option[value='${data.dimensions}']`) as HTMLOptionElement;
-        dimensionOption.ariaSelected = 'true';
-        dimensionOption.selected = true;
     } else {
         logout();
     }

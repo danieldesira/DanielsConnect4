@@ -6,6 +6,7 @@ import { GameMode } from "./lib/enums/game-mode";
 import GameOptions from "./lib/game-options";
 import NetworkGame from "./lib/network-game";
 import SameDeviceGame from "./lib/same-device-game";
+import dimensionsSelect from "./lib/dimensions-select";
 
 const samePCBtn = document.getElementById('samePC') as HTMLButtonElement;
 const networkBtn = document.getElementById('network') as HTMLButtonElement;
@@ -20,9 +21,7 @@ networkBtn.addEventListener('click', () => {
 }, false);
 
 function initGame(mode: GameMode) {
-    try {const dimensionsSelect = document.getElementById('dimensions') as HTMLSelectElement;
-        const dimensions = parseInt(dimensionsSelect.options[dimensionsSelect.selectedIndex].value) as BoardDimensions;
-
+    try {
         const options: GameOptions = {
             canvasId: 'board',
             exitBtnId: 'exitBtn',
@@ -35,10 +34,10 @@ function initGame(mode: GameMode) {
         };
         if (mode === GameMode.Network) {
             const connect4 = NetworkGame.getInstance(options);
-            connect4.start(dimensions);
+            connect4.start();
         } else {
             const connect4 = SameDeviceGame.getInstance(options);
-            connect4.start(dimensions);
+            connect4.start();
         }
     } catch (ex) {
         Dialog.notify({
@@ -109,30 +108,11 @@ settingsBtn.addEventListener('click', () => {
     Dialog.prompt({
         id: DialogIds.Settings,
         title: 'Settings',
-        text: ['Configure as desired'],
+        text: [],
         inputs: [],
-        selects: [{
-            name: 'dimensions',
-            label: 'Dimensions',
-            required: true,
-            options: [
-                {
-                    text: 'Small (6x5)',
-                    value: BoardDimensions.Small.toString()
-                },
-                {
-                    text: 'Medium (7x6)',
-                    value: BoardDimensions.Medium.toString()
-                },
-                {
-                    text: 'Large (9x8)',
-                    value: BoardDimensions.Large.toString()
-                }
-            ],
-            default: 3
-        }],
+        selects: [dimensionsSelect],
         onOK: async () => {
-            const dimensionsSelect = document.getElementById('dimensions') as HTMLSelectElement;
+            const dimensionsSelect = document.getElementById('dialog-select-dimensions') as HTMLSelectElement;
             const dimensions = parseInt(dimensionsSelect.value) as BoardDimensions;
             await updatePlayerDimensions(dimensions);
         },

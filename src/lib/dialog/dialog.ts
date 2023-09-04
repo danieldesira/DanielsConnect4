@@ -96,7 +96,9 @@ export default class Dialog {
         inputContainer.appendChild(form);
         form.addEventListener('submit', (event: SubmitEvent) => {
             event.preventDefault();
-            options.onOK();
+            if (options.onOK) {
+                options.onOK();
+            }
             this.closeModal(modal);
         });
 
@@ -109,7 +111,9 @@ export default class Dialog {
 
         this.appendBtn(btnContainer, 'OK', null, 'green', 'submit');
         this.appendBtn(btnContainer, 'Cancel', () => {
-            options.onCancel();
+            if (options.onCancel) {
+                options.onCancel();
+            }
             this.closeModal(modal);
         }, 'red', 'button');
     }
@@ -137,7 +141,8 @@ export default class Dialog {
     private static appendSelects(form: HTMLFormElement, selects: Array<PromptSelect>) {
         for (let i: number = 0; i < selects.length; i++) {
             const select = document.createElement('select');
-            select.name = selects[i].name;
+            select.id = `dialog-select-${selects[i].name}`;
+            select.name = `dialog-select-${selects[i].name}`;
             select.ariaPlaceholder = selects[i].label;
             select.classList.add('select');
             select.required = selects[i].required;

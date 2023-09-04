@@ -8,6 +8,7 @@ import { BoardDimensions, Coin, randomiseColor } from "@danieldesira/daniels-con
 import { DialogIds } from "./enums/dialog-ids";
 import PreviousGameData, { MainGameDataModel } from "./models/previous-game-data";
 import { BoardLogic } from "@danieldesira/daniels-connect4-common/lib/board-logic";
+import dimensionsSelectData from "./dimensions-select";
 
 export default class SameDeviceGame extends Game {
 
@@ -36,9 +37,7 @@ export default class SameDeviceGame extends Game {
         }
     }
 
-    public start(dimensions: BoardDimensions = BoardDimensions.Large) {
-        this.dimensions = dimensions;
-        this.board = new BoardLogic(dimensions);
+    public start() {
         this.checkGameData();
     }
 
@@ -65,6 +64,11 @@ export default class SameDeviceGame extends Game {
                 this.playerNameSection.setPlayerGreen(greenInput.value);
                 this.setTimer();
             }
+
+            const dimensionsSelect = document.getElementById('dialog-select-dimensions') as HTMLSelectElement;
+            const dimensions = parseInt(dimensionsSelect.value) as BoardDimensions;
+            this.dimensions = dimensions;
+            this.board = new BoardLogic(dimensions);
         };
 
         if (!dimensionData) {
@@ -90,7 +94,7 @@ export default class SameDeviceGame extends Game {
                         required: true
                     }
                 ],
-                selects: []
+                selects: [dimensionsSelectData]
             });
         }
     }

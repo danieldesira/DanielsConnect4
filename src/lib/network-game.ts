@@ -38,8 +38,8 @@ export default class NetworkGame extends Game {
         return NetworkGame.instance;
     }
 
-    public start(dimensions: BoardDimensions = BoardDimensions.Large) {
-        this.board = new BoardLogic(dimensions);
+    public start() {
+        this.board = new BoardLogic(BoardDimensions.Large);
         const auth = getToken();
         if (auth) {
             this.defineSocket(auth);
