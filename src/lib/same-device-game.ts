@@ -6,7 +6,7 @@ import Utils from "./utils";
 import Timer from "./timer";
 import { BoardDimensions, Coin, randomiseColor } from "@danieldesira/daniels-connect4-common";
 import { DialogIds } from "./enums/dialog-ids";
-import PreviousGameData, { MainGameDataModel } from "./models/previous-game-data";
+import PreviousGameData from "./models/previous-game-data";
 import { BoardLogic } from "@danieldesira/daniels-connect4-common/lib/board-logic";
 import dimensionsSelectData from "./dimensions-select";
 
@@ -14,7 +14,6 @@ export default class SameDeviceGame extends Game {
 
     private static instance: SameDeviceGame;
     private timer: Timer;
-    private dimensions: BoardDimensions;
 
     private constructor(options: GameOptions) {
         super(options);
@@ -52,8 +51,7 @@ export default class SameDeviceGame extends Game {
     }
 
     private setUpPlayerNames() {
-        const gameData = JSON.parse(localStorage.getItem('gameData')) as MainGameDataModel;
-        const dimensionData = this.getGameDimensionData(gameData);
+        const gameData = JSON.parse(localStorage.getItem('gameData')) as PreviousGameData;
 
         const onPromptOK = () => {
             const redInput = document.getElementById('dialog-input-red') as HTMLInputElement;
@@ -67,11 +65,15 @@ export default class SameDeviceGame extends Game {
 
             const dimensionsSelect = document.getElementById('dialog-select-dimensions') as HTMLSelectElement;
             const dimensions = parseInt(dimensionsSelect.value) as BoardDimensions;
-            this.dimensions = dimensions;
             this.board = new BoardLogic(dimensions);
         };
 
-        if (!dimensionData) {
+        if (!gameData) {
+            dimensionsSelectData.onChange = (value: string) => {
+                const dimensions = parseInt(value);
+                this.board = new BoardLogic(dimensions);
+                this.resizeCanvas();
+            };
             Dialog.prompt({
                 id: DialogIds.PlayerNames,
                 title: 'Input Players',
@@ -100,10 +102,9 @@ export default class SameDeviceGame extends Game {
     }
 
     private checkGameData() {
-        const gameData = JSON.parse(localStorage.getItem('gameData')) as MainGameDataModel;
-        const dimensionData = this.getGameDimensionData(gameData);
+        const gameData = JSON.parse(localStorage.getItem('gameData')) as PreviousGameData;
         
-        if (dimensionData) {
+        if (gameData) {
             Dialog.confirm({
                 id: DialogIds.ContinueGame,
                 title: null,
@@ -131,50 +132,32 @@ export default class SameDeviceGame extends Game {
     };
 
     private restoreLastGame() {
-        const gameData = JSON.parse(localStorage.getItem('gameData')) as MainGameDataModel;
-        const dimensionData = this.getGameDimensionData(gameData);
+        const gameData = JSON.parse(localStorage.getItem('gameData')) as PreviousGameData;
         
-        this.turn = dimensionData.nextTurn;
-        this.board.setBoard(dimensionData.board);
+        this.turn = gameData.nextTurn;
+        this.board = new BoardLogic(gameData.dimensions);
+        this.board.setBoard(gameData.board);
 
         if (this.timer) {
-            this.timer.setSecondsRunning(dimensionData.secondsRunning);
+            this.timer.setSecondsRunning(gameData.secondsRunning);
         }
 
         if (this.playerNameSection) {
-            this.playerNameSection.setPlayerGreen(dimensionData.playerGreen);
-            this.playerNameSection.setPlayerRed(dimensionData.playerRed);
+            this.playerNameSection.setPlayerGreen(gameData.playerGreen);
+            this.playerNameSection.setPlayerRed(gameData.playerRed);
         }
     }
 
     private saveGame() {
         if (this.areBothPlayersConnected()) {
-            let gameData = JSON.parse(localStorage.getItem('gameData')) as MainGameDataModel;
-            if (!gameData) {
-                gameData = {
-                    small: null,
-                    medium: null,
-                    large: null
-                };
-            }
-            const dimensionData: PreviousGameData = {
+            const gameData: PreviousGameData = {
                 nextTurn: this.turn,
                 board: this.board.getBoard(),
                 secondsRunning: this.timer?.getSecondsRunning(),
                 playerRed: this.playerNameSection?.getPlayerRed(),
-                playerGreen: this.playerNameSection?.getPlayerGreen()
+                playerGreen: this.playerNameSection?.getPlayerGreen(),
+                dimensions: this.board.getDimensions()
             };
-            switch (this.dimensions) {
-                case BoardDimensions.Small:
-                    gameData.small = dimensionData;
-                    break;
-                case BoardDimensions.Medium:
-                    gameData.medium = dimensionData;
-                    break;
-                case BoardDimensions.Large:
-                    gameData.large = dimensionData;
-                    break;
-            }
             localStorage.setItem('gameData', JSON.stringify(gameData));
         }
     }
@@ -335,37 +318,7 @@ export default class SameDeviceGame extends Game {
     };
 
     private clearGameData() {
-        const gameData = JSON.parse(localStorage.getItem('gameData')) as MainGameDataModel;
-        switch (this.dimensions) {
-            case BoardDimensions.Small:
-                gameData.small = null;
-                break;
-            case BoardDimensions.Medium:
-                gameData.medium = null;
-                break;
-            case BoardDimensions.Large:
-                gameData.large = null;
-                break;
-        }
-        localStorage.setItem('gameData', JSON.stringify(gameData));
-    }
-
-    private getGameDimensionData(gameData: MainGameDataModel): PreviousGameData | null {
-        let dimensionData: PreviousGameData = null;
-        if (gameData) {
-            switch (this.dimensions) {
-                case BoardDimensions.Small:
-                    dimensionData = gameData.small;
-                    break;
-                case BoardDimensions.Medium:
-                    dimensionData = gameData.medium;
-                    break;
-                case BoardDimensions.Large:
-                    dimensionData = gameData.large;
-                    break;
-            }
-        }
-        return dimensionData;
+        localStorage.removeItem('gameData');
     }
 
 }

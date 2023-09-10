@@ -160,6 +160,12 @@ export default class Dialog {
                 select.appendChild(option);
             }
 
+            const handleChange = selects[i].onChange;
+            if (handleChange) {
+                handleChange(select.selectedOptions[0].value);
+                select.addEventListener('change', () => handleChange(select.selectedOptions[0].value));
+            }
+
             this.appendBrElement(form);
             this.appendBrElement(form);
         }

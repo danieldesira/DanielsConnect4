@@ -1,4 +1,4 @@
-import { Coin } from "@danieldesira/daniels-connect4-common";
+import { BoardDimensions, Coin } from "@danieldesira/daniels-connect4-common";
 
 export default interface PreviousGameData {
     board: Array<Array<Coin>>;
@@ -6,10 +6,5 @@ export default interface PreviousGameData {
     secondsRunning: number;
     playerRed: string;
     playerGreen: string;
-}
-
-export interface MainGameDataModel {
-    small: PreviousGameData;
-    medium: PreviousGameData;
-    large: PreviousGameData;
+    dimensions: BoardDimensions;
 }

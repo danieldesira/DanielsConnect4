@@ -19,7 +19,8 @@ const dimensionsSelectData: PromptSelect = {
             value: BoardDimensions.Large.toString()
         }
     ],
-    default: 3
+    default: 3,
+    onChange: () => {}
 };
 
 export default dimensionsSelectData;

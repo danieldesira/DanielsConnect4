@@ -12,6 +12,7 @@ export default interface PromptInput extends PromptEntry {
 export interface PromptSelect extends PromptEntry {
     options: Array<PromptSelectOption>;
     default: number;
+    onChange: Function;
 }
 
 interface PromptSelectOption {

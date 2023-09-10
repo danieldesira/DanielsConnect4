@@ -174,7 +174,7 @@ export default abstract class Game {
         }
     }
 
-    private resizeCanvas = () => {
+    protected resizeCanvas = () => {
         const topHeight = 100;
 
         this.canvas.height = window.innerHeight - topHeight;
@@ -186,12 +186,12 @@ export default abstract class Game {
             this.coinRadius = 30; // Desktop
         }
 
-        this.colGap = this.canvas.width / this.board.getColumns();
-        this.rowGap = (this.canvas.height - topHeight) / this.board.getRows();
-
-        this.colOffset = this.colGap / 2;
-
-        this.paintBoard();
+        if (this.board) {
+            this.colGap = this.canvas.width / this.board.getColumns();
+            this.rowGap = (this.canvas.height - topHeight) / this.board.getRows();
+            this.colOffset = this.colGap / 2;
+            this.paintBoard();
+        }
     };
 
     protected resetValues() {
