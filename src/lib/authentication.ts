@@ -1,4 +1,4 @@
-import { BoardDimensions, PlayerInfo, PlayerStats } from "@danieldesira/daniels-connect4-common";
+import { BoardDimensions, PlayerInfo, PlayerSettings, PlayerStats } from "@danieldesira/daniels-connect4-common";
 import config from "./config";
 import { AuthenticationModel } from "./models/authentication-model";
 import Dialog from "./dialog/dialog";
@@ -106,5 +106,14 @@ export async function updatePlayerDimensions(dimensions: BoardDimensions) {
             text: ['Dimensions updated successfully!'],
             id: DialogIds.Saved
         });
+    }
+}
+
+export async function getSettings(): Promise<PlayerSettings> {
+    const auth = getToken();
+    const response = await fetch(`${config.httpServer}/settings?token=${auth.token}&service=${auth.service}`);
+    if (response.status === 200) {
+        const data = await response.json();
+        return data;
     }
 }

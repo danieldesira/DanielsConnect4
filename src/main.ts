@@ -1,5 +1,5 @@
 import { BoardDimensions } from "@danieldesira/daniels-connect4-common";
-import { initGoogleSSO, loadStats, logout, showLoginLogout, updatePlayerDimensions } from "./lib/authentication";
+import { getSettings, initGoogleSSO, loadStats, logout, showLoginLogout, updatePlayerDimensions } from "./lib/authentication";
 import Dialog from "./lib/dialog/dialog";
 import { DialogIds } from "./lib/enums/dialog-ids";
 import { GameMode } from "./lib/enums/game-mode";
@@ -104,7 +104,10 @@ statsBtn.addEventListener('click', async () => {
 });
 
 const settingsBtn = document.getElementById('settings') as HTMLButtonElement;
-settingsBtn.addEventListener('click', () => {
+settingsBtn.addEventListener('click', async () => {
+    dimensionsSelect.onChange = null;
+    const settings = await getSettings();
+    dimensionsSelect.default = settings.dimensions;
     Dialog.prompt({
         id: DialogIds.Settings,
         title: 'Settings',
