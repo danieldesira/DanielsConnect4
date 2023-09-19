@@ -144,7 +144,7 @@ export default class Dialog {
             select.id = `dialog-select-${selects[i].name}`;
             select.name = `dialog-select-${selects[i].name}`;
             select.ariaPlaceholder = selects[i].label;
-            select.classList.add('select');
+            select.classList.add('dialog-input');
             select.required = selects[i].required;
             select.ariaRequired = selects[i].required.toString();
             form.appendChild(select);
