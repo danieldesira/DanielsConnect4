@@ -92,7 +92,7 @@ export async function updatePlayerDimensions(dimensions: BoardDimensions) {
         service,
         dimensions
     };
-    const response = await fetch(`${config.httpServer}/update-dimensions`, {
+    const response = await fetch(`${config.httpServer}/settings`, {
         method: 'post',
         headers: {
             'Accept': 'application/json',

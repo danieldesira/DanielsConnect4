@@ -91,6 +91,11 @@ export default class NetworkGame extends Game {
                         this.playerNameSection.setPlayerGreen(this.socket.getPlayerName());
                     }
                 }
+
+                if (data.dimensions) {
+                    this.board = new BoardLogic(data.dimensions);
+                    this.resizeCanvas();
+                }
             }
         }
         
