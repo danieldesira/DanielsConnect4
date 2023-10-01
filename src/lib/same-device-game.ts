@@ -17,9 +17,9 @@ export default class SameDeviceGame extends Game {
 
     private constructor(options: GameOptions) {
         super(options);
-
-        if (options.timerCountdownId) {
-            this.timer = new Timer(options.timerCountdownId);
+        
+        if (options.timerId) {
+            this.timer = new Timer(options.timerId);
         }
     }
 
@@ -38,6 +38,12 @@ export default class SameDeviceGame extends Game {
 
     public start() {
         this.checkGameData();
+        if (this.timerSpan) {
+            this.timerSpan.classList.remove('hide');
+        }
+        if (this.countdownSpan) {
+            this.countdownSpan.classList.add('hide');
+        }
     }
 
     private onGameDataCheck() {

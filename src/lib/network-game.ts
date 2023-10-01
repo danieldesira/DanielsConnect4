@@ -18,16 +18,10 @@ export default class NetworkGame extends Game {
     private socket: Socket;
     private turnCountDown: number;
     private turnCountDownInterval: number;
-    private countdownSpan: HTMLSpanElement;
     private logoutBtn: HTMLButtonElement;
 
     private constructor(options: GameOptions) {
         super(options);
-
-        if (options.timerCountdownId) {
-            this.countdownSpan = document.getElementById(options.timerCountdownId) as HTMLSpanElement;
-        }
-
         this.logoutBtn = document.getElementById(options.logoutBtnId) as HTMLButtonElement;
     }
 
@@ -47,6 +41,12 @@ export default class NetworkGame extends Game {
             super.start();
             document.body.classList.add('waiting');
             this.disableLogoutBtn();
+            if (this.timerSpan) {
+                this.timerSpan.classList.add('hide');
+            }
+            if (this.countdownSpan) {
+                this.countdownSpan.classList.remove('hide');
+            }
         } else {
             Dialog.notify({
                 title: 'Error',

@@ -13,6 +13,8 @@ export default abstract class Game {
     protected playerNameSection: PlayerNameSection;
     private gameIndicatorsContainer: HTMLDivElement;
     private gameMenu: HTMLDivElement;
+    protected timerSpan: HTMLSpanElement;
+    protected countdownSpan: HTMLSpanElement;
 
     protected turn: Coin = Coin.Red;
 
@@ -44,6 +46,14 @@ export default abstract class Game {
 
         if (options.menuId) {
             this.gameMenu = document.getElementById(options.menuId) as HTMLDivElement;
+        }
+
+        if (options.timerId) {
+            this.timerSpan = document.getElementById(options.timerId) as HTMLSpanElement;
+        }
+
+        if (options.countdownId) {
+            this.countdownSpan = document.getElementById(options.countdownId) as HTMLSpanElement;
         }
     }
 

@@ -25,7 +25,8 @@ function initGame(mode: GameMode) {
         const options: GameOptions = {
             canvasId: 'board',
             exitBtnId: 'exitBtn',
-            timerCountdownId: 'timer',
+            timerId: 'timer',
+            countdownId: 'countdown',
             playerRedId: 'playerRed',
             playerGreenId: 'playerGreen',
             menuId: 'menu',
