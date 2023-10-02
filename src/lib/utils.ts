@@ -5,7 +5,7 @@ export default class Utils {
     }
 
     public static playSound(path: string) {
-        let audio = new Audio(path);
+        const audio = new Audio(path);
         audio.play();
     }
 }

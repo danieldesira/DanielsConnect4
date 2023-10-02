@@ -48,9 +48,8 @@ export function getToken(): AuthenticationModel | null {
 }
 
 async function loadUserData() {
-    const auth = getToken();
-    const response = await fetch(`${config.httpServer}/auth?token=${auth.token}&service=${auth.service}`);
-    if (response.status === 200) {
+    const response = await authGet(`${config.httpServer}/auth`);
+    if (response) {
         const data = await response.json() as PlayerInfo;
         const userName = document.getElementById('authPlayerName') as HTMLButtonElement;
         userName.innerText = data.user;
@@ -62,16 +61,14 @@ async function loadUserData() {
 }
 
 export async function loadStats() {
-    const auth = getToken();
-    const response = await fetch(`${config.httpServer}/stats?token=${auth.token}&service=${auth.service}`);
-    if (response.status === 200) {
-        const data = await response.json() as PlayerStats;
+    const stats = await authGet(`${config.httpServer}/stats`) as PlayerStats;
+    if (stats) {
         Dialog.notify({
             id: DialogIds.PlayerStats,
             title: 'Stats',
             text: [
-                    `Wins: ${data.wins} - ${data.winPercent.toFixed(2)}%`,
-                    `Losses: ${data.losses} - ${data.lossPercent.toFixed(2)}%`
+                    `Wins: ${stats.wins} - ${stats.winPercent.toFixed(2)}%`,
+                    `Losses: ${stats.losses} - ${stats.lossPercent.toFixed(2)}%`
                 ]
         });
     }
@@ -110,10 +107,17 @@ export async function updatePlayerDimensions(dimensions: BoardDimensions) {
 }
 
 export async function getSettings(): Promise<PlayerSettings> {
+    return await authGet(`${config.httpServer}/settings`);
+}
+
+async function authGet(url: string): Promise<any> {
     const auth = getToken();
-    const response = await fetch(`${config.httpServer}/settings?token=${auth.token}&service=${auth.service}`);
-    if (response.status === 200) {
-        const data = await response.json();
-        return data;
-    }
+    const res = await fetch(url, {
+        headers: {
+            'Authorization': auth.token,
+            'Service': auth.service
+        }
+    });
+    const data = (res.status === 200 ? await res.json() : null);
+    return data;
 }
