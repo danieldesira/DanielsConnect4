@@ -1,5 +1,5 @@
 import { BoardDimensions } from "@danieldesira/daniels-connect4-common";
-import { getSettings, initGoogleSSO, loadStats, logout, showLoginLogout, updatePlayerDimensions } from "./lib/authentication";
+import { getSettings, getUserData, initGoogleSSO, loadStats, logout, updateSettings } from "./lib/authentication";
 import Dialog from "./lib/dialog/dialog";
 import { DialogIds } from "./lib/enums/dialog-ids";
 import { GameMode } from "./lib/enums/game-mode";
@@ -90,14 +90,17 @@ shareBtn.addEventListener('click', (event: MouseEvent) => {
 });
 
 const googleSignonBtn = document.getElementById('googleSignon') as HTMLButtonElement;
-googleSignonBtn.addEventListener('click', initGoogleSSO);
+googleSignonBtn.addEventListener('click', () => {
+    initGoogleSSO(showLoginLogout);
+});
 
-(async () => {
-    await showLoginLogout();
-})();
+showLoginLogout();
 
 const logoutBtn = document.getElementById('logout') as HTMLButtonElement;
-logoutBtn.addEventListener('click', logout);
+logoutBtn.addEventListener('click', () => {
+    logout();
+    showLoginLogout();
+});
 
 const statsBtn = document.getElementById('stats') as HTMLButtonElement;
 statsBtn.addEventListener('click', async () => {
@@ -118,8 +121,34 @@ settingsBtn.addEventListener('click', async () => {
         onOK: async () => {
             const dimensionsSelect = document.getElementById('dialog-select-dimensions') as HTMLSelectElement;
             const dimensions = parseInt(dimensionsSelect.value) as BoardDimensions;
-            await updatePlayerDimensions(dimensions);
+            await updateSettings(dimensions);
         },
         onCancel: null
     });
 });
+
+async function showLoginLogout() {
+    const loginBtns = document.getElementById('login-btns') as HTMLDivElement;
+    const loggedInArea = document.getElementById('slidebar') as HTMLDivElement;
+    if (localStorage.getItem('auth')) {
+        loginBtns.classList.add('hide');
+        loggedInArea.classList.remove('hide');
+        await loadUserData();
+    } else {
+        loginBtns.classList.remove('hide');
+        loggedInArea.classList.add('hide');
+    }
+}
+
+async function loadUserData() {
+    const user = await getUserData();
+    if (user) {
+        const userName = document.getElementById('authPlayerName') as HTMLButtonElement;
+        userName.innerText = user.user;
+        const authPlayerPicture = document.getElementById('authPlayerPicture') as HTMLImageElement;
+        authPlayerPicture.src = user.picUrl;
+    } else {
+        logout();
+        showLoginLogout();
+    }
+}

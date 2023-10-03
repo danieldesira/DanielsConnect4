@@ -13,7 +13,6 @@ declare global {
 export async function handleGoogleSignon(response: any) {
     const {credential} = response;
     storeGoogleToken(credential);
-    await showLoginLogout();
 }
 
 function storeGoogleToken(token: string) {
@@ -24,22 +23,8 @@ function storeGoogleToken(token: string) {
     localStorage.setItem('auth', JSON.stringify(data));
 }
 
-export async function showLoginLogout() {
-    const loginBtns = document.getElementById('login-btns') as HTMLDivElement;
-    const loggedInArea = document.getElementById('slidebar') as HTMLDivElement;
-    if (localStorage.getItem('auth')) {
-        loginBtns.classList.add('hide');
-        loggedInArea.classList.remove('hide');
-        await loadUserData();
-    } else {
-        loginBtns.classList.remove('hide');
-        loggedInArea.classList.add('hide');
-    }
-}
-
 export function logout() {
     localStorage.removeItem('auth');
-    showLoginLogout();
 }
 
 export function getToken(): AuthenticationModel | null {
@@ -47,17 +32,8 @@ export function getToken(): AuthenticationModel | null {
     return val ? JSON.parse(val) as AuthenticationModel : null;
 }
 
-async function loadUserData() {
-    const response = await authGet(`${config.httpServer}/auth`);
-    if (response) {
-        const data = await response.json() as PlayerInfo;
-        const userName = document.getElementById('authPlayerName') as HTMLButtonElement;
-        userName.innerText = data.user;
-        const authPlayerPicture = document.getElementById('authPlayerPicture') as HTMLImageElement;
-        authPlayerPicture.src = data.picUrl;
-    } else {
-        logout();
-    }
+export async function getUserData() {
+    return await authGet(`${config.httpServer}/auth`) as PlayerInfo;
 }
 
 export async function loadStats() {
@@ -74,36 +50,28 @@ export async function loadStats() {
     }
 }
 
-export function initGoogleSSO() {
+export function initGoogleSSO(showLoginLogout: Function) {
     window.google.accounts.id.initialize({
         client_id: '966331594657-sjtp3m7ooigjma726j7aa4kcf5qdu2v7.apps.googleusercontent.com',
-        callback: handleGoogleSignon
+        callback: (response: any) => {
+            handleGoogleSignon(response);
+            showLoginLogout();
+        }
     });
     window.google.accounts.id.prompt();
 }
 
-export async function updatePlayerDimensions(dimensions: BoardDimensions) {
-    const {token, service} = getToken();
+export async function updateSettings(dimensions: BoardDimensions) {
     const params = {
-        token,
-        service,
         dimensions
     };
-    const response = await fetch(`${config.httpServer}/settings`, {
-        method: 'post',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(params)
-    });
-    if (response.status === 200) {
+    await authPost(`${config.httpServer}/settings`, params, () => {
         Dialog.notify({
-            title: 'Dimensions',
-            text: ['Dimensions updated successfully!'],
-            id: DialogIds.Saved
-        });
-    }
+            title: 'Settings',
+            text: ['Error saving settings!'],
+            id: DialogIds.ServerError
+        })
+    });
 }
 
 export async function getSettings(): Promise<PlayerSettings> {
@@ -111,13 +79,30 @@ export async function getSettings(): Promise<PlayerSettings> {
 }
 
 async function authGet(url: string): Promise<any> {
-    const auth = getToken();
+    const {token, service} = getToken();
     const res = await fetch(url, {
         headers: {
-            'Authorization': auth.token,
-            'Service': auth.service
+            'Authorization': token,
+            'Service': service
         }
     });
     const data = (res.status === 200 ? await res.json() : null);
     return data;
+}
+
+async function authPost(url: string, data: any, handleError: Function) {
+    const {token, service} = getToken();
+    const res = await fetch(url, {
+        method: 'post',
+        headers: {
+            'Authorization': token,
+            'Service': service,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+    if ((res.status < 200 || res.status >= 300) && handleError) {
+        handleError();
+    }
 }
