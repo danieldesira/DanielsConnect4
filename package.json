@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "concurrently": "^8.2.1",
     "serve": "^14.2.0",
     "ts-loader": "^9.4.2",
     "webpack": "^5.75.0",
@@ -9,7 +10,7 @@
     "@danieldesira/daniels-connect4-common": "^0.1.32"
   },
   "scripts": {
-    "start": "npx webpack -w",
-    "serve": "npx serve -l 5000"
+    "start": "npx concurrently \"npx webpack -w\" \"npx serve -l 5000\"",
+    "dev": "npm start"
   }
 }
