@@ -167,10 +167,18 @@ path {
         background-color: var(--dark-theme-text-color);
     }
 
-    a, .heading {
-        color: var(--dark-theme-text-color);
+    .btn.text {
+        color: #fff;
     }
 
+    .btn path {
+        fill: #fff;
+    }
+
+    a, .heading, .text {
+        color: var(--dark-theme-text-color);
+    }
+    
     path {
         fill: var(--dark-theme-text-color);
     }

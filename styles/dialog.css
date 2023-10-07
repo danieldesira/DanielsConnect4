@@ -12,6 +12,10 @@
     padding-bottom: 20px;
 }
 
+.dialog .text {
+    color: #fff
+}
+
 .dialog-btn {
     border-radius: 10px;
     border-color: transparent;
@@ -58,4 +62,5 @@
 
 .dialog-title {
     text-align: center;
+    color: #fff;
 }
