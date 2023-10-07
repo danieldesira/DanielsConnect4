@@ -1,7 +1,11 @@
 @import 'dialog.css';
 
+body {
+    --theme-color: darkblue;
+}
+
 a {
-    color: #000;
+    color: var(--theme-color);
 }
 
 .align-right {
@@ -27,7 +31,7 @@ a {
 
 .btn {
     height: 100px;
-    background-color: darkblue;
+    background-color: var(--theme-color);
     color: whitesmoke;
     border-color: transparent;
     border-radius: 45px;
@@ -45,7 +49,7 @@ a {
 
 .btn-light {
     background-color: greenyellow;
-    color: #000;
+    color: var(--theme-color);
 }
 
 .center-text {
@@ -67,6 +71,7 @@ a {
 
 .heading {
     display: inline;
+    color: var(--theme-color);
 }
 
 .hide {
