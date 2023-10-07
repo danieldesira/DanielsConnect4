@@ -13,8 +13,7 @@ export default class Position {
         if (event.pageX !== undefined || event.pageY !== undefined) {
             x = event.pageX;
             y = event.pageY;
-        }
-        else {
+        } else {
             x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
             y = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
         }

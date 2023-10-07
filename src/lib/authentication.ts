@@ -62,16 +62,18 @@ export function initGoogleSSO(showLoginLogout: Function) {
 }
 
 export async function updateSettings(dimensions: BoardDimensions) {
-    const params = {
-        dimensions
-    };
-    await authPost(`${config.httpServer}/settings`, params, () => {
+    try {
+        const params = {
+            dimensions
+        };
+        await authPost(`${config.httpServer}/settings`, params);
+    } catch {
         Dialog.notify({
             title: 'Settings',
             text: ['Error saving settings!'],
             id: DialogIds.ServerError
-        })
-    });
+        });
+    }
 }
 
 export async function getSettings(): Promise<PlayerSettings> {
@@ -86,11 +88,11 @@ async function authGet(url: string): Promise<any> {
             'Service': service
         }
     });
-    const data = (res.status === 200 ? await res.json() : null);
+    const data = (res.status >= 200 && res.status < 300 ? await res.json() : null);
     return data;
 }
 
-async function authPost(url: string, data: any, handleError: Function) {
+async function authPost(url: string, data: any) {
     const {token, service} = getToken();
     const res = await fetch(url, {
         method: 'post',
@@ -102,7 +104,7 @@ async function authPost(url: string, data: any, handleError: Function) {
         },
         body: JSON.stringify(data)
     });
-    if ((res.status < 200 || res.status >= 300) && handleError) {
-        handleError();
+    if (res.status < 200 || res.status >= 300) {
+        throw `HTTP Status Code ${res.status}`;
     }
 }

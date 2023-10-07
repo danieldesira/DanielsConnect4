@@ -8,6 +8,10 @@ a {
     color: var(--theme-color);
 }
 
+path {
+    fill: var(--theme-color);
+}
+
 .align-right {
     text-align: right;
 }
@@ -83,8 +87,8 @@ a {
 }
 
 .menu {
-    width: 80%;
-    max-width: 600px;
+    width: 30%;
+    max-width: 350px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -151,4 +155,23 @@ a {
 
 .version {
     font-size: small;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        --dark-theme-text-color: pink;
+        background-color: var(--theme-color);
+    }
+
+    .btn {
+        background-color: var(--dark-theme-text-color);
+    }
+
+    a, .heading {
+        color: var(--dark-theme-text-color);
+    }
+
+    path {
+        fill: var(--dark-theme-text-color);
+    }
 }
