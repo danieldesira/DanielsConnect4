@@ -5,7 +5,7 @@ import Game from "./game";
 import GameOptions from "./game-options";
 import Socket from "./socket";
 import Utils from "./utils";
-import { ActionMessage, BoardDimensions, CurrentTurnMessage, ErrorMessage, GameMessage, InitialMessage, SkipTurnMessage, WinnerMessage, skipTurnMaxWait } from "@danieldesira/daniels-connect4-common";
+import { ActionMessage, BoardDimensions, CurrentTurnMessage, ErrorMessage, GameMessage, InitialMessage, WinnerMessage, skipTurnMaxWait } from "@danieldesira/daniels-connect4-common";
 import { DialogIds } from "./enums/dialog-ids";
 import { getToken } from "./authentication";
 import { AuthenticationModel } from "./models/authentication-model";
@@ -113,13 +113,11 @@ export default class NetworkGame extends Game {
             }
         }
         
-        if (GameMessage.isSkipTurnMessage(messageData)) {
-            const data = messageData as SkipTurnMessage;
-            if (data.skipTurn && data.currentTurn) {
-                this.turn = data.currentTurn;
-                this.turnCountDown = skipTurnMaxWait;
-                this.toggleWaitingClass();
-            }
+        if (GameMessage.isCurrentTurnMessage(messageData)) {
+            const data = messageData as CurrentTurnMessage;
+            this.turn = data.currentTurn;
+            this.turnCountDown = skipTurnMaxWait;
+            this.toggleWaitingClass();
         }
 
         if (GameMessage.isWinnerMessage(messageData)) {
@@ -203,7 +201,11 @@ export default class NetworkGame extends Game {
             this.currentCoinColumn = this.getColumnFromCursorPosition(event);
             this.moveCoin();
 
-            const data = new ActionMessage(this.currentCoinColumn, 'mousemove', this.turn);
+            const data: ActionMessage = {
+                column: this.currentCoinColumn,
+                action: 'mousemove',
+                color: this.turn
+            };
             this.socket.send(data);
         }
     };
@@ -212,7 +214,11 @@ export default class NetworkGame extends Game {
         if (this.socket && this.turn === this.socket.getPlayerColor() && this.areBothPlayersConnected()) {
             this.currentCoinColumn = this.getColumnFromCursorPosition(event);
 
-            const data = new ActionMessage(this.currentCoinColumn, 'click', this.turn);
+            const data: ActionMessage = {
+                column: this.currentCoinColumn,
+                action: 'click',
+                color: this.turn
+            };
             this.socket.send(data);
             
             this.landCoin();
@@ -225,7 +231,11 @@ export default class NetworkGame extends Game {
             this.currentCoinColumn = this.getColumnFromCursorPosition(firstTouch);
             this.moveCoin();
 
-            const data = new ActionMessage(this.currentCoinColumn, 'mousemove', this.turn);
+            const data: ActionMessage = {
+                column: this.currentCoinColumn,
+                action: 'mousemove',
+                color: this.turn
+            };
             this.socket.send(data);
         }
     };
@@ -346,7 +356,11 @@ export default class NetworkGame extends Game {
                 if (this.currentCoinColumn > 0) {
                     this.currentCoinColumn--;
 
-                    data = new ActionMessage(this.currentCoinColumn, 'mousemove', this.turn);
+                    data = {
+                        column: this.currentCoinColumn,
+                        action: 'mousemove',
+                        color: this.turn
+                    };
                     this.socket.send(data);
 
                     this.moveCoin();
@@ -357,7 +371,11 @@ export default class NetworkGame extends Game {
                 if (this.currentCoinColumn < this.board.getColumns() - 1) {
                     this.currentCoinColumn++;
 
-                    data = new ActionMessage(this.currentCoinColumn, 'mousemove', this.turn);
+                    data = {
+                        column: this.currentCoinColumn,
+                        action: 'mousemove',
+                        color: this.turn
+                    };
                     this.socket.send(data);
 
                     this.moveCoin();
@@ -365,7 +383,11 @@ export default class NetworkGame extends Game {
             }
     
             if (event.key === ' ') {
-                data = new ActionMessage(this.currentCoinColumn, 'click', this.turn);
+                data = {
+                    column: this.currentCoinColumn,
+                    action: 'click',
+                    color: this.turn
+                };
                 this.socket.send(data);
 
                 this.landCoin();

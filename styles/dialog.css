@@ -13,7 +13,7 @@
 }
 
 .dialog .text {
-    color: #fff
+    color: #fff;
 }
 
 .dialog-btn {
@@ -44,6 +44,7 @@
     height: 37px;
     text-align: center;
     font-size: large;
+    color: rgb(50, 50, 50)!important;
 }
 
 .dialog-input-container {

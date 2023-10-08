@@ -7,7 +7,7 @@
     "webpack-cli": "^5.0.1"
   },
   "dependencies": {
-    "@danieldesira/daniels-connect4-common": "^0.1.32"
+    "@danieldesira/daniels-connect4-common": "^0.2.0"
   },
   "scripts": {
     "start": "npx concurrently \"npx webpack -w\" \"npx serve -l 5000\"",

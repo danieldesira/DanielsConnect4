@@ -4,7 +4,7 @@ import GameOptions from "./game-options";
 import { Sound } from "./enums/sound";
 import Utils from "./utils";
 import Timer from "./timer";
-import { BoardDimensions, Coin, randomiseColor } from "@danieldesira/daniels-connect4-common";
+import { BoardDimensions, Coin, randomiseTurn } from "@danieldesira/daniels-connect4-common";
 import { DialogIds } from "./enums/dialog-ids";
 import PreviousGameData from "./models/previous-game-data";
 import { BoardLogic } from "@danieldesira/daniels-connect4-common/lib/board-logic";
@@ -121,7 +121,7 @@ export default class SameDeviceGame extends Game {
                 noColor: 'red'
             });
         } else {
-            this.turn = randomiseColor();
+            this.turn = randomiseTurn();
             this.onGameDataCheck();
         }
     }
@@ -133,7 +133,7 @@ export default class SameDeviceGame extends Game {
 
     private cancelPreviousGame = () => {
         this.clearGameData();
-        this.turn = randomiseColor();
+        this.turn = randomiseTurn();
         this.onGameDataCheck();
     };
 
