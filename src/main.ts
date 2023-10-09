@@ -7,6 +7,7 @@ import GameOptions from "./lib/game-options";
 import NetworkGame from "./lib/network-game";
 import SameDeviceGame from "./lib/same-device-game";
 import dimensionsSelect from "./lib/dimensions-select";
+import openCredits from "./lib/credits";
 
 const samePCBtn = document.getElementById('samePC') as HTMLButtonElement;
 const networkBtn = document.getElementById('network') as HTMLButtonElement;
@@ -152,3 +153,6 @@ async function loadUserData() {
         showLoginLogout();
     }
 }
+
+const creditsBtn = document.getElementById('credits') as HTMLButtonElement;
+creditsBtn.addEventListener('click', openCredits);

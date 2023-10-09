@@ -1,4 +1,5 @@
 import ConfirmationDialogOptions from "./confirmation-dialog-options";
+import CreditsDialogOptions from "./credits-dialog-options";
 import DialogOptions from "./dialog-options";
 import { DialogType } from "./enums/dialog-type";
 import PromptDialogOptions from "./prompt-dialog-options";
@@ -43,25 +44,20 @@ export default class Dialog {
                     break;
                 }
                 case DialogType.Notification: {
-                    const btnContainer = document.createElement('div') as HTMLDivElement;
-                    btnContainer.classList.add('dialog-btn-container');
-                    modal.appendChild(btnContainer);
-
-                    this.appendBtn(btnContainer, 'OK', () => {
-                        this.closeModal(modal);
-                    }, 'green', 'button');
-
-                    modal.addEventListener('keydown', (event: KeyboardEvent) => {
-                        if (event.key === 'Escape' || event.key === 'Enter') {
-                            this.closeModal(modal);
-                        }
-                    });
-
+                    this.appendOKButton(modal);
+                    this.listenKeyboard(modal);
                     break;
                 }
                 case DialogType.Prompt: {
                     const o = options as PromptDialogOptions;
                     this.appendForm(modal, o);
+                    break;
+                }
+                case DialogType.Credits: {
+                    const o = options as CreditsDialogOptions;
+                    this.appendCredits(textContainer, o);
+                    this.appendOKButton(modal);
+                    this.listenKeyboard(modal);
                     break;
                 }
             }
@@ -186,6 +182,39 @@ export default class Dialog {
         }
     }
 
+    private static appendCredits(container: HTMLDivElement, options: CreditsDialogOptions) {
+        for (let i: number = 0; i < options.sections.length; i++) {
+            const h2 = document.createElement('h2');
+            h2.innerText = options.sections[i].title;
+            container.appendChild(h2);
+            const ul = document.createElement('ul');
+            for (let j: number = 0; j < options.sections[i].contributors.length; j++) {
+                const li = document.createElement('li');
+                li.innerText = options.sections[i].contributors[j];
+                ul.appendChild(li);
+            }
+            container.appendChild(ul);
+        }
+    }
+
+    private static appendOKButton(modal: HTMLDivElement) {
+        const btnContainer = document.createElement('div') as HTMLDivElement;
+        btnContainer.classList.add('dialog-btn-container');
+        modal.appendChild(btnContainer);
+
+        this.appendBtn(btnContainer, 'OK', () => {
+            this.closeModal(modal);
+        }, 'green', 'button');
+    }
+
+    private static listenKeyboard(modal: HTMLDivElement) {
+        modal.addEventListener('keydown', (event: KeyboardEvent) => {
+            if (event.key === 'Escape' || event.key === 'Enter') {
+                this.closeModal(modal);
+            }
+        });
+    }
+
     private static closeModal(modal: HTMLDivElement) {
         if (document.body.contains(modal)) {
             document.body.removeChild(modal);
@@ -202,6 +231,10 @@ export default class Dialog {
 
     public static prompt(options: PromptDialogOptions) {
         Dialog.modal(DialogType.Prompt, options);
+    }
+
+    public static credit(options: CreditsDialogOptions) {
+        Dialog.modal(DialogType.Credits, options);
     }
 
     public static closeAllOpenDialogs() {
