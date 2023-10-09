@@ -51,6 +51,14 @@ path {
     font-size: 0.5em;
 }
 
+.btn-xs {
+    height: 17px;
+}
+
+.btn-xs.text {
+    font-size: 0.9em;
+}
+
 .btn-light {
     background-color: greenyellow;
     color: var(--theme-color);

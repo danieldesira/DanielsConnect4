@@ -8,6 +8,7 @@ import NetworkGame from "./lib/network-game";
 import SameDeviceGame from "./lib/same-device-game";
 import dimensionsSelect from "./lib/dimensions-select";
 import openCredits from "./lib/credits";
+import showInstructions from "./lib/instructions";
 
 const samePCBtn = document.getElementById('samePC') as HTMLButtonElement;
 const networkBtn = document.getElementById('network') as HTMLButtonElement;
@@ -15,11 +16,11 @@ const instructionsBtn = document.getElementById('instructions') as HTMLButtonEle
 
 samePCBtn.addEventListener('click', () => {
     initGame(GameMode.SamePC);
-}, false);
+});
 
 networkBtn.addEventListener('click', () => {
     initGame(GameMode.Network);
-}, false);
+});
 
 function initGame(mode: GameMode) {
     try {
@@ -51,25 +52,7 @@ function initGame(mode: GameMode) {
     }
 }
 
-instructionsBtn.addEventListener('click', () => {
-    const text = [
-        'The principle behind Connect4 is simple:',
-        'The player who first places 4 coins next to each other, wins. You may ' +
-            'match horizontally, vertically or diagonally.',
-        'Furthermore, in Network Play, you must place your coin within 60 seconds. ' +
-            'If you fail to do so, you pass the turn to your opponent.',
-        'Further note that exiting in Same Device Play, saves game progress. You ' +
-            'will be presented with the option to continue the same game the next ' +
-            'time. This does not work for Network Play because your opponent might ' +
-            'not be available the next time and you might not even know him/her/them.',
-        'Good luck and have fun playing!'
-    ];
-    Dialog.notify({
-        id: DialogIds.Instructions,
-        text,
-        title: 'Instructions'
-    });
-}, false);
+instructionsBtn.addEventListener('click', showInstructions);
 
 const shareBtn = document.getElementById('shareBtn') as HTMLAnchorElement;
 shareBtn.addEventListener('click', (event: MouseEvent) => {

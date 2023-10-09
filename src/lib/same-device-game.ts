@@ -63,9 +63,9 @@ export default class SameDeviceGame extends Game {
             const redInput = document.getElementById('dialog-input-red') as HTMLInputElement;
             const greenInput = document.getElementById('dialog-input-green') as HTMLInputElement;
             if (redInput.value && greenInput.value && redInput.value.trim()
-                    && greenInput.value.trim() && this.playerNameSection) {
-                this.playerNameSection.setPlayerRed(redInput.value);
-                this.playerNameSection.setPlayerGreen(greenInput.value);
+                    && greenInput.value.trim()) {
+                this.playerNameSection?.setPlayerRed(redInput.value);
+                this.playerNameSection?.setPlayerGreen(greenInput.value);
                 this.setTimer();
             }
 
@@ -230,22 +230,16 @@ export default class SameDeviceGame extends Game {
             if (coinCount >= 4) {
                 let winner: string = '';
 
-                if (this.playerNameSection) {
-                    if (this.turn === Coin.Red) {
-                        winner = `${this.playerNameSection.getPlayerRed()} (Red)`;
-                    } else if (this.turn === Coin.Green) {
-                        winner = `${this.playerNameSection.getPlayerGreen()} (Green)`;
-                    }
+                if (this.turn === Coin.Red) {
+                    winner = `${this.playerNameSection?.getPlayerRed()} (Red)`;
+                } else if (this.turn === Coin.Green) {
+                    winner = `${this.playerNameSection?.getPlayerGreen()} (Green)`;
                 }
 
                 this.showWinDialog(winner, this.turn);
                 this.closeGameAfterWinning();
             } else if (this.board.isBoardFull()) {
-                let message: string = '';
-                if (this.playerNameSection) {
-                    message += `${this.playerNameSection.getPlayerRed()} (Red) and ${this.playerNameSection.getPlayerGreen()} (Green)`;
-                }
-                message += ' are tied!';
+                const message: string = `${this.playerNameSection?.getPlayerRed()} (Red) and ${this.playerNameSection?.getPlayerGreen()} (Green) are tied!`;
                 Dialog.notify({
                     id: DialogIds.GameEnd,
                     title: 'Tie',
