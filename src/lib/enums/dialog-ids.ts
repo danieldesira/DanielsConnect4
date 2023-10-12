@@ -8,5 +8,6 @@ export enum DialogIds {
     Saved = 'saved-notification-dialog',
     PlayerStats = 'player-stats-dialog',
     Settings = 'settings-dialog',
-    Credits = 'credits-dialog'
+    Credits = 'credits-dialog',
+    AccountMenu = 'account-menu-dialog'
 }

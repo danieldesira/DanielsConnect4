@@ -37,6 +37,17 @@
     background-color: rgb(255, 0, 0);
 }
 
+.dialog-menu-container {
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.dialog-menu-container .dialog-btn {
+    margin-right: 20px;
+    width: 150px;
+}
+
 .dialog-input {
     border-radius: 15px;
     border-color: transparent;

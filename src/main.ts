@@ -1,14 +1,13 @@
-import { BoardDimensions } from "@danieldesira/daniels-connect4-common";
-import { getSettings, getUserData, initGoogleSSO, loadStats, logout, updateSettings } from "./lib/authentication";
+import { getUserData, initGoogleSSO, loadStats, logout } from "./lib/authentication";
 import Dialog from "./lib/dialog/dialog";
 import { DialogIds } from "./lib/enums/dialog-ids";
 import { GameMode } from "./lib/enums/game-mode";
 import GameOptions from "./lib/game-options";
 import NetworkGame from "./lib/network-game";
 import SameDeviceGame from "./lib/same-device-game";
-import dimensionsSelect from "./lib/dimensions-select";
 import openCredits from "./lib/credits";
 import showInstructions from "./lib/instructions";
+import openSettings from "./lib/settings-dialog";
 
 const samePCBtn = document.getElementById('samePC') as HTMLButtonElement;
 const networkBtn = document.getElementById('network') as HTMLButtonElement;
@@ -81,35 +80,6 @@ googleSignonBtn.addEventListener('click', () => {
 showLoginLogout();
 
 const logoutBtn = document.getElementById('logout') as HTMLButtonElement;
-logoutBtn.addEventListener('click', () => {
-    logout();
-    showLoginLogout();
-});
-
-const statsBtn = document.getElementById('stats') as HTMLButtonElement;
-statsBtn.addEventListener('click', async () => {
-    await loadStats();
-});
-
-const settingsBtn = document.getElementById('settings') as HTMLButtonElement;
-settingsBtn.addEventListener('click', async () => {
-    dimensionsSelect.onChange = null;
-    const settings = await getSettings();
-    dimensionsSelect.default = settings.dimensions;
-    Dialog.prompt({
-        id: DialogIds.Settings,
-        title: 'Settings',
-        text: [],
-        inputs: [],
-        selects: [dimensionsSelect],
-        onOK: async () => {
-            const dimensionsSelect = document.getElementById('dialog-select-dimensions') as HTMLSelectElement;
-            const dimensions = parseInt(dimensionsSelect.value) as BoardDimensions;
-            await updateSettings(dimensions);
-        },
-        onCancel: null
-    });
-});
 
 async function showLoginLogout() {
     const loginBtns = document.getElementById('login-btns') as HTMLDivElement;
@@ -129,7 +99,6 @@ async function loadUserData() {
     if (user) {
         const userName = document.getElementById('authPlayerName') as HTMLButtonElement;
         userName.innerText = user.user;
-        const authPlayerPicture = document.getElementById('authPlayerPicture') as HTMLImageElement;
         authPlayerPicture.src = user.picUrl;
     } else {
         logout();
@@ -139,3 +108,33 @@ async function loadUserData() {
 
 const creditsBtn = document.getElementById('credits') as HTMLButtonElement;
 creditsBtn.addEventListener('click', openCredits);
+
+const authPlayerPicture = document.getElementById('authPlayerPicture') as HTMLImageElement;
+authPlayerPicture.addEventListener('click', async () => {
+    const user = await getUserData();
+    Dialog.menu({
+        id: DialogIds.AccountMenu,
+        title: user.user,
+        text: [],
+        buttons: [
+            {
+                text: 'Load Stats',
+                callback: async () => await loadStats(),
+                color: 'green'
+            },
+            {
+                text: 'Settings',
+                callback: openSettings,
+                color: 'green'
+            },
+            {
+                text: 'Logout',
+                callback: () => {
+                    logout();
+                    showLoginLogout();
+                },
+                color: 'red'
+            }
+        ]
+    });
+})

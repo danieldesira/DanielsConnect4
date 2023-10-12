@@ -2,6 +2,7 @@ import ConfirmationDialogOptions from "./confirmation-dialog-options";
 import CreditsDialogOptions from "./credits-dialog-options";
 import DialogOptions from "./dialog-options";
 import { DialogType } from "./enums/dialog-type";
+import MenuDialogOptions from "./menu-dialog-options";
 import PromptDialogOptions from "./prompt-dialog-options";
 import PromptInput, { PromptSelect } from "./prompt-input";
 
@@ -56,6 +57,13 @@ export default class Dialog {
                 case DialogType.Credits: {
                     const o = options as CreditsDialogOptions;
                     this.appendCredits(textContainer, o);
+                    this.appendOKButton(modal);
+                    this.listenKeyboard(modal);
+                    break;
+                }
+                case DialogType.Menu: {
+                    const o = options as MenuDialogOptions;
+                    this.appendMenu(modal, o);
                     this.appendOKButton(modal);
                     this.listenKeyboard(modal);
                     break;
@@ -215,6 +223,22 @@ export default class Dialog {
         });
     }
 
+    private static appendMenu(modal: HTMLDivElement, options: MenuDialogOptions) {
+        const container = document.createElement('div');
+        container.classList.add('dialog-menu-container');
+        modal.appendChild(container);
+        for (let i = 0; i < options.buttons.length; i++) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.innerText = options.buttons[i].text;
+            button.classList.add('dialog-btn');
+            button.classList.add(`dialog-btn-${options.buttons[i].color}`)
+            button.classList.add('text');
+            button.addEventListener('click', options.buttons[i].callback);
+            container.appendChild(button);
+        }
+    }
+
     private static closeModal(modal: HTMLDivElement) {
         if (document.body.contains(modal)) {
             document.body.removeChild(modal);
@@ -235,6 +259,10 @@ export default class Dialog {
 
     public static credit(options: CreditsDialogOptions) {
         Dialog.modal(DialogType.Credits, options);
+    }
+
+    public static menu(options: MenuDialogOptions) {
+        Dialog.modal(DialogType.Menu, options);
     }
 
     public static closeAllOpenDialogs() {
