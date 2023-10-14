@@ -10,5 +10,6 @@ export enum DialogIds {
     Settings = 'settings-dialog',
     Credits = 'credits-dialog',
     AccountMenu = 'account-menu-dialog',
-    LogoutDisabled = 'logout-disabled-dialog'
+    LogoutDisabled = 'logout-disabled-dialog',
+    Changelog = 'changelog-dialog'
 }

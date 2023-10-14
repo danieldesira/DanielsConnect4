@@ -8,6 +8,7 @@ import SameDeviceGame from "./lib/same-device-game";
 import openCredits from "./lib/credits";
 import showInstructions from "./lib/instructions";
 import openSettings from "./lib/settings-dialog";
+import openChangelog from "./lib/changelog";
 
 const samePCBtn = document.getElementById('samePC') as HTMLButtonElement;
 const networkBtn = document.getElementById('network') as HTMLButtonElement;
@@ -76,13 +77,12 @@ googleSignonBtn.addEventListener('click', () => {
     initGoogleSSO(showLoginLogout);
 });
 
-async function showLoginLogout() {
+function showLoginLogout() {
     const loginBtns = document.getElementById('login-btns') as HTMLDivElement;
     const loggedInArea = document.getElementById('logged-in') as HTMLDivElement;
     if (localStorage.getItem('auth')) {
         loginBtns.classList.add('hide');
         loggedInArea.classList.remove('hide');
-        await loadUserData();
     } else {
         loginBtns.classList.remove('hide');
         loggedInArea.classList.add('hide');
@@ -97,7 +97,7 @@ async function loadUserData() {
         authPlayerPicture.src = user.picUrl;
     } else {
         logout();
-        await showLoginLogout();
+        showLoginLogout();
     }
 }
 
@@ -105,11 +105,11 @@ const creditsBtn = document.getElementById('credits') as HTMLButtonElement;
 creditsBtn.addEventListener('click', openCredits);
 
 const authPlayerPicture = document.getElementById('authPlayerPicture') as HTMLImageElement;
-authPlayerPicture.addEventListener('click', async () => {
-    const userSpan = document.getElementById('authPlayerName');
+authPlayerPicture.addEventListener('click', () => {
+    const userText = document.getElementById('authPlayerName');
     Dialog.menu({
         id: DialogIds.AccountMenu,
-        title: userSpan.innerText,
+        title: userText.innerText,
         text: [],
         buttons: [
             {
@@ -146,6 +146,6 @@ authPlayerPicture.addEventListener('click', async () => {
 });
 
 (async () => {
-    await showLoginLogout();
-    await loadUserData();
+    showLoginLogout();
+    await loadUserData();openChangelog();
 })();

@@ -1,5 +1,5 @@
 import { BoardDimensions } from "@danieldesira/daniels-connect4-common";
-import { PromptSelect } from "./dialog/prompt-input";
+import { PromptSelect } from "./dialog/options/prompt-input";
 
 const dimensionsSelectData: PromptSelect = {
     name: 'dimensions',

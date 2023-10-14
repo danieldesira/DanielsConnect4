@@ -3,5 +3,6 @@ export enum DialogType {
     Notification = 1,
     Prompt = 2,
     Credits = 3,
-    Menu = 4
+    Menu = 4,
+    Changelog = 5
 }

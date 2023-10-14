@@ -1,4 +1,4 @@
-import CreditsDialogOptions from "./dialog/credits-dialog-options";
+import CreditsDialogOptions from "./dialog/options/credits-dialog-options";
 import Dialog from "./dialog/dialog";
 import { DialogIds } from "./enums/dialog-ids";
 

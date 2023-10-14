@@ -81,15 +81,20 @@ export async function getSettings(): Promise<PlayerSettings> {
 }
 
 async function authGet(url: string): Promise<any> {
-    const {token, service} = getToken();
-    const res = await fetch(url, {
-        headers: {
-            'Authorization': token,
-            'Service': service
-        }
-    });
-    const data = (res.status >= 200 && res.status < 300 ? await res.json() : null);
-    return data;
+    const auth = getToken();
+    if (auth) {
+        const {token, service} = auth;
+        const res = await fetch(url, {
+            headers: {
+                'Authorization': token,
+                'Service': service
+            }
+        });
+        const data = (res.status >= 200 && res.status < 300 ? await res.json() : null);
+        return data;
+    } else {
+        return null;
+    }
 }
 
 async function authPost(url: string, data: any) {

@@ -1,10 +1,11 @@
-import ConfirmationDialogOptions from "./confirmation-dialog-options";
-import CreditsDialogOptions from "./credits-dialog-options";
-import DialogOptions from "./dialog-options";
+import ConfirmationDialogOptions from "./options/confirmation-dialog-options";
+import CreditsDialogOptions from "./options/credits-dialog-options";
+import DialogOptions from "./options/dialog-options";
 import { DialogType } from "./enums/dialog-type";
-import MenuDialogOptions from "./menu-dialog-options";
-import PromptDialogOptions from "./prompt-dialog-options";
-import PromptInput, { PromptSelect } from "./prompt-input";
+import MenuDialogOptions from "./options/menu-dialog-options";
+import PromptDialogOptions from "./options/prompt-dialog-options";
+import PromptInput, { PromptSelect } from "./options/prompt-input";
+import ChangelogDialogOptions from "./options/changelog-dialog-options";
 
 export default class Dialog {
     
@@ -64,6 +65,13 @@ export default class Dialog {
                 case DialogType.Menu: {
                     const o = options as MenuDialogOptions;
                     this.appendMenu(modal, o);
+                    this.appendOKButton(modal);
+                    this.listenKeyboard(modal);
+                    break;
+                }
+                case DialogType.Changelog: {
+                    const o = options as ChangelogDialogOptions;
+                    this.appendChangelog(modal, o);
                     this.appendOKButton(modal);
                     this.listenKeyboard(modal);
                     break;
@@ -239,6 +247,34 @@ export default class Dialog {
         }
     }
 
+    private static appendChangelog(modal: HTMLDivElement, options: ChangelogDialogOptions) {
+        const container = document.createElement('div');
+        container.classList.add('text');
+        container.classList.add('dialog-text');
+        modal.appendChild(container);
+        for (let i = 0; i < options.releases.length; i++) {
+            const h2 = document.createElement('h2');
+            h2.innerText = `${options.releases[i].version} (${options.releases[i].status} release - ${options.releases[i].dateTime})`;
+            container.appendChild(h2);
+            const ul = document.createElement('ul');
+            container.appendChild(ul);
+            for (let j = 0; j < options.releases[i].points.length; j++) {
+                const outerLi = document.createElement('li');
+                outerLi.innerText = options.releases[i].points[j].text;
+                ul.appendChild(outerLi);
+                if (options.releases[i].points[j].subPoints.length > 0) {
+                    const ol = document.createElement('ol');
+                    outerLi.appendChild(ol);
+                    for (let k = 0; k < options.releases[i].points[j].subPoints.length; k++) {
+                        const innerLi = document.createElement('li');
+                        innerLi.innerText = options.releases[i].points[j].subPoints[k];
+                        ol.appendChild(innerLi);
+                    }
+                }
+            }
+        }
+    }
+
     private static closeModal(modal: HTMLDivElement) {
         if (document.body.contains(modal)) {
             document.body.removeChild(modal);
@@ -263,6 +299,10 @@ export default class Dialog {
 
     public static menu(options: MenuDialogOptions) {
         Dialog.modal(DialogType.Menu, options);
+    }
+
+    public static changelog(options: ChangelogDialogOptions) {
+        Dialog.modal(DialogType.Changelog, options);
     }
 
     public static closeAllOpenDialogs() {
