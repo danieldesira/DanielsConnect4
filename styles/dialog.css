@@ -44,10 +44,7 @@
 }
 
 .dialog-menu-container .dialog-btn {
-    margin-right: 20px;
-    width: 150px;
-    a;
-    align-content: inline-start;
+    width: 100%;
 }
 
 .dialog-input {
@@ -77,4 +74,14 @@
 .dialog-title {
     text-align: center;
     color: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+    .dialog-btn-green {
+        background-color: #090;
+    }
+
+    .dialog-btn-red {
+        background-color: #900;
+    }
 }

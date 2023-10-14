@@ -130,6 +130,7 @@ authPlayerPicture.addEventListener('click', async () => {
                     if (canvas.classList.contains('hide') || countdown.classList.contains('hide')) {
                         logout();
                         showLoginLogout();
+                        Dialog.closeAllOpenDialogs();
                     } else {
                         Dialog.notify({
                             id: DialogIds.LogoutDisabled,
