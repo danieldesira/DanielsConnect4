@@ -46,6 +46,8 @@
 .dialog-menu-container .dialog-btn {
     margin-right: 20px;
     width: 150px;
+    a;
+    align-content: inline-start;
 }
 
 .dialog-input {

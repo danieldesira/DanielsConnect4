@@ -120,38 +120,6 @@ path {
     color: red;
 }
 
-.slidebar {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 75px;
-    height: 75px;
-    z-index: 999;
-    opacity: .9;
-    background-color: lightgreen;
-    border-top-left-radius: 20px;
-    border-bottom-left-radius: 20px;
-    transition: width,height .5s;
-}
-
-.slidebar .visible-on-slide {
-    display: none;
-}
-
-.slidebar:hover {
-    width: 250px;
-    height: 100%;
-}
-
-.slidebar:hover .player-pic {
-    width: 100px;
-    height: 100px;
-}
-
-.slidebar:hover .visible-on-slide {
-    display: block;
-}
-
 .text {
     font-family: Source-Sans-Pro;
     font-size: 1.75em;

@@ -18,11 +18,9 @@ export default class NetworkGame extends Game {
     private socket: Socket;
     private turnCountDown: number;
     private turnCountDownInterval: number;
-    private logoutBtn: HTMLButtonElement;
 
     private constructor(options: GameOptions) {
         super(options);
-        this.logoutBtn = document.getElementById(options.logoutBtnId) as HTMLButtonElement;
     }
 
     public static getInstance(options: GameOptions): NetworkGame {
@@ -40,7 +38,6 @@ export default class NetworkGame extends Game {
             this.startCountdown();
             super.start();
             document.body.classList.add('waiting');
-            this.disableLogoutBtn();
             if (this.timerSpan) {
                 this.timerSpan.classList.add('hide');
             }
@@ -134,7 +131,6 @@ export default class NetworkGame extends Game {
 
             this.closeGameAfterWinning();
             document.body.classList.remove('waiting');
-            this.enableLogoutBtn();
         }
 
         if (GameMessage.isTieMessage(messageData)) {
@@ -144,7 +140,6 @@ export default class NetworkGame extends Game {
                 title: null
             });
             document.body.classList.remove('waiting');
-            this.enableLogoutBtn();
             this.closeGameAfterWinning();
         }
 
@@ -164,7 +159,6 @@ export default class NetworkGame extends Game {
                 title: 'We have a winner!'
             });
             document.body.classList.remove('waiting');
-            this.enableLogoutBtn();
             this.closeGameAfterWinning();
         }
 
@@ -177,14 +171,12 @@ export default class NetworkGame extends Game {
                 title: 'Error'
             });
             document.body.classList.remove('waiting');
-            this.enableLogoutBtn();
             this.closeGameAfterWinning();
         }
     };
 
     private onSocketError = () => {
         super.exit();
-        this.enableLogoutBtn();
     };
 
     protected resetValues() {
@@ -283,7 +275,6 @@ export default class NetworkGame extends Game {
         }
         Dialog.closeAllOpenDialogs();
         document.body.classList.remove('waiting');
-        this.enableLogoutBtn();
 
         super.exit();
     };
@@ -398,15 +389,5 @@ export default class NetworkGame extends Game {
             this.exit();
         }
     };
-
-    private disableLogoutBtn() {
-        this.logoutBtn.disabled = true;
-        this.logoutBtn.ariaDisabled = 'true';
-    }
-
-    private enableLogoutBtn() {
-        this.logoutBtn.disabled = false;
-        this.logoutBtn.ariaDisabled = 'false';
-    }
     
 }

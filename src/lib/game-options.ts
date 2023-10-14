@@ -7,5 +7,4 @@ export default interface GameOptions {
     playerGreenId: string;
     menuId: string;
     gameIndicatorsId: string;
-    logoutBtnId: string;
 }

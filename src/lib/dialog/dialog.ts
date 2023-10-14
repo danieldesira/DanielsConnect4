@@ -232,7 +232,7 @@ export default class Dialog {
             button.type = 'button';
             button.innerText = options.buttons[i].text;
             button.classList.add('dialog-btn');
-            button.classList.add(`dialog-btn-${options.buttons[i].color}`)
+            button.classList.add(`dialog-btn-${options.buttons[i].color}`);
             button.classList.add('text');
             button.addEventListener('click', options.buttons[i].callback);
             container.appendChild(button);

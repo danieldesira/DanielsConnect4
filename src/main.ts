@@ -31,8 +31,7 @@ function initGame(mode: GameMode) {
             playerRedId: 'playerRed',
             playerGreenId: 'playerGreen',
             menuId: 'menu',
-            gameIndicatorsId: 'gameIndicators',
-            logoutBtnId: 'logout'
+            gameIndicatorsId: 'gameIndicators'
         };
         if (mode === GameMode.Network) {
             const connect4 = NetworkGame.getInstance(options);
@@ -77,13 +76,9 @@ googleSignonBtn.addEventListener('click', () => {
     initGoogleSSO(showLoginLogout);
 });
 
-showLoginLogout();
-
-const logoutBtn = document.getElementById('logout') as HTMLButtonElement;
-
 async function showLoginLogout() {
     const loginBtns = document.getElementById('login-btns') as HTMLDivElement;
-    const loggedInArea = document.getElementById('slidebar') as HTMLDivElement;
+    const loggedInArea = document.getElementById('logged-in') as HTMLDivElement;
     if (localStorage.getItem('auth')) {
         loginBtns.classList.add('hide');
         loggedInArea.classList.remove('hide');
@@ -97,12 +92,12 @@ async function showLoginLogout() {
 async function loadUserData() {
     const user = await getUserData();
     if (user) {
-        const userName = document.getElementById('authPlayerName') as HTMLButtonElement;
+        const userName = document.getElementById('authPlayerName');
         userName.innerText = user.user;
         authPlayerPicture.src = user.picUrl;
     } else {
         logout();
-        showLoginLogout();
+        await showLoginLogout();
     }
 }
 
@@ -111,10 +106,10 @@ creditsBtn.addEventListener('click', openCredits);
 
 const authPlayerPicture = document.getElementById('authPlayerPicture') as HTMLImageElement;
 authPlayerPicture.addEventListener('click', async () => {
-    const user = await getUserData();
+    const userSpan = document.getElementById('authPlayerName');
     Dialog.menu({
         id: DialogIds.AccountMenu,
-        title: user.user,
+        title: userSpan.innerText,
         text: [],
         buttons: [
             {
@@ -130,11 +125,26 @@ authPlayerPicture.addEventListener('click', async () => {
             {
                 text: 'Logout',
                 callback: () => {
-                    logout();
-                    showLoginLogout();
+                    const canvas = document.getElementById('board');
+                    const countdown = document.getElementById('countdown');
+                    if (canvas.classList.contains('hide') || countdown.classList.contains('hide')) {
+                        logout();
+                        showLoginLogout();
+                    } else {
+                        Dialog.notify({
+                            id: DialogIds.LogoutDisabled,
+                            title: 'Logout Disabled',
+                            text: ['You may not logout while Network Game is in progress.']
+                        });
+                    }
                 },
                 color: 'red'
             }
         ]
     });
-})
+});
+
+(async () => {
+    await showLoginLogout();
+    await loadUserData();
+})();
