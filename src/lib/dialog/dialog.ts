@@ -131,18 +131,18 @@ export default class Dialog {
     }
 
     private static appendInputs(form: HTMLFormElement, inputs: Array<PromptInput>) {
-        for (let i: number = 0; i < inputs.length; i++) {
+        for (const i of inputs) {
             const input = document.createElement('input');
-            input.type = inputs[i].type;
-            input.id = `dialog-input-${inputs[i].name}`;
-            input.name = `dialog-input-${inputs[i].name}`;
-            input.ariaPlaceholder = `Enter ${inputs[i].label}`;
-            input.placeholder = `Enter ${inputs[i].label}`;
-            input.maxLength = inputs[i].limit;
+            input.type = i.type;
+            input.id = `dialog-input-${i.name}`;
+            input.name = `dialog-input-${i.name}`;
+            input.ariaPlaceholder = `Enter ${i.label}`;
+            input.placeholder = `Enter ${i.label}`;
+            input.maxLength = i.limit;
             input.classList.add('dialog-input');
             input.classList.add('text');
-            input.required = inputs[i].required;
-            input.ariaRequired = inputs[i].required.toString();
+            input.required = i.required;
+            input.ariaRequired = i.required.toString();
             form.appendChild(input);
 
             this.appendBrElement(form);
@@ -151,28 +151,28 @@ export default class Dialog {
     }
 
     private static appendSelects(form: HTMLFormElement, selects: Array<PromptSelect>) {
-        for (let i: number = 0; i < selects.length; i++) {
+        for (const s of selects) {
             const select = document.createElement('select');
-            select.id = `dialog-select-${selects[i].name}`;
-            select.name = `dialog-select-${selects[i].name}`;
-            select.ariaPlaceholder = selects[i].label;
+            select.id = `dialog-select-${s.name}`;
+            select.name = `dialog-select-${s.name}`;
+            select.ariaPlaceholder = s.label;
             select.classList.add('dialog-input');
-            select.required = selects[i].required;
-            select.ariaRequired = selects[i].required.toString();
+            select.required = s.required;
+            select.ariaRequired = s.required.toString();
             form.appendChild(select);
 
-            for (let j = 0; j < selects[i].options.length; j++) {
+            for (const o of s.options) {
                 const option = document.createElement('option');
-                option.innerText = selects[i].options[j].text;
-                option.value = selects[i].options[j].value;
-                if (selects[i].default === parseInt(selects[i].options[j].value)) {
+                option.innerText = o.text;
+                option.value = o.value;
+                if (s.default === parseInt(o.value)) {
                     option.selected = true;
                     option.ariaSelected = "true";
                 }
                 select.appendChild(option);
             }
 
-            const handleChange = selects[i].onChange;
+            const handleChange = s.onChange;
             if (handleChange) {
                 handleChange(select.selectedOptions[0].value);
                 select.addEventListener('change', () => handleChange(select.selectedOptions[0].value));
@@ -191,22 +191,22 @@ export default class Dialog {
     private static appendText(text: Array<string>, container: HTMLDivElement) {
         container.classList.add('text');
         container.classList.add('dialog-text');
-        for (let i: number = 0; i < text.length; i++) {
+        for (const t of text) {
             const p = document.createElement('p') as HTMLParagraphElement;
-            p.innerText = text[i];
+            p.innerText = t;
             container.appendChild(p);
         }
     }
 
     private static appendCredits(container: HTMLDivElement, options: CreditsDialogOptions) {
-        for (let i: number = 0; i < options.sections.length; i++) {
+        for (const section of options.sections) {
             const h2 = document.createElement('h2');
-            h2.innerText = options.sections[i].title;
+            h2.innerText = section.title;
             container.appendChild(h2);
             const ul = document.createElement('ul');
-            for (let j: number = 0; j < options.sections[i].contributors.length; j++) {
+            for (const contributor of section.contributors) {
                 const li = document.createElement('li');
-                li.innerText = options.sections[i].contributors[j];
+                li.innerText = contributor;
                 ul.appendChild(li);
             }
             container.appendChild(ul);
@@ -235,14 +235,14 @@ export default class Dialog {
         const container = document.createElement('div');
         container.classList.add('dialog-menu-container');
         modal.appendChild(container);
-        for (let i = 0; i < options.buttons.length; i++) {
+        for (const b of options.buttons) {
             const button = document.createElement('button');
             button.type = 'button';
-            button.innerText = options.buttons[i].text;
+            button.innerText = b.text;
             button.classList.add('dialog-btn');
-            button.classList.add(`dialog-btn-${options.buttons[i].color}`);
+            button.classList.add(`dialog-btn-${b.color}`);
             button.classList.add('text');
-            button.addEventListener('click', options.buttons[i].callback);
+            button.addEventListener('click', b.callback);
             container.appendChild(button);
         }
     }
@@ -252,22 +252,22 @@ export default class Dialog {
         container.classList.add('text');
         container.classList.add('dialog-text');
         modal.appendChild(container);
-        for (let i = 0; i < options.releases.length; i++) {
+        for (const release of options.releases) {
             const h2 = document.createElement('h2');
-            h2.innerText = `${options.releases[i].version} (${options.releases[i].status} release - ${options.releases[i].dateTime})`;
+            h2.innerText = `${release.version} (${release.status} release - ${release.dateTime})`;
             container.appendChild(h2);
             const ul = document.createElement('ul');
             container.appendChild(ul);
-            for (let j = 0; j < options.releases[i].points.length; j++) {
+            for (const point of release.points) {
                 const outerLi = document.createElement('li');
-                outerLi.innerText = options.releases[i].points[j].text;
+                outerLi.innerText = point.text;
                 ul.appendChild(outerLi);
-                if (options.releases[i].points[j].subPoints.length > 0) {
+                if (point.subPoints.length > 0) {
                     const ol = document.createElement('ol');
                     outerLi.appendChild(ol);
-                    for (let k = 0; k < options.releases[i].points[j].subPoints.length; k++) {
+                    for (const subPoint of point.subPoints) {
                         const innerLi = document.createElement('li');
-                        innerLi.innerText = options.releases[i].points[j].subPoints[k];
+                        innerLi.innerText = subPoint;
                         ol.appendChild(innerLi);
                     }
                 }
