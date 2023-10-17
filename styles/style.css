@@ -42,15 +42,6 @@ path {
     cursor: pointer;
 }
 
-.btn-sm {
-    height: 30px;
-    width: 150px;
-}
-
-.btn-sm.text {
-    font-size: 0.5em;
-}
-
 .btn-xs {
     height: 17px;
 }

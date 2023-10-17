@@ -1,4 +1,4 @@
-import { getUserData, initGoogleSSO, loadStats, logout } from "./lib/authentication";
+import { getUserData, initGoogleSSO, loadStats, logout, renderGoogleBtn } from "./lib/authentication";
 import Dialog from "./lib/dialog/dialog";
 import { DialogIds } from "./lib/enums/dialog-ids";
 import { GameMode } from "./lib/enums/game-mode";
@@ -72,9 +72,9 @@ shareBtn.addEventListener('click', (event: MouseEvent) => {
     }
 });
 
-const googleSignonBtn = document.getElementById('googleSignon') as HTMLButtonElement;
-googleSignonBtn.addEventListener('click', () => {
+window.addEventListener('load', () => {
     initGoogleSSO(showLoginLogout);
+    renderGoogleBtn('googleSignonContainer');
 });
 
 function showLoginLogout() {

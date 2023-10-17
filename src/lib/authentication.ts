@@ -61,6 +61,15 @@ export function initGoogleSSO(showLoginLogout: Function) {
     window.google.accounts.id.prompt();
 }
 
+export function renderGoogleBtn(containerId: string) {
+    const container = document.getElementById(containerId);
+    window?.google?.accounts?.id?.renderButton(container, {
+        type: 'standard',
+        theme: 'outline',
+        size: 'large'
+    });
+}
+
 export async function updateSettings(dimensions: BoardDimensions) {
     try {
         const params = {
