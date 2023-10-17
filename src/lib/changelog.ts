@@ -28,6 +28,10 @@ export default function openChangelog() {
                             'Adapted button colors for dark mode',
                             'Changelog dialog'
                         ]
+                    },
+                    {
+                        text: 'Opted for official Google signon button in attempt to solve issue with iOS',
+                        subPoints: []
                     }
                 ]
             },

@@ -7,7 +7,7 @@ import Socket from "./socket";
 import Utils from "./utils";
 import { ActionMessage, BoardDimensions, CurrentTurnMessage, ErrorMessage, GameMessage, InitialMessage, WinnerMessage, skipTurnMaxWait } from "@danieldesira/daniels-connect4-common";
 import { DialogIds } from "./enums/dialog-ids";
-import { getToken } from "./authentication";
+import Authentication from "./authentication";
 import { AuthenticationModel } from "./models/authentication-model";
 import { BoardLogic } from "@danieldesira/daniels-connect4-common/lib/board-logic";
 
@@ -32,7 +32,7 @@ export default class NetworkGame extends Game {
 
     public start() {
         this.board = new BoardLogic(BoardDimensions.Large);
-        const auth = getToken();
+        const auth = Authentication.getToken();
         if (auth) {
             this.defineSocket(auth);
             this.startCountdown();

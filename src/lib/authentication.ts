@@ -10,115 +10,113 @@ declare global {
     }
 }
 
-export async function handleGoogleSignon(response: any) {
-    const {credential} = response;
-    storeGoogleToken(credential);
-}
-
-function storeGoogleToken(token: string) {
-    const data = {
-        token,
-        service: 'google'
-    } as AuthenticationModel;
-    localStorage.setItem('auth', JSON.stringify(data));
-}
-
-export function logout() {
-    localStorage.removeItem('auth');
-}
-
-export function getToken(): AuthenticationModel | null {
-    const val = localStorage.getItem('auth');
-    return val ? JSON.parse(val) as AuthenticationModel : null;
-}
-
-export async function getUserData() {
-    return await authGet(`${config.httpServer}/auth`) as PlayerInfo;
-}
-
-export async function loadStats() {
-    const stats = await authGet(`${config.httpServer}/stats`) as PlayerStats;
-    if (stats) {
-        Dialog.notify({
-            id: DialogIds.PlayerStats,
-            title: 'Stats',
-            text: [
-                    `Wins: ${stats.wins} - ${stats.winPercent.toFixed(2)}%`,
-                    `Losses: ${stats.losses} - ${stats.lossPercent.toFixed(2)}%`
-                ]
-        });
+export default class Authentication {
+    public static async handleGoogleSignon(response: any) {
+        const {credential} = response;
+        Authentication.storeGoogleToken(credential);
     }
-}
 
-export function initGoogleSSO(showLoginLogout: Function) {
-    window.google.accounts.id.initialize({
-        client_id: '966331594657-sjtp3m7ooigjma726j7aa4kcf5qdu2v7.apps.googleusercontent.com',
-        callback: (response: any) => {
-            handleGoogleSignon(response);
-            showLoginLogout();
+    private static storeGoogleToken(token: string) {
+        const data = {
+            token,
+            service: 'google'
+        } as AuthenticationModel;
+        localStorage.setItem('auth', JSON.stringify(data));
+    }
+
+    public static logout = () => localStorage.removeItem('auth');
+
+    public static getToken(): AuthenticationModel | null {
+        const val = localStorage.getItem('auth');
+        return val ? JSON.parse(val) as AuthenticationModel : null;
+    }
+
+    public static getUserData = async () => await Authentication.authGet(`${config.httpServer}/auth`) as PlayerInfo;
+
+    public static async loadStats() {
+        const stats = await Authentication.authGet(`${config.httpServer}/stats`) as PlayerStats;
+        if (stats) {
+            Dialog.notify({
+                id: DialogIds.PlayerStats,
+                title: 'Stats',
+                text: [
+                        `Wins: ${stats.wins} - ${stats.winPercent.toFixed(2)}%`,
+                        `Losses: ${stats.losses} - ${stats.lossPercent.toFixed(2)}%`
+                    ]
+            });
         }
-    });
-    window.google.accounts.id.prompt();
-}
-
-export function renderGoogleBtn(containerId: string) {
-    const container = document.getElementById(containerId);
-    window?.google?.accounts?.id?.renderButton(container, {
-        type: 'standard',
-        theme: 'outline',
-        size: 'large'
-    });
-}
-
-export async function updateSettings(dimensions: BoardDimensions) {
-    try {
-        const params = {
-            dimensions
-        };
-        await authPost(`${config.httpServer}/settings`, params);
-    } catch {
-        Dialog.notify({
-            title: 'Settings',
-            text: ['Error saving settings!'],
-            id: DialogIds.ServerError
-        });
     }
-}
 
-export async function getSettings(): Promise<PlayerSettings> {
-    return await authGet(`${config.httpServer}/settings`);
-}
-
-async function authGet(url: string): Promise<any> {
-    const auth = getToken();
-    if (auth) {
-        const {token, service} = auth;
-        const res = await fetch(url, {
-            headers: {
-                'Authorization': token,
-                'Service': service
+    public static initGoogleSSO(callback: Function) {
+        window?.google?.accounts?.id?.initialize({
+            client_id: '966331594657-sjtp3m7ooigjma726j7aa4kcf5qdu2v7.apps.googleusercontent.com',
+            callback: (response: any) => {
+                Authentication.handleGoogleSignon(response);
+                callback();
             }
         });
-        const data = (res.status >= 200 && res.status < 300 ? await res.json() : null);
-        return data;
-    } else {
-        return null;
+        window?.google?.accounts?.id?.prompt();
     }
-}
 
-async function authPost(url: string, data: any) {
-    const {token, service} = getToken();
-    const res = await fetch(url, {
-        method: 'post',
-        headers: {
-            'Authorization': token,
-            'Service': service,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    });
-    if (res.status < 200 || res.status >= 300) {
-        throw `HTTP Status Code ${res.status}`;
+    public static renderGoogleBtn(containerId: string) {
+        const container = document.getElementById(containerId);
+        window?.google?.accounts?.id?.renderButton(container, {
+            type: 'standard',
+            theme: 'outline',
+            size: 'large'
+        });
     }
+
+    public static async updateSettings(dimensions: BoardDimensions) {
+        try {
+            const params = {
+                dimensions
+            };
+            await Authentication.authPost(`${config.httpServer}/settings`, params);
+        } catch {
+            Dialog.notify({
+                title: 'Settings',
+                text: ['Error saving settings!'],
+                id: DialogIds.ServerError
+            });
+        }
+    }
+
+    public static getSettings = async (): Promise<PlayerSettings> => await Authentication.authGet(`${config.httpServer}/settings`);
+    
+    private static async authGet(url: string): Promise<any> {
+        const auth = Authentication.getToken();
+        if (auth) {
+            const {token, service} = auth;
+            const res = await fetch(url, {
+                headers: {
+                    'Authorization': token,
+                    'Service': service
+                }
+            });
+            const data = (res.status >= 200 && res.status < 300 ? await res.json() : null);
+            return data;
+        } else {
+            return null;
+        }
+    }
+
+    private static async authPost(url: string, data: any) {
+        const {token, service} = Authentication.getToken();
+        const res = await fetch(url, {
+            method: 'post',
+            headers: {
+                'Authorization': token,
+                'Service': service,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        if (res.status < 200 || res.status >= 300) {
+            throw `HTTP Status Code ${res.status}`;
+        }
+    }
+
+    public static isLoggedIn = (): boolean => !!localStorage.getItem('auth');
 }

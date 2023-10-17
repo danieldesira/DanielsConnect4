@@ -1,4 +1,4 @@
-import { getUserData, initGoogleSSO, loadStats, logout, renderGoogleBtn } from "./lib/authentication";
+import Authentication from "./lib/authentication";
 import Dialog from "./lib/dialog/dialog";
 import { DialogIds } from "./lib/enums/dialog-ids";
 import { GameMode } from "./lib/enums/game-mode";
@@ -73,8 +73,11 @@ shareBtn.addEventListener('click', (event: MouseEvent) => {
 });
 
 window.addEventListener('load', () => {
-    initGoogleSSO(showLoginLogout);
-    renderGoogleBtn('googleSignonContainer');
+    Authentication.initGoogleSSO(async () => {
+        showLoginLogout();
+        await loadUserData();
+    });
+    Authentication.renderGoogleBtn('googleSignonContainer');
 });
 
 function showLoginLogout() {
@@ -90,13 +93,13 @@ function showLoginLogout() {
 }
 
 async function loadUserData() {
-    const user = await getUserData();
+    const user = await Authentication.getUserData();
     if (user) {
         const userName = document.getElementById('authPlayerName');
         userName.innerText = user.user;
         authPlayerPicture.src = user.picUrl;
     } else {
-        logout();
+        Authentication.logout();
         showLoginLogout();
     }
 }
@@ -114,7 +117,7 @@ authPlayerPicture.addEventListener('click', () => {
         buttons: [
             {
                 text: 'Load Stats',
-                callback: async () => await loadStats(),
+                callback: async () => await Authentication.loadStats(),
                 color: 'green'
             },
             {
@@ -128,7 +131,7 @@ authPlayerPicture.addEventListener('click', () => {
                     const canvas = document.getElementById('board');
                     const countdown = document.getElementById('countdown');
                     if (canvas.classList.contains('hide') || countdown.classList.contains('hide')) {
-                        logout();
+                        Authentication.logout();
                         showLoginLogout();
                         Dialog.closeAllOpenDialogs();
                     } else {

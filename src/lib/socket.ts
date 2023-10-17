@@ -1,4 +1,4 @@
-import { getToken } from "./authentication";
+import Authentication from "./authentication";
 import config from "./config";
 import Dialog from "./dialog/dialog";
 import { DialogIds } from "./enums/dialog-ids";
@@ -81,7 +81,7 @@ export default class Socket {
     };
 
     private onClose = () => {
-        const auth = getToken();
+        const auth = Authentication.getToken();
         if (auth) {
             this.connect(auth);
         }
