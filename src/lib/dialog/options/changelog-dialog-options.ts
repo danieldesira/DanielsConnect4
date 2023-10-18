@@ -13,5 +13,5 @@ interface Release {
 
 interface ReleasePoint {
     text: string;
-    subPoints: Array<string>;
+    subPoints?: Array<string>;
 }

@@ -262,7 +262,7 @@ export default class Dialog {
                 const outerLi = document.createElement('li');
                 outerLi.innerText = point.text;
                 ul.appendChild(outerLi);
-                if (point.subPoints.length > 0) {
+                if (point.subPoints && point.subPoints.length > 0) {
                     const ol = document.createElement('ol');
                     outerLi.appendChild(ol);
                     for (const subPoint of point.subPoints) {
