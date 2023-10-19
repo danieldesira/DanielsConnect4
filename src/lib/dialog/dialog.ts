@@ -188,13 +188,15 @@ export default class Dialog {
         container.appendChild(br);
     }
 
-    private static appendText(text: Array<string>, container: HTMLDivElement) {
+    private static appendText(text: Array<string>|undefined, container: HTMLDivElement) {
         container.classList.add('text');
         container.classList.add('dialog-text');
-        for (const t of text) {
-            const p = document.createElement('p') as HTMLParagraphElement;
-            p.innerText = t;
-            container.appendChild(p);
+        if (text) {
+            for (const t of text) {
+                const p = document.createElement('p') as HTMLParagraphElement;
+                p.innerText = t;
+                container.appendChild(p);
+            }
         }
     }
 

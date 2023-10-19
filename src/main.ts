@@ -104,8 +104,17 @@ async function loadUserData() {
     }
 }
 
-const creditsBtn = document.getElementById('credits') as HTMLButtonElement;
-creditsBtn.addEventListener('click', openCredits);
+const creditsBtn = document.getElementById('credits') as HTMLAnchorElement;
+creditsBtn.addEventListener('click', (event: MouseEvent) => {
+    event.preventDefault();
+    openCredits();
+});
+
+const changelogLink = document.getElementById('changelog') as HTMLAnchorElement;
+changelogLink.addEventListener('click', (event: MouseEvent) => {
+    event.preventDefault();
+    openChangelog();
+})
 
 const authPlayerPicture = document.getElementById('authPlayerPicture') as HTMLImageElement;
 authPlayerPicture.addEventListener('click', () => {
@@ -150,5 +159,5 @@ authPlayerPicture.addEventListener('click', () => {
 
 (async () => {
     showLoginLogout();
-    await loadUserData();openChangelog();
+    await loadUserData();
 })();

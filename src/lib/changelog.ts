@@ -5,12 +5,11 @@ export default function openChangelog() {
     Dialog.changelog({
         id: DialogIds.Changelog,
         title: 'Daniel`s Connect4 Version History',
-        text: [],
         releases: [
             {
                 version: '0.3.7',
                 status: 'Beta',
-                dateTime: '',
+                dateTime: '19/10/2023 10:15AM Malta time',
                 points: [
                     {
                         text: 'Internal:',
@@ -26,7 +25,8 @@ export default function openChangelog() {
                             'Credits as dialog',
                             'Menu dialog replacing the slider',
                             'Adapted button colors for dark mode',
-                            'Changelog dialog'
+                            'Changelog dialog',
+                            '"text" made an optional parameter'
                         ]
                     },
                     {
@@ -39,12 +39,8 @@ export default function openChangelog() {
                 status: 'Beta',
                 dateTime: '08/10/2023 0:30AM Malta time',
                 points: [
-                    {
-                        text: 'Applied quick fix for credits and changelog pages in dark mode'
-                    },
-                    {
-                        text: 'Changed dialog text color to white'
-                    }
+                    { text: 'Applied quick fix for credits and changelog pages in dark mode' },
+                    { text: 'Changed dialog text color to white' }
                 ]
             },
             {
@@ -184,25 +180,12 @@ export default function openChangelog() {
                 status: 'Beta',
                 dateTime: '22/07/2023',
                 points: [
-                    {
-                        text: 'Github icon points to my Github profile'
-                    },
-                    {
-                        text: 'Email icon subject set to "Connect4"'
-                    },
-                    {
-                        text: 'Added links to my official Instagram and Facebook pages',
-                        
-                    },
-                    {
-                        text: 'Added Share button'
-                    },
-                    {
-                        text: 'Change cursor to `progress` while waiting for opponent'
-                    },
-                    {
-                        text: 'Introduced keyboard shortcuts during game play'
-                    }
+                    { text: 'Github icon points to my Github profile' },
+                    { text: 'Email icon subject set to "Connect4"' },
+                    { text: 'Added links to my official Instagram and Facebook pages' },
+                    { text: 'Added Share button' },
+                    { text: 'Change cursor to `progress` while waiting for opponent' },
+                    { text: 'Introduced keyboard shortcuts during game play' }
                 ]
             },
             {

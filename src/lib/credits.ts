@@ -6,7 +6,6 @@ export default function openCredits() {
     const options: CreditsDialogOptions = {
         id: DialogIds.Credits,
         title: 'Contributors',
-        text: [],
         sections: [
             {
                 title: 'Development',
