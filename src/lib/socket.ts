@@ -19,7 +19,7 @@ export default class Socket {
     }
 
     private connect(auth: AuthenticationModel) {
-        let url: string = `${config.wsServer}?token=${auth.token}&service=${auth.service}`;
+        let url: string = `${config.connections.wsServer}?token=${auth.token}&service=${auth.service}`;
 
         if (this.playerColor && !isNaN(this.gameId)) {
             url += `&playerColor=${this.playerColor}&gameId=${this.gameId}`;

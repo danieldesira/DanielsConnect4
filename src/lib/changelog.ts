@@ -7,6 +7,19 @@ export default function openChangelog() {
         title: 'Daniel`s Connect4 Version History',
         releases: [
             {
+                version: '0.3.8',
+                status: 'Beta',
+                dateTime: '',
+                points: [
+                    {
+                        text: 'Internal',
+                        subPoints: [
+                            'Load version number from config',
+                        ]
+                    }
+                ]
+            },
+            {
                 version: '0.3.7',
                 status: 'Beta',
                 dateTime: '19/10/2023 10:15AM Malta time',

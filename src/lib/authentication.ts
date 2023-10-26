@@ -31,10 +31,10 @@ export default class Authentication {
         return val ? JSON.parse(val) as AuthenticationModel : null;
     }
 
-    public static getUserData = async () => await Authentication.authGet(`${config.httpServer}/auth`) as PlayerInfo;
+    public static getUserData = async () => await Authentication.authGet(`${config.connections.httpServer}/auth`) as PlayerInfo;
 
     public static async loadStats() {
-        const stats = await Authentication.authGet(`${config.httpServer}/stats`) as PlayerStats;
+        const stats = await Authentication.authGet(`${config.connections.httpServer}/stats`) as PlayerStats;
         if (stats) {
             Dialog.notify({
                 id: DialogIds.PlayerStats,
@@ -72,7 +72,7 @@ export default class Authentication {
             const params = {
                 dimensions
             };
-            await Authentication.authPost(`${config.httpServer}/settings`, params);
+            await Authentication.authPost(`${config.connections.httpServer}/settings`, params);
         } catch {
             Dialog.notify({
                 title: 'Settings',
@@ -82,7 +82,7 @@ export default class Authentication {
         }
     }
 
-    public static getSettings = async (): Promise<PlayerSettings> => await Authentication.authGet(`${config.httpServer}/settings`);
+    public static getSettings = async (): Promise<PlayerSettings> => await Authentication.authGet(`${config.connections.httpServer}/settings`);
     
     private static async authGet(url: string): Promise<any> {
         const auth = Authentication.getToken();

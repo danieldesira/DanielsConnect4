@@ -9,6 +9,7 @@ import openCredits from "./lib/credits";
 import showInstructions from "./lib/instructions";
 import openSettings from "./lib/settings-dialog";
 import openChangelog from "./lib/changelog";
+import config from "./lib/config";
 
 const samePCBtn = document.getElementById('samePC') as HTMLButtonElement;
 const networkBtn = document.getElementById('network') as HTMLButtonElement;
@@ -114,7 +115,7 @@ const changelogLink = document.getElementById('changelog') as HTMLAnchorElement;
 changelogLink.addEventListener('click', (event: MouseEvent) => {
     event.preventDefault();
     openChangelog();
-})
+});
 
 const authPlayerPicture = document.getElementById('authPlayerPicture') as HTMLImageElement;
 authPlayerPicture.addEventListener('click', () => {
@@ -160,4 +161,6 @@ authPlayerPicture.addEventListener('click', () => {
 (async () => {
     showLoginLogout();
     await loadUserData();
+
+    changelogLink.innerText = config.version;
 })();
