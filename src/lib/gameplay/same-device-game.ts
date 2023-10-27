@@ -1,14 +1,14 @@
-import Dialog from "./dialog/dialog";
+import Dialog from "../dialog/dialog";
 import Game from "./game";
-import GameOptions from "./game-options";
-import { Sound } from "./enums/sound";
-import Utils from "./utils";
+import GameOptions from "../game-options";
+import { Sound } from "../enums/sound";
+import Utils from "../utils";
 import Timer from "./timer";
 import { BoardDimensions, Coin, randomiseTurn } from "@danieldesira/daniels-connect4-common";
-import { DialogIds } from "./enums/dialog-ids";
-import PreviousGameData from "./models/previous-game-data";
+import { DialogIds } from "../enums/dialog-ids";
+import PreviousGameData from "../models/previous-game-data";
 import { BoardLogic } from "@danieldesira/daniels-connect4-common/lib/board-logic";
-import dimensionsSelectData from "./dimensions-select";
+import dimensionsSelectData from "../dimensions-select";
 
 export default class SameDeviceGame extends Game {
 

@@ -1,8 +1,8 @@
-import Authentication from "./authentication";
-import config from "./config";
-import Dialog from "./dialog/dialog";
-import { DialogIds } from "./enums/dialog-ids";
-import { AuthenticationModel } from "./models/authentication-model";
+import Authentication from "../authentication";
+import config from "../config";
+import Dialog from "../dialog/dialog";
+import { DialogIds } from "../enums/dialog-ids";
+import { AuthenticationModel } from "../models/authentication-model";
 import { Coin, GameMessage, InitialMessage } from "@danieldesira/daniels-connect4-common";
 
 export default class Socket {

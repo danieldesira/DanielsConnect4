@@ -14,7 +14,8 @@ export default function openChangelog() {
                     {
                         text: 'Internal',
                         subPoints: [
-                            'Load version number from config',
+                            'Load game title and version number from config',
+                            'General code cleanup and refactoring',
                         ]
                     }
                 ]

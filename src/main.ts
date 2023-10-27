@@ -3,13 +3,14 @@ import Dialog from "./lib/dialog/dialog";
 import { DialogIds } from "./lib/enums/dialog-ids";
 import { GameMode } from "./lib/enums/game-mode";
 import GameOptions from "./lib/game-options";
-import NetworkGame from "./lib/network-game";
-import SameDeviceGame from "./lib/same-device-game";
+import NetworkGame from "./lib/gameplay/network-game";
+import SameDeviceGame from "./lib/gameplay/same-device-game";
 import openCredits from "./lib/credits";
 import showInstructions from "./lib/instructions";
 import openSettings from "./lib/settings-dialog";
 import openChangelog from "./lib/changelog";
 import config from "./lib/config";
+import logout from "./lib/logout";
 
 const samePCBtn = document.getElementById('samePC') as HTMLButtonElement;
 const networkBtn = document.getElementById('network') as HTMLButtonElement;
@@ -60,7 +61,7 @@ shareBtn.addEventListener('click', (event: MouseEvent) => {
     if (navigator.canShare) {
         const shareData = {
             url: location.href,
-            title: `Daniel's Connect4`
+            title: `${config.title} ${config.version}`
         };
         navigator.share(shareData)
             .catch((err) => console.error(`Problem while sharing: ${err}`));
@@ -137,21 +138,7 @@ authPlayerPicture.addEventListener('click', () => {
             },
             {
                 text: 'Logout',
-                callback: () => {
-                    const canvas = document.getElementById('board');
-                    const countdown = document.getElementById('countdown');
-                    if (canvas.classList.contains('hide') || countdown.classList.contains('hide')) {
-                        Authentication.logout();
-                        showLoginLogout();
-                        Dialog.closeAllOpenDialogs();
-                    } else {
-                        Dialog.notify({
-                            id: DialogIds.LogoutDisabled,
-                            title: 'Logout Disabled',
-                            text: ['You may not logout while Network Game is in progress.']
-                        });
-                    }
-                },
+                callback: () => logout('board', 'countdown', showLoginLogout),
                 color: 'red'
             }
         ]
@@ -163,4 +150,8 @@ authPlayerPicture.addEventListener('click', () => {
     await loadUserData();
 
     changelogLink.innerText = config.version;
+
+    const heading = document.getElementById('heading');
+    heading.innerText = config.title;
+    document.title = `${config.title} ${config.version}`;
 })();
