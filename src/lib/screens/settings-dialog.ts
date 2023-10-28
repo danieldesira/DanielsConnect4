@@ -1,8 +1,8 @@
 import { BoardDimensions } from "@danieldesira/daniels-connect4-common";
-import Authentication from "./authentication";
-import Dialog from "./dialog/dialog";
-import dimensionsSelect from "./dimensions-select";
-import { DialogIds } from "./enums/dialog-ids";
+import Authentication from "../authentication";
+import Dialog from "../dialog/dialog";
+import dimensionsSelect from "../dimensions-select";
+import { DialogIds } from "../enums/dialog-ids";
 
 export default async function openSettings() {
     dimensionsSelect.onChange = null;

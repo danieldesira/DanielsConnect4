@@ -2,13 +2,13 @@ import Authentication from "./lib/authentication";
 import Dialog from "./lib/dialog/dialog";
 import { DialogIds } from "./lib/enums/dialog-ids";
 import { GameMode } from "./lib/enums/game-mode";
-import GameOptions from "./lib/game-options";
+import GameOptions from "./lib/gameplay/game-options";
 import NetworkGame from "./lib/gameplay/network-game";
 import SameDeviceGame from "./lib/gameplay/same-device-game";
-import openCredits from "./lib/credits";
-import showInstructions from "./lib/instructions";
-import openSettings from "./lib/settings-dialog";
-import openChangelog from "./lib/changelog";
+import openCredits from "./lib/screens/credits";
+import showInstructions from "./lib/screens/instructions";
+import openSettings from "./lib/screens/settings-dialog";
+import openChangelog from "./lib/screens/changelog";
 import config from "./lib/config";
 import logout from "./lib/logout";
 

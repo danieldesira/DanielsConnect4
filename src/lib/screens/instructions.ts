@@ -1,5 +1,5 @@
-import Dialog from "./dialog/dialog";
-import { DialogIds } from "./enums/dialog-ids";
+import Dialog from "../dialog/dialog";
+import { DialogIds } from "../enums/dialog-ids";
 
 export default function showInstructions() {
     const text = [

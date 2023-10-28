@@ -2,7 +2,7 @@ import { Coin } from "@danieldesira/daniels-connect4-common/lib/enums/coin";
 import Dialog from "../dialog/dialog";
 import { Sound } from "../enums/sound";
 import Game from "./game";
-import GameOptions from "../game-options";
+import GameOptions from "./game-options";
 import Socket from "./socket";
 import Utils from "../utils";
 import { ActionMessage, BoardDimensions, CurrentTurnMessage, ErrorMessage, GameMessage, InitialMessage, WinnerMessage, skipTurnMaxWait } from "@danieldesira/daniels-connect4-common";

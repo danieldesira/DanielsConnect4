@@ -1,6 +1,6 @@
-import CreditsDialogOptions from "./dialog/options/credits-dialog-options";
-import Dialog from "./dialog/dialog";
-import { DialogIds } from "./enums/dialog-ids";
+import CreditsDialogOptions from "../dialog/options/credits-dialog-options";
+import Dialog from "../dialog/dialog";
+import { DialogIds } from "../enums/dialog-ids";
 
 export default function openCredits() {
     const options: CreditsDialogOptions = {

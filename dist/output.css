@@ -546,7 +546,8 @@ a {
   color: var(--theme-color);
 }
 
-path {
+svg {
+  display: inline;
   fill: var(--theme-color);
 }
 
@@ -617,10 +618,6 @@ path {
 
 .hide {
   display: none;
-}
-
-.icon {
-  text-decoration: none;
 }
 
 .menu {

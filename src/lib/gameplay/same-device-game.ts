@@ -1,6 +1,6 @@
 import Dialog from "../dialog/dialog";
 import Game from "./game";
-import GameOptions from "../game-options";
+import GameOptions from "./game-options";
 import { Sound } from "../enums/sound";
 import Utils from "../utils";
 import Timer from "./timer";
