@@ -16,6 +16,7 @@ export default function openChangelog() {
                         subPoints: [
                             'Load game title and version number from config',
                             'General code cleanup and refactoring',
+                            'Introduced Tailwind for more compact CSS by reusing pre-existing classes',
                         ]
                     }
                 ]

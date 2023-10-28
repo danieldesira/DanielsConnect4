@@ -15,14 +15,14 @@ export default class Timer {
         const seconds: number = this.secondsRunning % 60;
         this.timerSpan.innerText = `${minutes}:${(seconds < 10 ? '0' : '')}${seconds}`;
         
-        if (this.timerSpan.classList.contains('hide')) {
+        if (this.timerSpan.classList.contains('hidden')) {
             clearInterval(this.interval);
         }
     };
 
     public set() {
         if (this.timerSpan) {
-            this.timerSpan.classList.remove('hide');
+            this.timerSpan.classList.remove('hidden');
             this.interval = window.setInterval(this.timerCallback, 1000);
         }
     }
@@ -31,7 +31,7 @@ export default class Timer {
         if (this.interval) {
             clearInterval(this.interval);
             this.timerSpan.innerText = '';
-            this.timerSpan.classList.add('hide');
+            this.timerSpan.classList.add('hidden');
         }
     }
 

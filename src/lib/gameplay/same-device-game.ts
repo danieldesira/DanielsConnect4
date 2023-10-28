@@ -39,10 +39,10 @@ export default class SameDeviceGame extends Game {
     public start() {
         this.checkGameData();
         if (this.timerSpan) {
-            this.timerSpan.classList.remove('hide');
+            this.timerSpan.classList.remove('hidden');
         }
         if (this.countdownSpan) {
-            this.countdownSpan.classList.add('hide');
+            this.countdownSpan.classList.add('hidden');
         }
     }
 

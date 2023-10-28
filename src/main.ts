@@ -86,11 +86,11 @@ function showLoginLogout() {
     const loginBtns = document.getElementById('login-btns') as HTMLDivElement;
     const loggedInArea = document.getElementById('logged-in') as HTMLDivElement;
     if (localStorage.getItem('auth')) {
-        loginBtns.classList.add('hide');
-        loggedInArea.classList.remove('hide');
+        loginBtns.classList.add('hidden');
+        loggedInArea.classList.remove('hidden');
     } else {
-        loginBtns.classList.remove('hide');
-        loggedInArea.classList.add('hide');
+        loginBtns.classList.remove('hidden');
+        loggedInArea.classList.add('hidden');
     }
 }
 

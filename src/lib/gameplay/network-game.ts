@@ -39,10 +39,10 @@ export default class NetworkGame extends Game {
             super.start();
             document.body.classList.add('waiting');
             if (this.timerSpan) {
-                this.timerSpan.classList.add('hide');
+                this.timerSpan.classList.add('hidden');
             }
             if (this.countdownSpan) {
-                this.countdownSpan.classList.remove('hide');
+                this.countdownSpan.classList.remove('hidden');
             }
         } else {
             Dialog.notify({

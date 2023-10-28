@@ -534,8 +534,32 @@ video {
   --tw-backdrop-sepia:  ;
 }
 
+.ml-1 {
+  margin-left: 0.25rem;
+}
+
+.mr-1 {
+  margin-right: 0.25rem;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
 .hidden {
   display: none;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
 }
 
 body {
@@ -551,25 +575,11 @@ svg {
   fill: var(--theme-color);
 }
 
-.align-right {
-  text-align: right;
-}
-
-.align-right a {
-  margin-right: 20px;
-}
-
 .blue-bg {
-  display: inline-block;
   background-color: blue;
   color: whitesmoke;
   border-radius: 10px;
   max-width: 500px;
-}
-
-.blue-bg strong {
-  margin-left: 10px;
-  margin-right: 10px;
 }
 
 .btn {
@@ -589,15 +599,6 @@ svg {
   font-size: 0.9em;
 }
 
-.btn-light {
-  background-color: greenyellow;
-  color: var(--theme-color);
-}
-
-.center-text {
-  text-align: center;
-}
-
 .currentTurn {
   font-style: italic;
   text-decoration: underline;
@@ -612,12 +613,7 @@ svg {
 }
 
 .heading {
-  display: inline;
   color: var(--theme-color);
-}
-
-.hide {
-  display: none;
 }
 
 .menu {
@@ -644,7 +640,6 @@ svg {
 }
 
 .profile-area {
-  display: inline-block;
   width: -moz-fit-content;
   width: fit-content;
 }

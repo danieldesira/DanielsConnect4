@@ -138,7 +138,7 @@ export default abstract class Game {
         this.cleanUpEvents();
 
         if (this.exitBtn) {
-            this.exitBtn.classList.add('hide');
+            this.exitBtn.classList.add('hidden');
         }
         
         setTimeout(() => {
@@ -225,17 +225,19 @@ export default abstract class Game {
     }
 
     private showGame() {
-        this.canvas.classList.remove('hide');
-        this.exitBtn.classList.remove('hide');
-        this.gameIndicatorsContainer.classList.remove('hide');
-        this.gameMenu.classList.add('hide');
+        this.canvas.classList.remove('hidden');
+        this.exitBtn.classList.remove('hidden');
+        this.gameIndicatorsContainer.classList.remove('hidden');
+        this.gameIndicatorsContainer.classList.add('inline-block');
+        this.gameMenu.classList.add('hidden');
     }
 
     private hideGame() {
-        this.canvas.classList.add('hide');
-        this.exitBtn.classList.add('hide');
-        this.gameIndicatorsContainer.classList.add('hide');
-        this.gameMenu.classList.remove('hide');
+        this.canvas.classList.add('hidden');
+        this.exitBtn.classList.add('hidden');
+        this.gameIndicatorsContainer.classList.add('hidden');
+        this.gameIndicatorsContainer.classList.remove('inline-block');
+        this.gameMenu.classList.remove('hidden');
     }
 
     protected static getColor(color: Coin): string {
