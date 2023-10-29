@@ -11,13 +11,13 @@ export default class Dialog {
     
     private static modal(type: DialogType, options: DialogOptions) {
         if (!document.getElementById(options.id)) {
-            const modal = document.createElement('div') as HTMLDivElement;
+            const modal = document.createElement('div');
             modal.tabIndex = 1;
             modal.id = options.id;
             modal.classList.add('dialog');
 
             if (options.title) {
-                const h1 = document.createElement('h1') as HTMLHeadingElement;
+                const h1 = document.createElement('h1');
                 h1.innerText = options.title;
                 h1.classList.add('dialog-title');
                 h1.classList.add('text-xl');
@@ -25,14 +25,14 @@ export default class Dialog {
                 modal.appendChild(document.createElement('hr'));
             }
 
-            const textContainer = document.createElement('div') as HTMLDivElement;
+            const textContainer = document.createElement('div');
             this.appendText(options.text, textContainer);
             modal.appendChild(textContainer);
 
             switch (type) {
                 case DialogType.Confirmation: {
                     const o = options as ConfirmationDialogOptions;
-                    const btnContainer = document.createElement('div') as HTMLDivElement;
+                    const btnContainer = document.createElement('div');
                     btnContainer.classList.add('dialog-btn-container');
                     modal.appendChild(btnContainer);
 
@@ -88,13 +88,17 @@ export default class Dialog {
                 callback: any,
                 bgColor: string,
                 btnType: 'submit' | 'button' | 'reset') {
-        const btn = document.createElement('button') as HTMLButtonElement;
+        const btn = document.createElement('button');
         btn.type = btnType;
-        btn.innerText = text;
-        btn.classList.add('text');
         btn.classList.add('dialog-btn');
         btn.classList.add(`dialog-btn-${bgColor}`);
-        btn.classList.add('text-xl');
+        const span = document.createElement('span');
+        span.classList.add('text');
+        span.classList.add('text-xl');
+        span.classList.add('ml-1');
+        span.classList.add('mr-1');
+        span.innerText = text;
+        btn.appendChild(span);
         if (btnType === 'button') {
             btn.addEventListener('click', callback);
         }
@@ -186,7 +190,7 @@ export default class Dialog {
     }
 
     private static appendBrElement(container: HTMLDivElement | HTMLFormElement) {
-        const br = document.createElement('br') as HTMLBRElement;
+        const br = document.createElement('br');
         container.appendChild(br);
     }
 
@@ -195,7 +199,7 @@ export default class Dialog {
         container.classList.add('dialog-text');
         if (text) {
             for (const t of text) {
-                const p = document.createElement('p') as HTMLParagraphElement;
+                const p = document.createElement('p');
                 p.innerText = t;
                 container.appendChild(p);
             }
