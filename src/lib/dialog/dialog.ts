@@ -20,6 +20,7 @@ export default class Dialog {
                 const h1 = document.createElement('h1') as HTMLHeadingElement;
                 h1.innerText = options.title;
                 h1.classList.add('dialog-title');
+                h1.classList.add('text-xl');
                 modal.appendChild(h1);
                 modal.appendChild(document.createElement('hr'));
             }
@@ -93,6 +94,7 @@ export default class Dialog {
         btn.classList.add('text');
         btn.classList.add('dialog-btn');
         btn.classList.add(`dialog-btn-${bgColor}`);
+        btn.classList.add('text-xl');
         if (btnType === 'button') {
             btn.addEventListener('click', callback);
         }
@@ -203,6 +205,7 @@ export default class Dialog {
     private static appendCredits(container: HTMLDivElement, options: CreditsDialogOptions) {
         for (const section of options.sections) {
             const h2 = document.createElement('h2');
+            h2.classList.add('text-xl');
             h2.innerText = section.title;
             container.appendChild(h2);
             const ul = document.createElement('ul');
@@ -256,6 +259,7 @@ export default class Dialog {
         modal.appendChild(container);
         for (const release of options.releases) {
             const h2 = document.createElement('h2');
+            h2.classList.add('text-xl');
             h2.innerText = `${release.version} (${release.status} release - ${release.dateTime})`;
             container.appendChild(h2);
             const ul = document.createElement('ul');
