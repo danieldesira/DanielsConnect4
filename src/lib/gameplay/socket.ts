@@ -77,7 +77,7 @@ export default class Socket {
             title: 'Error'
         });
 
-        document.body.classList.remove('waiting');
+        document.body.classList.remove('cursor-progress');
     };
 
     private onClose = () => {

@@ -37,7 +37,7 @@ export default class NetworkGame extends Game {
             this.defineSocket(auth);
             this.startCountdown();
             super.start();
-            document.body.classList.add('waiting');
+            document.body.classList.add('cursor-progress');
             if (this.timerSpan) {
                 this.timerSpan.classList.add('hidden');
             }
@@ -130,7 +130,7 @@ export default class NetworkGame extends Game {
             this.showWinDialog(winner, data.winner);
 
             this.closeGameAfterWinning();
-            document.body.classList.remove('waiting');
+            document.body.classList.remove('cursor-progress');
         }
 
         if (GameMessage.isTieMessage(messageData)) {
@@ -139,7 +139,7 @@ export default class NetworkGame extends Game {
                 text: ['Game resulted in tie!'],
                 title: null
             });
-            document.body.classList.remove('waiting');
+            document.body.classList.remove('cursor-progress');
             this.closeGameAfterWinning();
         }
 
@@ -158,7 +158,7 @@ export default class NetworkGame extends Game {
                 text: ['Your opponent disconnected. You win!'],
                 title: 'We have a winner!'
             });
-            document.body.classList.remove('waiting');
+            document.body.classList.remove('cursor-progress');
             this.closeGameAfterWinning();
         }
 
@@ -170,7 +170,7 @@ export default class NetworkGame extends Game {
                 text: [data.error],
                 title: 'Error'
             });
-            document.body.classList.remove('waiting');
+            document.body.classList.remove('cursor-progress');
             this.closeGameAfterWinning();
         }
     };
@@ -251,9 +251,9 @@ export default class NetworkGame extends Game {
 
     private toggleWaitingClass() {
         if (this.socket.getPlayerColor() === this.turn) {
-            document.body.classList.remove('waiting');
+            document.body.classList.remove('cursor-progress');
         } else {
-            document.body.classList.add('waiting');
+            document.body.classList.add('cursor-progress');
         }
     }
 
@@ -274,7 +274,7 @@ export default class NetworkGame extends Game {
             this.socket.close();
         }
         Dialog.closeAllOpenDialogs();
-        document.body.classList.remove('waiting');
+        document.body.classList.remove('cursor-progress');
 
         super.exit();
     };

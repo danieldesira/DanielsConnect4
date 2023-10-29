@@ -18,6 +18,9 @@ export default function openChangelog() {
                             'General code cleanup and refactoring',
                             'Introduced Tailwind for more compact CSS by reusing pre-existing classes',
                         ]
+                    },
+                    {
+                        text: 'Apply progress cursor until user info request completes'
                     }
                 ]
             },

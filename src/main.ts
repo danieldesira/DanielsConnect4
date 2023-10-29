@@ -7,10 +7,9 @@ import NetworkGame from "./lib/gameplay/network-game";
 import SameDeviceGame from "./lib/gameplay/same-device-game";
 import openCredits from "./lib/screens/credits";
 import showInstructions from "./lib/screens/instructions";
-import openSettings from "./lib/screens/settings-dialog";
 import openChangelog from "./lib/screens/changelog";
 import config from "./lib/config";
-import logout from "./lib/logout";
+import openUserMenu from "./lib/screens/user-menu";
 
 const samePCBtn = document.getElementById('samePC') as HTMLButtonElement;
 const networkBtn = document.getElementById('network') as HTMLButtonElement;
@@ -75,9 +74,9 @@ shareBtn.addEventListener('click', (event: MouseEvent) => {
 });
 
 window.addEventListener('load', () => {
-    Authentication.initGoogleSSO(async () => {
+    Authentication.initGoogleSSO(() => {
         showLoginLogout();
-        await loadUserData();
+        loadUserData();
     });
     Authentication.renderGoogleBtn('googleSignonContainer');
 });
@@ -94,16 +93,17 @@ function showLoginLogout() {
     }
 }
 
-async function loadUserData() {
-    const user = await Authentication.getUserData();
-    if (user) {
+function loadUserData() {
+    Authentication.getUserData().then((user) => {
         const userName = document.getElementById('authPlayerName');
         userName.innerText = user.user;
         authPlayerPicture.src = user.picUrl;
-    } else {
+    }).catch(() => {
         Authentication.logout();
         showLoginLogout();
-    }
+    }).finally(() => {
+        document.body.classList.remove('cursor-progress');
+    });
 }
 
 const creditsBtn = document.getElementById('credits') as HTMLAnchorElement;
@@ -121,33 +121,12 @@ changelogLink.addEventListener('click', (event: MouseEvent) => {
 const authPlayerPicture = document.getElementById('authPlayerPicture') as HTMLImageElement;
 authPlayerPicture.addEventListener('click', () => {
     const userText = document.getElementById('authPlayerName');
-    Dialog.menu({
-        id: DialogIds.AccountMenu,
-        title: userText.innerText,
-        text: [],
-        buttons: [
-            {
-                text: 'Load Stats',
-                callback: async () => await Authentication.loadStats(),
-                color: 'green'
-            },
-            {
-                text: 'Settings',
-                callback: openSettings,
-                color: 'green'
-            },
-            {
-                text: 'Logout',
-                callback: () => logout('board', 'countdown', showLoginLogout),
-                color: 'red'
-            }
-        ]
-    });
+    openUserMenu(userText.innerText, showLoginLogout);
 });
 
-(async () => {
+(() => {
     showLoginLogout();
-    await loadUserData();
+    loadUserData();
 
     changelogLink.innerText = config.version;
 

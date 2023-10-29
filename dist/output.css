@@ -554,6 +554,14 @@ video {
   display: none;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-progress {
+  cursor: progress;
+}
+
 .text-center {
   text-align: center;
 }
@@ -588,7 +596,6 @@ svg {
   color: whitesmoke;
   border-color: transparent;
   border-radius: 45px;
-  cursor: pointer;
 }
 
 .btn-xs {
@@ -636,7 +643,6 @@ svg {
 
 .player-pic {
   border-radius: 3px;
-  cursor: pointer;
 }
 
 .profile-area {
@@ -675,15 +681,11 @@ svg {
     color: #fff;
   }
 
-  .btn path {
-    fill: #fff;
-  }
-
   a, .heading, .text {
     color: var(--dark-theme-text-color);
   }
 
-  path {
+  svg {
     fill: var(--dark-theme-text-color);
   }
 }
