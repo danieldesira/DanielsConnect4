@@ -20,14 +20,16 @@
             <a href="https://www.enable-javascript.com/" title="Instructions" target="_blank">Read instructions.</a>
         </noscript>
         <div class="text-center text">
-            <button type="button" id="exitBtn" class="btn exit-btn hidden text text-lg">Menu</button>
+            <button type="button" id="exitBtn" class="btn exit-btn hidden text text-lg">
+                <span class="ml-1 mr-1">Menu</span>
+            </button>
             <h1 id="heading" class="heading inline-block text-xl"></h1>
             <div id="gameIndicators" class="hidden blue-bg">
                 <strong id="timer" class="ml-1 mr-1"></strong><strong id="countdown" class="ml-1 mr-1"></strong>|
                 <strong id="playerRed" class="red-text ml-1 mr-1"></strong>|
                 <strong id="playerGreen" class="green-text ml-1 mr-1"></strong>
             </div>
-            <div class="profile-area inline-block">
+            <div class="inline-block w-fit">
                 <div id="login-btns">
                     <div id="googleSignonContainer"></div>
                 </div>
@@ -38,10 +40,10 @@
                 </div>
             </div>
         </div>
-        <div id="menu" class="menu">
-            <button type="button" id="network" class="btn menu-btn text cursor-pointer text-lg">Network Play</button>
-            <button type="button" id="samePC" class="btn menu-btn text cursor-pointer text-lg">Same Device Play</button>
-            <button type="button" id="instructions" class="btn menu-btn text cursor-pointer text-lg">Instructions</button>
+        <div id="menu" class="w-1/3 m-auto">
+            <button type="button" id="network" class="btn text cursor-pointer text-lg max-w-sm min-w-xs w-full mt-12">Network Play</button>
+            <button type="button" id="samePC" class="btn text cursor-pointer text-lg max-w-sm min-w-xs w-full mt-12">Same Device Play</button>
+            <button type="button" id="instructions" class="btn text cursor-pointer text-lg max-w-sm min-w-xs w-full mt-12">Instructions</button>
             <p class="text-right">
                 <a id="shareBtn" class="mr-2" href="#" title="Share">
                     <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M352 224c53 0 96-43 96-96s-43-96-96-96s-96 43-96 96c0 4 .2 8 .7 11.9l-94.1 47C145.4 170.2 121.9 160 96 160c-53 0-96 43-96 96s43 96 96 96c25.9 0 49.4-10.2 66.6-26.9l94.1 47c-.5 3.9-.7 7.8-.7 11.9c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-25.9 0-49.4 10.2-66.6 26.9l-94.1-47c.5-3.9 .7-7.8 .7-11.9s-.2-8-.7-11.9l94.1-47C302.6 213.8 326.1 224 352 224z"/></svg>

@@ -55,18 +55,6 @@ svg {
     color: var(--theme-color);
 }
 
-.menu {
-    width: 30%;
-    max-width: 350px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.menu-btn {
-    width: 100%;
-    margin-top: 100px;
-}
-
 .player-menu-btn {
     position: fixed;
     top: 10px;
@@ -77,20 +65,12 @@ svg {
     border-radius: 3px;
 }
 
-.profile-area {
-    width: fit-content;
-}
-
 .red-text {
     color: red;
 }
 
 .text {
     font-family: Source-Sans-Pro;
-}
-
-.waiting {
-    cursor: progress;
 }
 
 @media (prefers-color-scheme: dark) {
