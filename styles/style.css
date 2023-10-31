@@ -4,9 +4,7 @@
 
 body {
     --theme-color: darkblue;
-}
-
-a {
+    font-family: Source-Sans-Pro;
     color: var(--theme-color);
 }
 
@@ -18,7 +16,6 @@ svg {
 .blue-bg {
     background-color: blue;
     color: whitesmoke;
-    border-radius: 10px;
     max-width: 500px;
 }
 
@@ -30,14 +27,6 @@ svg {
     border-radius: 45px;
 }
 
-.btn-xs {
-    height: 17px;
-}
-
-.btn-xs.text {
-    font-size: 0.9em;
-}
-
 .currentTurn {
     font-style: italic;
     text-decoration: underline;
@@ -47,48 +36,15 @@ svg {
     height: 60px;
 }
 
-.green-text {
-    color: greenyellow;
-}
-
-.heading {
-    color: var(--theme-color);
-}
-
-.player-menu-btn {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-}
-
-.player-pic {
-    border-radius: 3px;
-}
-
-.red-text {
-    color: red;
-}
-
-.text {
-    font-family: Source-Sans-Pro;
-}
-
 @media (prefers-color-scheme: dark) {
     body {
         --dark-theme-text-color: pink;
         background-color: var(--theme-color);
+        color: var(--dark-theme-text-color);
     }
 
     .btn {
         background-color: var(--dark-theme-text-color);
-    }
-
-    .btn.text {
-        color: #fff;
-    }
-
-    a, .heading, .text {
-        color: var(--dark-theme-text-color);
     }
     
     svg {

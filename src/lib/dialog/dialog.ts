@@ -93,7 +93,6 @@ export default class Dialog {
         btn.classList.add('dialog-btn');
         btn.classList.add(`dialog-btn-${bgColor}`);
         const span = document.createElement('span');
-        span.classList.add('text');
         span.classList.add('text-xl');
         span.classList.add('ml-1');
         span.classList.add('mr-1');
@@ -146,7 +145,6 @@ export default class Dialog {
             input.placeholder = `Enter ${i.label}`;
             input.maxLength = i.limit;
             input.classList.add('dialog-input');
-            input.classList.add('text');
             input.required = i.required;
             input.ariaRequired = i.required.toString();
             form.appendChild(input);
@@ -195,7 +193,6 @@ export default class Dialog {
     }
 
     private static appendText(text: Array<string>|undefined, container: HTMLDivElement) {
-        container.classList.add('text');
         container.classList.add('dialog-text');
         if (text) {
             for (const t of text) {
@@ -250,7 +247,6 @@ export default class Dialog {
             button.innerText = b.text;
             button.classList.add('dialog-btn');
             button.classList.add(`dialog-btn-${b.color}`);
-            button.classList.add('text');
             button.addEventListener('click', b.callback);
             container.appendChild(button);
         }
@@ -258,7 +254,6 @@ export default class Dialog {
 
     private static appendChangelog(modal: HTMLDivElement, options: ChangelogDialogOptions) {
         const container = document.createElement('div');
-        container.classList.add('text');
         container.classList.add('dialog-text');
         modal.appendChild(container);
         for (const release of options.releases) {
