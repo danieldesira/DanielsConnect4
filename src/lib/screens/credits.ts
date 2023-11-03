@@ -21,7 +21,7 @@ export default function openCredits() {
             },
             {
                 title: 'Testing',
-                contributors: ['George Zaharia']
+                contributors: ['George Zaharia', 'Yazan Enayeh']
             }
         ]
     };

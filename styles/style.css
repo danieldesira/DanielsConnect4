@@ -9,8 +9,15 @@ body {
 }
 
 svg {
-    display: inline;
     fill: var(--theme-color);
+}
+
+ol {
+    list-style: decimal;
+}
+
+ul, ol {
+    margin-left: 20px;
 }
 
 .blue-bg {
@@ -20,7 +27,6 @@ svg {
 }
 
 .btn {
-    height: 100px;
     background-color: var(--theme-color);
     color: whitesmoke;
     border-color: transparent;
@@ -30,10 +36,6 @@ svg {
 .currentTurn {
     font-style: italic;
     text-decoration: underline;
-}
-
-.exit-btn {
-    height: 60px;
 }
 
 @media (prefers-color-scheme: dark) {

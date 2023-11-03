@@ -60,11 +60,15 @@ export default class PlayerNameSection {
 
     public indicateTurn(turn: Coin) {
         if (turn === Coin.Red) {
-            this.playerRedSpan.classList.add('currentTurn');
-            this.playerGreenSpan.classList.remove('currentTurn');
+            this.playerRedSpan.classList.add('italic');
+            this.playerRedSpan.classList.add('underline');
+            this.playerGreenSpan.classList.remove('italic');
+            this.playerGreenSpan.classList.remove('underline');
         } else {
-            this.playerGreenSpan.classList.add('currentTurn');
-            this.playerRedSpan.classList.remove('currentTurn');
+            this.playerGreenSpan.classList.add('italic');
+            this.playerGreenSpan.classList.add('underline');
+            this.playerRedSpan.classList.remove('italic');
+            this.playerRedSpan.classList.remove('underline');
         }
     }
 

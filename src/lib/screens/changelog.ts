@@ -12,7 +12,7 @@ export default function openChangelog() {
                 dateTime: '',
                 points: [
                     {
-                        text: 'Internal',
+                        text: 'Internal:',
                         subPoints: [
                             'Load game title and version number from config',
                             'General code cleanup and refactoring',
@@ -20,7 +20,11 @@ export default function openChangelog() {
                         ]
                     },
                     {
-                        text: 'Apply progress cursor until user info request completes'
+                        text: 'UI:',
+                        subPoints: [
+                            'Apply progress cursor until user info request completes',
+                            'Smaller exit button and reduced the gap between menu buttons'
+                        ]
                     }
                 ]
             },
