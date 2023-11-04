@@ -12,6 +12,9 @@ module.exports = {
       },
       fontFamily: {
         "sans-pro": "Source-Sans-Pro"
+      },
+      maxHeight: {
+        "screen-1/4": "25vh"
       }
     },
   },

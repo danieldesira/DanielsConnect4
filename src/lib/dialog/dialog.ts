@@ -17,11 +17,13 @@ export default class Dialog {
             modal.classList.add('dialog');
             modal.classList.add('fixed');
             modal.classList.add('text-white');
+            modal.classList.add('w-4/5');
+            modal.classList.add('opacity-80');
 
             if (options.title) {
                 const h1 = document.createElement('h1');
                 h1.innerText = options.title;
-                h1.classList.add('dialog-title');
+                h1.classList.add('text-center');
                 h1.classList.add('text-xl');
                 modal.appendChild(h1);
                 modal.appendChild(document.createElement('hr'));
@@ -93,7 +95,10 @@ export default class Dialog {
                 btnType: 'submit' | 'button' | 'reset') {
         const btn = document.createElement('button');
         btn.type = btnType;
-        btn.classList.add('dialog-btn');
+        btn.classList.add('rounded-3xl')
+        btn.classList.add('border-transperant');
+        btn.classList.add('m-1');
+        btn.classList.add('cursor-pointer');
         btn.classList.add(`dialog-btn-${bgColor}`);
         const span = document.createElement('span');
         span.classList.add('text-xl');
@@ -109,7 +114,8 @@ export default class Dialog {
 
     private static appendForm(modal: HTMLDivElement, options: PromptDialogOptions) {
         const inputContainer = document.createElement('div') as HTMLDivElement;
-        inputContainer.classList.add('dialog-input-container');
+        inputContainer.classList.add('m-auto');
+        inputContainer.classList.add('w-3/4');
         modal.appendChild(inputContainer);
 
         const form = document.createElement('form') as HTMLFormElement;
@@ -148,6 +154,7 @@ export default class Dialog {
             input.ariaPlaceholder = `Enter ${i.label}`;
             input.placeholder = `Enter ${i.label}`;
             input.maxLength = i.limit;
+            this.assignInputClassNames(input);
             input.classList.add('dialog-input');
             input.required = i.required;
             input.ariaRequired = i.required.toString();
@@ -158,12 +165,23 @@ export default class Dialog {
         }
     }
 
+    private static assignInputClassNames(input: HTMLElement) {
+        input.classList.add('border-transperant');
+        input.classList.add('text-center');
+        input.classList.add('w-full');
+        input.classList.add('rounded-3xl');
+        input.classList.add('h-9');
+        input.classList.add('text-lg');
+        input.classList.add('text-gray-700');
+    }
+
     private static appendSelects(form: HTMLFormElement, selects: Array<PromptSelect>) {
         for (const s of selects) {
             const select = document.createElement('select');
             select.id = `dialog-select-${s.name}`;
             select.name = `dialog-select-${s.name}`;
             select.ariaPlaceholder = s.label;
+            this.assignInputClassNames(select);
             select.classList.add('dialog-input');
             select.required = s.required;
             select.ariaRequired = s.required.toString();
@@ -197,7 +215,7 @@ export default class Dialog {
     }
 
     private static appendText(text: Array<string>|undefined, container: HTMLDivElement) {
-        container.classList.add('dialog-text');
+        this.assignTextClassNames(container);
         if (text) {
             for (const t of text) {
                 const p = document.createElement('p');
@@ -226,7 +244,8 @@ export default class Dialog {
 
     private static appendOKButton(modal: HTMLDivElement) {
         const btnContainer = document.createElement('div') as HTMLDivElement;
-        btnContainer.classList.add('dialog-btn-container');
+        btnContainer.classList.add('w-fit');
+        btnContainer.classList.add('m-auto');
         modal.appendChild(btnContainer);
 
         this.appendBtn(btnContainer, 'OK', () => {
@@ -244,13 +263,17 @@ export default class Dialog {
 
     private static appendMenu(modal: HTMLDivElement, options: MenuDialogOptions) {
         const container = document.createElement('div');
-        container.classList.add('dialog-menu-container');
+        container.classList.add('w-1/3');
+        container.classList.add('m-auto');
         modal.appendChild(container);
         for (const b of options.buttons) {
             const button = document.createElement('button');
             button.type = 'button';
             button.innerText = b.text;
-            button.classList.add('dialog-btn');
+            button.classList.add('w-full');
+            button.classList.add('rounded-3xl');
+            button.classList.add('mt-3');
+            button.classList.add('mb-3');
             button.classList.add(`dialog-btn-${b.color}`);
             button.addEventListener('click', b.callback);
             container.appendChild(button);
@@ -259,7 +282,7 @@ export default class Dialog {
 
     private static appendChangelog(modal: HTMLDivElement, options: ChangelogDialogOptions) {
         const container = document.createElement('div');
-        container.classList.add('dialog-text');
+        this.assignTextClassNames(container);
         modal.appendChild(container);
         for (const release of options.releases) {
             const h2 = document.createElement('h2');
@@ -286,6 +309,13 @@ export default class Dialog {
                 }
             }
         }
+    }
+
+    private static assignTextClassNames(container: HTMLDivElement) {
+        container.classList.add('w-11/12');
+        container.classList.add('m-auto');
+        container.classList.add('max-h-screen-1/4');
+        container.classList.add('overflow-y-auto');
     }
 
     private static closeModal(modal: HTMLDivElement) {

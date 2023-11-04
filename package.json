@@ -12,7 +12,7 @@
     "@danieldesira/daniels-connect4-common": "^0.2.0"
   },
   "scripts": {
-    "start": "npx concurrently \"npx webpack -w\" \"npx serve -l 5000\" \"npx update-browserslist-db@latest\" \"npx tailwindcss -i ./styles/style.css -o ./dist/output.css --watch\"",
+    "start": "npx concurrently \"npx webpack -w\" \"npx serve -l 5000\" \"npx update-browserslist-db@latest\" \"npx tailwindcss -i ./src/main.css -o ./dist/bundle.css --watch --minify\"",
     "dev": "npm start"
   }
 }
