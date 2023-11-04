@@ -4,11 +4,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        "theme-color": "var(--theme-color)",
-        "dark-theme-color": "var(--dark-theme-color)"
+        "theme-color": "darkblue",
+        "dark-theme-color": "pink"
+      },
+      borderRadius: {
+        "7xl": "45px"
+      },
+      fontFamily: {
+        "sans-pro": "Source-Sans-Pro"
       }
     },
   },
   plugins: ["postcss"],
-}
-
+};

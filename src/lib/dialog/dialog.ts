@@ -15,6 +15,8 @@ export default class Dialog {
             modal.tabIndex = 1;
             modal.id = options.id;
             modal.classList.add('dialog');
+            modal.classList.add('fixed');
+            modal.classList.add('text-white');
 
             if (options.title) {
                 const h1 = document.createElement('h1');
@@ -33,7 +35,8 @@ export default class Dialog {
                 case DialogType.Confirmation: {
                     const o = options as ConfirmationDialogOptions;
                     const btnContainer = document.createElement('div');
-                    btnContainer.classList.add('dialog-btn-container');
+                    btnContainer.classList.add('w-fit');
+                    btnContainer.classList.add('m-auto');
                     modal.appendChild(btnContainer);
 
                     this.appendBtn(btnContainer, 'Yes', () => {
@@ -123,7 +126,8 @@ export default class Dialog {
         this.appendSelects(form, options.selects);
 
         const btnContainer = document.createElement('div') as HTMLDivElement;
-        btnContainer.classList.add('dialog-btn-container');
+        btnContainer.classList.add('w-fit');
+        btnContainer.classList.add('m-auto');
         form.appendChild(btnContainer);
 
         this.appendBtn(btnContainer, 'OK', null, 'green', 'submit');
@@ -210,6 +214,7 @@ export default class Dialog {
             h2.innerText = section.title;
             container.appendChild(h2);
             const ul = document.createElement('ul');
+            ul.classList.add('ml-5');
             for (const contributor of section.contributors) {
                 const li = document.createElement('li');
                 li.innerText = contributor;
@@ -262,6 +267,7 @@ export default class Dialog {
             h2.innerText = `${release.version} (${release.status} release - ${release.dateTime})`;
             container.appendChild(h2);
             const ul = document.createElement('ul');
+            ul.classList.add('ml-5');
             container.appendChild(ul);
             for (const point of release.points) {
                 const outerLi = document.createElement('li');
@@ -269,6 +275,8 @@ export default class Dialog {
                 ul.appendChild(outerLi);
                 if (point.subPoints && point.subPoints.length > 0) {
                     const ol = document.createElement('ol');
+                    ol.classList.add('list-decimal');
+                    ol.classList.add('ml-5');
                     outerLi.appendChild(ol);
                     for (const subPoint of point.subPoints) {
                         const innerLi = document.createElement('li');

@@ -566,6 +566,10 @@ video {
   margin-left: 0.25rem;
 }
 
+.ml-5 {
+  margin-left: 1.25rem;
+}
+
 .mr-1 {
   margin-right: 0.25rem;
 }
@@ -627,8 +631,20 @@ video {
   resize: both;
 }
 
+.list-decimal {
+  list-style-type: decimal;
+}
+
 .rounded {
   border-radius: 0.25rem;
+}
+
+.rounded-3xl {
+  border-radius: 1.5rem;
+}
+
+.rounded-7xl {
+  border-radius: 45px;
 }
 
 .bg-blue-600 {
@@ -636,12 +652,21 @@ video {
   background-color: rgb(37 99 235 / var(--tw-bg-opacity));
 }
 
+.bg-theme-color {
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 0 139 / var(--tw-bg-opacity));
+}
+
 .fill-theme-color {
-  fill: var(--theme-color);
+  fill: darkblue;
 }
 
 .text-center {
   text-align: center;
+}
+
+.font-sans-pro {
+  font-family: Source-Sans-Pro;
 }
 
 .text-lg {
@@ -674,7 +699,8 @@ video {
 }
 
 .text-theme-color {
-  color: var(--theme-color);
+  --tw-text-opacity: 1;
+  color: rgb(0 0 139 / var(--tw-text-opacity));
 }
 
 .text-white {
@@ -690,44 +716,97 @@ video {
   outline-style: solid;
 }
 
-:root {
-  --theme-color: darkblue;
-  --dark-theme-color: pink;
+.dialog {
+  top: 30%;
+  left: max(10%, calc(50% - 300px));
+  background-color: rgb(255, 190, 0);
+  opacity: 0.85;
+  width: 80%;
+  max-width: 600px;
+  min-height: 150px;
+  border-radius: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
-body {
-  font-family: Source-Sans-Pro;
-}
-
-ol {
-  list-style: decimal;
-}
-
-ul, ol {
-  margin-left: 20px;
-}
-
-.btn {
-  background-color: var(--theme-color);
-  color: whitesmoke;
+.dialog-btn {
+  border-radius: 10px;
   border-color: transparent;
-  border-radius: 45px;
+  margin: 3px;
+  cursor: pointer;
+}
+
+.dialog-btn-green {
+  background-color: rgb(0, 255, 0);
+}
+
+.dialog-btn-red {
+  background-color: rgb(255, 0, 0);
+}
+
+.dialog-menu-container {
+  width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.dialog-menu-container .dialog-btn {
+  width: 100%;
+}
+
+.dialog-input {
+  border-radius: 15px;
+  border-color: transparent;
+  width: 100%;
+  height: 37px;
+  text-align: center;
+  font-size: large;
+  color: rgb(50, 50, 50)!important;
+}
+
+.dialog-input-container {
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.dialog-text {
+  width: 90%;
+  max-height: 25vh;
+  margin-left: auto;
+  margin-right: auto;
+  overflow-y: auto;
+}
+
+.dialog-title {
+  text-align: center;
 }
 
 @media (prefers-color-scheme: dark) {
-  .btn {
-    background-color: var(--dark-theme-color);
+  .dialog-btn-green {
+    background-color: #090;
+  }
+
+  .dialog-btn-red {
+    background-color: #900;
+  }
+
+  .dark\:bg-dark-theme-color {
+    --tw-bg-opacity: 1;
+    background-color: rgb(255 192 203 / var(--tw-bg-opacity));
   }
 
   .dark\:bg-theme-color {
-    background-color: var(--theme-color);
+    --tw-bg-opacity: 1;
+    background-color: rgb(0 0 139 / var(--tw-bg-opacity));
   }
 
   .dark\:fill-dark-theme-color {
-    fill: var(--dark-theme-color);
+    fill: pink;
   }
 
   .dark\:text-dark-theme-color {
-    color: var(--dark-theme-color);
+    --tw-text-opacity: 1;
+    color: rgb(255 192 203 / var(--tw-text-opacity));
   }
 }
