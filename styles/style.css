@@ -2,14 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+:root {
     --theme-color: darkblue;
-    font-family: Source-Sans-Pro;
-    color: var(--theme-color);
+    --dark-theme-color: pink;
 }
 
-svg {
-    fill: var(--theme-color);
+body {
+    font-family: Source-Sans-Pro;
 }
 
 ol {
@@ -20,12 +19,6 @@ ul, ol {
     margin-left: 20px;
 }
 
-.blue-bg {
-    background-color: blue;
-    color: whitesmoke;
-    max-width: 500px;
-}
-
 .btn {
     background-color: var(--theme-color);
     color: whitesmoke;
@@ -33,23 +26,8 @@ ul, ol {
     border-radius: 45px;
 }
 
-.currentTurn {
-    font-style: italic;
-    text-decoration: underline;
-}
-
 @media (prefers-color-scheme: dark) {
-    body {
-        --dark-theme-text-color: pink;
-        background-color: var(--theme-color);
-        color: var(--dark-theme-text-color);
-    }
-
     .btn {
-        background-color: var(--dark-theme-text-color);
-    }
-    
-    svg {
-        fill: var(--dark-theme-text-color);
+        background-color: var(--dark-theme-color);
     }
 }

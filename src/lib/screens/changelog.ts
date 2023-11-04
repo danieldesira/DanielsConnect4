@@ -23,7 +23,9 @@ export default function openChangelog() {
                         text: 'UI:',
                         subPoints: [
                             'Apply progress cursor until user info request completes',
-                            'Smaller exit button and reduced the gap between menu buttons'
+                            'Smaller exit button and reduced the gap between menu buttons',
+                            'Credits link displayed in small font size',
+                            'Smaller and smoother font settings and lighter color schemes'
                         ]
                     }
                 ]

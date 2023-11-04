@@ -534,6 +534,10 @@ video {
   --tw-backdrop-sepia:  ;
 }
 
+.visible {
+  visibility: visible;
+}
+
 .fixed {
   position: fixed;
 }
@@ -578,6 +582,10 @@ video {
   display: inline-block;
 }
 
+.inline {
+  display: inline;
+}
+
 .hidden {
   display: none;
 }
@@ -615,8 +623,21 @@ video {
   cursor: progress;
 }
 
+.resize {
+  resize: both;
+}
+
 .rounded {
   border-radius: 0.25rem;
+}
+
+.bg-blue-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(37 99 235 / var(--tw-bg-opacity));
+}
+
+.fill-theme-color {
+  fill: var(--theme-color);
 }
 
 .text-center {
@@ -628,14 +649,14 @@ video {
   line-height: 1.75rem;
 }
 
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
 .text-xl {
   font-size: 1.25rem;
   line-height: 1.75rem;
-}
-
-.text-xs {
-  font-size: 0.75rem;
-  line-height: 1rem;
 }
 
 .italic {
@@ -652,18 +673,30 @@ video {
   color: rgb(220 38 38 / var(--tw-text-opacity));
 }
 
+.text-theme-color {
+  color: var(--theme-color);
+}
+
+.text-white {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
 .underline {
   text-decoration-line: underline;
 }
 
-body {
-  --theme-color: darkblue;
-  font-family: Source-Sans-Pro;
-  color: var(--theme-color);
+.outline {
+  outline-style: solid;
 }
 
-svg {
-  fill: var(--theme-color);
+:root {
+  --theme-color: darkblue;
+  --dark-theme-color: pink;
+}
+
+body {
+  font-family: Source-Sans-Pro;
 }
 
 ol {
@@ -674,12 +707,6 @@ ul, ol {
   margin-left: 20px;
 }
 
-.blue-bg {
-  background-color: blue;
-  color: whitesmoke;
-  max-width: 500px;
-}
-
 .btn {
   background-color: var(--theme-color);
   color: whitesmoke;
@@ -687,23 +714,20 @@ ul, ol {
   border-radius: 45px;
 }
 
-.currentTurn {
-  font-style: italic;
-  text-decoration: underline;
-}
-
 @media (prefers-color-scheme: dark) {
-  body {
-    --dark-theme-text-color: pink;
-    background-color: var(--theme-color);
-    color: var(--dark-theme-text-color);
-  }
-
   .btn {
-    background-color: var(--dark-theme-text-color);
+    background-color: var(--dark-theme-color);
   }
 
-  svg {
-    fill: var(--dark-theme-text-color);
+  .dark\:bg-theme-color {
+    background-color: var(--theme-color);
+  }
+
+  .dark\:fill-dark-theme-color {
+    fill: var(--dark-theme-color);
+  }
+
+  .dark\:text-dark-theme-color {
+    color: var(--dark-theme-color);
   }
 }

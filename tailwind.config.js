@@ -1,9 +1,14 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["*.{html,js}"],
+  content: ["index.html", "dist/bundle.js"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        "theme-color": "var(--theme-color)",
+        "dark-theme-color": "var(--dark-theme-color)"
+      }
+    },
   },
-  plugins: [],
+  plugins: ["postcss"],
 }
 
