@@ -4,6 +4,7 @@ import Dialog from "../dialog/dialog";
 import { DialogIds } from "../enums/dialog-ids";
 import { AuthenticationModel } from "../models/authentication-model";
 import { Coin, GameMessage, InitialMessage } from "@danieldesira/daniels-connect4-common";
+import Utils from "../utils";
 
 export default class Socket {
     private webSocket: WebSocket;
@@ -77,7 +78,7 @@ export default class Socket {
             title: 'Error'
         });
 
-        document.body.classList.remove('cursor-progress');
+        Utils.disableProgressCursor();
     };
 
     private onClose = () => {

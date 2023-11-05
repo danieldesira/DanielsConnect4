@@ -3,6 +3,7 @@ import config from "./config";
 import { AuthenticationModel } from "./models/authentication-model";
 import Dialog from "./dialog/dialog";
 import { DialogIds } from "./enums/dialog-ids";
+import Utils from "./utils";
 
 declare global {
     interface Window {
@@ -34,7 +35,9 @@ export default class Authentication {
     public static getUserData = async () => await Authentication.authGet(`${config.connections.httpServer}/auth`) as PlayerInfo;
 
     public static async loadStats() {
+        Utils.enableProgressCursor();
         const stats = await Authentication.authGet(`${config.connections.httpServer}/stats`) as PlayerStats;
+        Utils.disableProgressCursor();
         if (stats) {
             Dialog.notify({
                 id: DialogIds.PlayerStats,
@@ -72,6 +75,7 @@ export default class Authentication {
             const params = {
                 dimensions
             };
+            Utils.enableProgressCursor();
             await Authentication.authPost(`${config.connections.httpServer}/settings`, params);
         } catch {
             Dialog.notify({
@@ -79,6 +83,8 @@ export default class Authentication {
                 text: ['Error saving settings!'],
                 id: DialogIds.ServerError
             });
+        } finally {
+            Utils.disableProgressCursor();
         }
     }
 

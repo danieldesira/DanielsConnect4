@@ -10,6 +10,7 @@ import showInstructions from "./lib/screens/instructions";
 import openChangelog from "./lib/screens/changelog";
 import config from "./lib/config";
 import openUserMenu from "./lib/screens/user-menu";
+import Utils from "./lib/utils";
 
 const samePCBtn = document.getElementById('samePC') as HTMLButtonElement;
 const networkBtn = document.getElementById('network') as HTMLButtonElement;
@@ -94,6 +95,7 @@ function showLoginLogout() {
 }
 
 function loadUserData() {
+    Utils.enableProgressCursor();
     Authentication.getUserData().then((user) => {
         const userName = document.getElementById('authPlayerName');
         userName.innerText = user.user;
@@ -102,7 +104,7 @@ function loadUserData() {
         Authentication.logout();
         showLoginLogout();
     }).finally(() => {
-        document.body.classList.remove('cursor-progress');
+        Utils.disableProgressCursor();
     });
 }
 

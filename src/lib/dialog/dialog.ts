@@ -162,7 +162,6 @@ export default class Dialog {
             input.placeholder = `Enter ${i.label}`;
             input.maxLength = i.limit;
             this.assignInputClassNames(input);
-            input.classList.add('dialog-input');
             input.required = i.required;
             input.ariaRequired = i.required.toString();
             form.appendChild(input);
@@ -189,7 +188,6 @@ export default class Dialog {
             select.name = `dialog-select-${s.name}`;
             select.ariaPlaceholder = s.label;
             this.assignInputClassNames(select);
-            select.classList.add('dialog-input');
             select.required = s.required;
             select.ariaRequired = s.required.toString();
             form.appendChild(select);
@@ -369,6 +367,7 @@ export default class Dialog {
         const dialogs = document.getElementsByClassName('dialog') as HTMLCollectionOf<HTMLDivElement>;
         for (let i: number = 0; i < dialogs.length; i++) {
             this.closeModal(dialogs[i]);
+            console.log(dialogs[i].id);
         }
     }
 

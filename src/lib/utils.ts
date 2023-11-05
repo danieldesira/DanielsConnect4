@@ -8,4 +8,8 @@ export default class Utils {
         const audio = new Audio(path);
         audio.play();
     }
+
+    public static enableProgressCursor = () => document.body.classList.add('cursor-progress');
+    
+    public static disableProgressCursor = () => document.body.classList.remove('cursor-progress');
 }
