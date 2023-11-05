@@ -116,9 +116,7 @@ export default class SameDeviceGame extends Game {
                 title: null,
                 text: ['Do you want to continue playing the previous game?'],
                 yesCallback: this.continuePreviousGame,
-                noCallback: this.cancelPreviousGame,
-                yesColor: 'green',
-                noColor: 'red'
+                noCallback: this.cancelPreviousGame
             });
         } else {
             this.turn = randomiseTurn();

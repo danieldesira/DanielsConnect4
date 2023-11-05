@@ -12,18 +12,16 @@ export default function openUserMenu(playerName: string, showLoginLogout: Functi
         buttons: [
             {
                 text: 'Load Stats',
-                callback: async () => await Authentication.loadStats(),
-                color: 'green'
+                callback: async () => await Authentication.loadStats()
             },
             {
                 text: 'Settings',
-                callback: openSettings,
-                color: 'green'
+                callback: openSettings
             },
             {
                 text: 'Logout',
                 callback: () => logout('board', 'countdown', showLoginLogout),
-                color: 'red'
+                isDanger: true
             }
         ]
     });

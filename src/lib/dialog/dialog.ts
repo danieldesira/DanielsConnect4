@@ -19,6 +19,13 @@ export default class Dialog {
             modal.classList.add('text-white');
             modal.classList.add('w-4/5');
             modal.classList.add('opacity-80');
+            modal.classList.add('focus:opacity-95');
+            modal.classList.add('bg-amber-500');
+            modal.classList.add('dark:bg-gray-900');
+            modal.classList.add('pt-5');
+            modal.classList.add('pb-5');
+            modal.classList.add('rounded-3xl');
+            modal.classList.add('max-w-xl');
 
             if (options.title) {
                 const h1 = document.createElement('h1');
@@ -44,11 +51,11 @@ export default class Dialog {
                     this.appendBtn(btnContainer, 'Yes', () => {
                         o.yesCallback();
                         this.closeModal(modal);
-                    }, o.yesColor, 'button');
+                    }, false, 'button');
                     this.appendBtn(btnContainer, 'No', () => {
                         o.noCallback();
                         this.closeModal(modal);
-                    }, o.noColor, 'button');
+                    }, true, 'button');
                     break;
                 }
                 case DialogType.Notification: {
@@ -91,7 +98,7 @@ export default class Dialog {
     private static appendBtn(container: HTMLDivElement | HTMLFormElement,
                 text: string,
                 callback: any,
-                bgColor: string,
+                isDanger: boolean,
                 btnType: 'submit' | 'button' | 'reset') {
         const btn = document.createElement('button');
         btn.type = btnType;
@@ -99,11 +106,11 @@ export default class Dialog {
         btn.classList.add('border-transperant');
         btn.classList.add('m-1');
         btn.classList.add('cursor-pointer');
-        btn.classList.add(`dialog-btn-${bgColor}`);
+        this.assignButtonColor(btn, isDanger);
         const span = document.createElement('span');
         span.classList.add('text-xl');
-        span.classList.add('ml-1');
-        span.classList.add('mr-1');
+        span.classList.add('ml-2');
+        span.classList.add('mr-2');
         span.innerText = text;
         btn.appendChild(span);
         if (btnType === 'button') {
@@ -136,13 +143,13 @@ export default class Dialog {
         btnContainer.classList.add('m-auto');
         form.appendChild(btnContainer);
 
-        this.appendBtn(btnContainer, 'OK', null, 'green', 'submit');
+        this.appendBtn(btnContainer, 'OK', null, false, 'submit');
         this.appendBtn(btnContainer, 'Cancel', () => {
             if (options.onCancel) {
                 options.onCancel();
             }
             this.closeModal(modal);
-        }, 'red', 'button');
+        }, true, 'button');
     }
 
     private static appendInputs(form: HTMLFormElement, inputs: Array<PromptInput>) {
@@ -250,7 +257,7 @@ export default class Dialog {
 
         this.appendBtn(btnContainer, 'OK', () => {
             this.closeModal(modal);
-        }, 'green', 'button');
+        }, false, 'button');
     }
 
     private static listenKeyboard(modal: HTMLDivElement) {
@@ -271,10 +278,11 @@ export default class Dialog {
             button.type = 'button';
             button.innerText = b.text;
             button.classList.add('w-full');
+            button.classList.add('h-12');
             button.classList.add('rounded-3xl');
             button.classList.add('mt-3');
             button.classList.add('mb-3');
-            button.classList.add(`dialog-btn-${b.color}`);
+            this.assignButtonColor(button, b.isDanger);
             button.addEventListener('click', b.callback);
             container.appendChild(button);
         }
@@ -316,6 +324,15 @@ export default class Dialog {
         container.classList.add('m-auto');
         container.classList.add('max-h-screen-1/4');
         container.classList.add('overflow-y-auto');
+    }
+
+    private static assignButtonColor(button: HTMLButtonElement, isDanger: boolean) {
+        if (isDanger) {
+            button.classList.add('bg-red-600');
+        } else {
+            button.classList.add('bg-theme-color');
+            button.classList.add('dark:bg-dark-theme-color');
+        }
     }
 
     private static closeModal(modal: HTMLDivElement) {

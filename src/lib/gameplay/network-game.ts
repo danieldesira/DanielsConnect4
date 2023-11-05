@@ -263,9 +263,7 @@ export default class NetworkGame extends Game {
             title: null,
             text: ['Network game in progress. Are you sure you want to quit?'],
             yesCallback: this.confirmExit,
-            noCallback: () => {},
-            yesColor: 'red',
-            noColor: 'green'
+            noCallback: () => {}
         });
     };
 

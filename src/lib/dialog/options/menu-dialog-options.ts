@@ -7,5 +7,5 @@ export default interface MenuDialogOptions extends DialogOptions {
 interface MenuButton {
     text: string;
     callback: { (event: MouseEvent): void }
-    color: 'green'|'red';
+    isDanger?: boolean;
 }
