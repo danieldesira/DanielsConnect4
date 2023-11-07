@@ -102,8 +102,7 @@ export default class Dialog {
                 btnType: 'submit' | 'button' | 'reset') {
         const btn = document.createElement('button');
         btn.type = btnType;
-        btn.classList.add('rounded-3xl')
-        btn.classList.add('border-transperant');
+        btn.classList.add('rounded-3xl');
         btn.classList.add('m-1');
         btn.classList.add('cursor-pointer');
         this.assignButtonColor(btn, isDanger);
@@ -172,7 +171,6 @@ export default class Dialog {
     }
 
     private static assignInputClassNames(input: HTMLElement) {
-        input.classList.add('border-transperant');
         input.classList.add('text-center');
         input.classList.add('w-full');
         input.classList.add('rounded-3xl');
