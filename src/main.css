@@ -5,5 +5,4 @@
 .dialog {
     top: 30%;
     left: max(10%, calc(50% - 300px));
-    min-height: 150px;
 }

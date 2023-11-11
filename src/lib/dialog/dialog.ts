@@ -318,6 +318,10 @@ export default class Dialog {
     private static assignTextClassNames(container: HTMLDivElement) {
         container.classList.add('w-11/12');
         container.classList.add('m-auto');
+        container.classList.add('mt-3');
+        container.classList.add('mb-3');
+        container.classList.add('grid');
+        container.classList.add('gap-3');
         container.classList.add('max-h-screen-1/4');
         container.classList.add('overflow-y-auto');
     }
@@ -337,35 +341,17 @@ export default class Dialog {
         }
     }
 
-    public static confirm(options: ConfirmationDialogOptions) {
-        Dialog.modal(DialogType.Confirmation, options);
-    }
-
-    public static notify(options: DialogOptions) {
-        Dialog.modal(DialogType.Notification, options);
-    }
-
-    public static prompt(options: PromptDialogOptions) {
-        Dialog.modal(DialogType.Prompt, options);
-    }
-
-    public static credit(options: CreditsDialogOptions) {
-        Dialog.modal(DialogType.Credits, options);
-    }
-
-    public static menu(options: MenuDialogOptions) {
-        Dialog.modal(DialogType.Menu, options);
-    }
-
-    public static changelog(options: ChangelogDialogOptions) {
-        Dialog.modal(DialogType.Changelog, options);
-    }
+    public static confirm = (options: ConfirmationDialogOptions) => Dialog.modal(DialogType.Confirmation, options);
+    public static notify = (options: DialogOptions) => Dialog.modal(DialogType.Notification, options);
+    public static prompt = (options: PromptDialogOptions) => Dialog.modal(DialogType.Prompt, options);
+    public static credit = (options: CreditsDialogOptions) => Dialog.modal(DialogType.Credits, options);
+    public static menu = (options: MenuDialogOptions) => Dialog.modal(DialogType.Menu, options);
+    public static changelog = (options: ChangelogDialogOptions) => Dialog.modal(DialogType.Changelog, options);
 
     public static closeAllOpenDialogs() {
         const dialogs = document.getElementsByClassName('dialog') as HTMLCollectionOf<HTMLDivElement>;
         for (let i: number = 0; i < dialogs.length; i++) {
             this.closeModal(dialogs[i]);
-            console.log(dialogs[i].id);
         }
     }
 

@@ -22,10 +22,11 @@ export default function openChangelog() {
                     {
                         text: 'UI:',
                         subPoints: [
-                            'Apply progress cursor until user info request completes',
+                            'Apply progress cursor when fetch requests are in progress',
                             'Smaller exit button and reduced the gap between menu buttons',
                             'Credits link displayed in small font size',
-                            'Smaller and smoother font settings and lighter color schemes'
+                            'Smaller and smoother font settings and lighter color schemes',
+                            'Apply gap for text within dialogs'
                         ]
                     }
                 ]

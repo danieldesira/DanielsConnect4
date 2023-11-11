@@ -199,9 +199,7 @@ export default class SameDeviceGame extends Game {
         super.exit();
     };
 
-    protected beforeUnload = () => {
-        this.saveGame();
-    }
+    protected beforeUnload = () => this.saveGame();
 
     private pageVisibilityChange = () => {
         if (this.timer) {
@@ -315,8 +313,6 @@ export default class SameDeviceGame extends Game {
         }
     };
 
-    private clearGameData() {
-        localStorage.removeItem('gameData');
-    }
+    private clearGameData = () => localStorage.removeItem('gameData');
 
 }
