@@ -1,0 +1,17 @@
+{
+    "manifest_version": 1,
+    "name": "Daniel's Connect4",
+    "version": "0.3.8",
+    "display": "minimal-ui",
+    "start_url": "./index.html",
+    "description": "Classical Connect4 game",
+    "author": "desiradaniel2007@gmail.com",
+    "default_locale": "en",
+    "icons": [
+        {
+            "src": "/images/Square150x150Logo.scale-100.png",
+            "type": "image/png",
+            "sizes": "150x150"
+        }
+    ]
+}
