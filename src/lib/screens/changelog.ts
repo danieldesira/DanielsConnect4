@@ -9,7 +9,7 @@ export default function openChangelog() {
             {
                 version: '0.3.8',
                 status: 'Beta',
-                dateTime: '',
+                dateTime: '19/11/2023 2:15PM Malta time',
                 points: [
                     {
                         text: 'Internal:',
@@ -28,6 +28,9 @@ export default function openChangelog() {
                             'Smaller and smoother font settings and lighter color schemes',
                             'Apply gap for text within dialogs'
                         ]
+                    },
+                    {
+                        text: 'Install game as Progressive Web App'
                     }
                 ]
             },
