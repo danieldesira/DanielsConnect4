@@ -18,5 +18,6 @@ module.exports = {
       }
     },
   },
+  darkMode: "class",
   plugins: ["postcss"],
 };

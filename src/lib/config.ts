@@ -9,8 +9,7 @@ const connections = Utils.isLocal() ? {
 };
 
 const config = {
-    title: 'Daniel`s Connect4',
-    version: '0.3.8b',
+    version: '0.3.9b',
     connections,
 };
 

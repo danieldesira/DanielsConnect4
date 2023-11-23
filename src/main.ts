@@ -61,7 +61,7 @@ shareBtn.addEventListener('click', (event: MouseEvent) => {
     if (navigator.canShare) {
         const shareData = {
             url: location.href,
-            title: `${config.title} ${config.version}`
+            title: `Daniel's Connect4 ${config.version}`
         };
         navigator.share(shareData)
             .catch((err) => console.error(`Problem while sharing: ${err}`));
@@ -126,13 +126,18 @@ authPlayerPicture.addEventListener('click', () => {
     openUserMenu(userText.innerText, showLoginLogout);
 });
 
+const applySystemTheme = (isDark: boolean) => isDark ?
+        document.documentElement.classList.add('dark') :
+        document.documentElement.classList.remove('dark');
+
+const darkSystemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+darkSystemTheme.addEventListener('change', ({ matches }) => applySystemTheme(matches));
+
 (() => {
     showLoginLogout();
     loadUserData();
+    applySystemTheme(darkSystemTheme.matches);
 
     changelogLink.innerText = config.version;
-
-    const heading = document.getElementById('heading');
-    heading.innerText = config.title;
-    document.title = `${config.title} ${config.version}`;
+    document.title = `Daniel's Connect4 ${config.version}`;
 })();
