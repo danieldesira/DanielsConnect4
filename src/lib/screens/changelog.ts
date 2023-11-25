@@ -9,9 +9,11 @@ export default function openChangelog() {
             {
                 version: '0.3.9',
                 status: 'Beta',
-                dateTime: '',
+                dateTime: '25/11/2023 11:15PM Malta time',
                 points: [
-                    {text: 'Added option for light/dark/system default theme for logged-in players'}
+                    {text: 'Internal: Removed title from config'},
+                    {text: 'Added option for light/dark/system default theme for logged-in players'},
+                    {text: 'Followed more Lighthouse recommendations over installable PWA'}
                 ]
             },
             {

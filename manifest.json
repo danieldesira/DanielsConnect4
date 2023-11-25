@@ -2,17 +2,24 @@
     "manifest_version": 1,
     "name": "Daniel's Connect4",
     "short_name": "Dan Connect4",
-    "version": "0.3.8",
+    "version": "0.3.9",
     "display": "standalone",
     "start_url": "./index.html",
     "description": "Classical Connect4 game",
     "author": "desiradaniel2007@gmail.com",
     "default_locale": "en",
+    "background_color": "blue",
+    "theme_color": "red",
     "icons": [
         {
             "src": "/images/Square150x150Logo.scale-100.png",
             "type": "image/png",
             "sizes": "150x150"
+        },
+        {
+            "src": "/images/TileIcon.png",
+            "type": "image/png",
+            "sizes": "512x512"
         }
     ]
 }
