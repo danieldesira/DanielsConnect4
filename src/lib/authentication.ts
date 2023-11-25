@@ -70,13 +70,10 @@ export default class Authentication {
         });
     }
 
-    public static async updateSettings(dimensions: BoardDimensions) {
+    public static async updateSettings(data: PlayerSettings) {
         try {
-            const params = {
-                dimensions
-            };
             Utils.enableProgressCursor();
-            await Authentication.authPost(`${config.connections.httpServer}/settings`, params);
+            await Authentication.authPost(`${config.connections.httpServer}/settings`, data);
         } catch {
             Dialog.notify({
                 title: 'Settings',

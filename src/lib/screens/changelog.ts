@@ -7,6 +7,14 @@ export default function openChangelog() {
         title: 'Daniel`s Connect4 Version History',
         releases: [
             {
+                version: '0.3.9',
+                status: 'Beta',
+                dateTime: '',
+                points: [
+                    {text: 'Added option for light/dark/system default theme for logged-in players'}
+                ]
+            },
+            {
                 version: '0.3.8',
                 status: 'Beta',
                 dateTime: '19/11/2023 2:15PM Malta time',

@@ -11,6 +11,7 @@ import openChangelog from "./lib/screens/changelog";
 import config from "./lib/config";
 import openUserMenu from "./lib/screens/user-menu";
 import Utils from "./lib/utils";
+import applySelectedTheme from "./lib/theme";
 
 const samePCBtn = document.getElementById('samePC') as HTMLButtonElement;
 const networkBtn = document.getElementById('network') as HTMLButtonElement;
@@ -75,9 +76,10 @@ shareBtn.addEventListener('click', (event: MouseEvent) => {
 });
 
 window.addEventListener('load', () => {
-    Authentication.initGoogleSSO(() => {
+    Authentication.initGoogleSSO(async () => {
         showLoginLogout();
         loadUserData();
+        await applySelectedTheme();
     });
     Authentication.renderGoogleBtn('googleSignonContainer');
 });
@@ -126,17 +128,10 @@ authPlayerPicture.addEventListener('click', () => {
     openUserMenu(userText.innerText, showLoginLogout);
 });
 
-const applySystemTheme = (isDark: boolean) => isDark ?
-        document.documentElement.classList.add('dark') :
-        document.documentElement.classList.remove('dark');
-
-const darkSystemTheme = window.matchMedia('(prefers-color-scheme: dark)');
-darkSystemTheme.addEventListener('change', ({ matches }) => applySystemTheme(matches));
-
-(() => {
+(async () => {
     showLoginLogout();
     loadUserData();
-    applySystemTheme(darkSystemTheme.matches);
+    await applySelectedTheme();
 
     changelogLink.innerText = config.version;
     document.title = `Daniel's Connect4 ${config.version}`;
