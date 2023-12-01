@@ -9,7 +9,7 @@ const connections = Utils.isLocal() ? {
 };
 
 const config = {
-    version: '0.3.9b',
+    version: '0.3.10b',
     connections,
 };
 

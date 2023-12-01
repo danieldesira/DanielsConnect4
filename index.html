@@ -25,10 +25,16 @@
                 <span class="ml-2 mr-2 text-white">Menu</span>
             </button>
             <h1 class="heading inline-block text-xl">Daniel's Connect4</h1>
-            <div id="gameIndicators" class="hidden bg-blue-600 rounded text-white">
+            <div id="gameIndicators" class="hidden text-white">
                 <strong id="timer" class="ml-2 mr-2"></strong><strong id="countdown" class="ml-2 mr-2"></strong>|
-                <strong id="playerRed" class="text-red-600 ml-2 mr-2 italic underline"></strong>|
-                <strong id="playerGreen" class="text-green-400 ml-2 mr-2"></strong>
+                <div id="playerRed" class="inline-block ml-2 mr-2">
+                    <img class="inline-block" src="/favicon.ico" alt="" height="30" width="30" />
+                    <strong class="text-red-600"></strong>
+                </div>|
+                <div id="playerGreen" class="inline-block ml-2 mr-2">
+                    <strong class="text-green-400"></strong>
+                    <img class="inline-block" src="/favicon.ico" alt="" height="30" width="30" />
+                </div>
             </div>
             <div class="inline-block w-fit">
                 <div id="login-btns">

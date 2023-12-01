@@ -1,37 +1,49 @@
 import { Coin } from "@danieldesira/daniels-connect4-common";
 
 export default class PlayerNameSection {
-    private playerRedSpan: HTMLSpanElement;
-    private playerGreenSpan: HTMLSpanElement;
+    private playerRedText: HTMLSpanElement;
+    private playerGreenText: HTMLSpanElement;
+    private playerRedImage: HTMLImageElement;
+    private playerGreenImage: HTMLImageElement;
     private playerRed: string;
     private playerGreen: string;
 
     public constructor(playerRedId: string, playerGreenId: string) {
         if (playerRedId) {
-            this.playerRedSpan = document.getElementById(playerRedId);
+            const playerRedContainer = document.getElementById(playerRedId);
+            this.playerRedText = playerRedContainer.getElementsByTagName('strong')[0];
+            this.playerRedImage = playerRedContainer.getElementsByTagName('img')[0];
         }
 
         if (playerGreenId) {
-            this.playerGreenSpan = document.getElementById(playerGreenId);
+            const playerGreenContainer = document.getElementById(playerGreenId);
+            this.playerGreenText = playerGreenContainer.getElementsByTagName('strong')[0];
+            this.playerGreenImage = playerGreenContainer.getElementsByTagName('img')[0];
         }
     }
 
     public initPlayerNames() {
         const waiting = 'Waiting to connect...';
-        if (this.playerGreenSpan && !this.playerGreen) {
-            this.playerGreenSpan.innerText = waiting;
+        if (this.playerGreenText && !this.playerGreen) {
+            this.playerGreenText.innerText = waiting;
         }
-        if (this.playerRedSpan && !this.playerRed) {
-            this.playerRedSpan.innerText = waiting;
+        if (this.playerRedText && !this.playerRed) {
+            this.playerRedText.innerText = waiting;
         }
     }
 
     public clear() {
-        if (this.playerGreenSpan) {
-            this.playerGreenSpan.innerText = '';
+        if (this.playerGreenText) {
+            this.playerGreenText.innerText = '';
         }
-        if (this.playerRedSpan) {
-            this.playerRedSpan.innerText = '';
+        if (this.playerRedText) {
+            this.playerRedText.innerText = '';
+        }
+        if (this.playerGreenImage) {
+            this.playerGreenImage.src = '';
+        }
+        if (this.playerRedImage) {
+            this.playerRedImage.src = '';
         }
     }
 
@@ -46,29 +58,29 @@ export default class PlayerNameSection {
 
     public setPlayerRed(playerName: string) {
         this.playerRed = playerName;
-        if (this.playerRedSpan) {
-            this.playerRedSpan.innerText = this.playerRed;
+        if (this.playerRedText) {
+            this.playerRedText.innerText = this.playerRed;
         }
     }
 
     public setPlayerGreen(playerName: string) {
         this.playerGreen = playerName;
-        if (this.playerGreenSpan) {
-            this.playerGreenSpan.innerText = this.playerGreen;
+        if (this.playerGreenText) {
+            this.playerGreenText.innerText = this.playerGreen;
         }
     }
 
     public indicateTurn(turn: Coin) {
         if (turn === Coin.Red) {
-            this.playerRedSpan.classList.add('italic');
-            this.playerRedSpan.classList.add('underline');
-            this.playerGreenSpan.classList.remove('italic');
-            this.playerGreenSpan.classList.remove('underline');
+            this.playerRedText.classList.add('italic');
+            this.playerRedText.classList.add('underline');
+            this.playerGreenText.classList.remove('italic');
+            this.playerGreenText.classList.remove('underline');
         } else {
-            this.playerGreenSpan.classList.add('italic');
-            this.playerGreenSpan.classList.add('underline');
-            this.playerRedSpan.classList.remove('italic');
-            this.playerRedSpan.classList.remove('underline');
+            this.playerGreenText.classList.add('italic');
+            this.playerGreenText.classList.add('underline');
+            this.playerRedText.classList.remove('italic');
+            this.playerRedText.classList.remove('underline');
         }
     }
 
