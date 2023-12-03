@@ -17,19 +17,22 @@ const untrackSystemTheme = () => darkSystemTheme.removeEventListener('change', t
 
 export default async function applySelectedTheme() {
     if (Authentication.isLoggedIn()) {
-        const settings = await Authentication.getSettings();
-        switch (settings.theme) {
-            case Themes.Light:
-                applyLightTheme();
-                untrackSystemTheme();
-                break;
-            case Themes.Dark:
-                applyDarkTheme();
-                untrackSystemTheme();
-                break;
-            case Themes.System:
-                trackSystemTheme();
-                break;
+        try {
+            const settings = await Authentication.getSettings();
+            untrackSystemTheme();
+            switch (settings.theme) {
+                case Themes.Light:
+                    applyLightTheme();
+                    break;
+                case Themes.Dark:
+                    applyDarkTheme();
+                    break;
+                case Themes.System:
+                    trackSystemTheme();
+                    break;
+            }
+        } catch {
+            trackSystemTheme();
         }
     } else {
         trackSystemTheme();

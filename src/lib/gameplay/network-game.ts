@@ -68,16 +68,20 @@ export default class NetworkGame extends Game {
                     this.toggleWaitingClass();
                     if (this.socket.getPlayerColor() === Coin.Red) {
                         this.playerNameSection.setPlayerGreen(data.opponentName);
+                        this.playerNameSection.setPlayerGreenPic(data.oppenentPic);
                     } else if (this.socket.getPlayerColor() === Coin.Green) {
                         this.playerNameSection.setPlayerRed(data.opponentName);
+                        this.playerNameSection.setPlayerRedPic(data.oppenentPic);
                     }
                 }
     
                 if (data.playerName) {
                     if (this.socket.getPlayerColor() === Coin.Red) {
                         this.playerNameSection.setPlayerRed(data.playerName);
+                        this.playerNameSection.setPlayerRedPic(data.playerPic);
                     } else if (this.socket.getPlayerColor() === Coin.Green) {
                         this.playerNameSection.setPlayerGreen(data.playerName);
+                        this.playerNameSection.setPlayerGreenPic(data.playerPic);
                     }
                 }
         

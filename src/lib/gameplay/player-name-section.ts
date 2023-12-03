@@ -39,11 +39,12 @@ export default class PlayerNameSection {
         if (this.playerRedText) {
             this.playerRedText.innerText = '';
         }
+        const defaultImage = '/images/default-icon.webp';
         if (this.playerGreenImage) {
-            this.playerGreenImage.src = '';
+            this.playerGreenImage.src = defaultImage;
         }
         if (this.playerRedImage) {
-            this.playerRedImage.src = '';
+            this.playerRedImage.src = defaultImage;
         }
     }
 
@@ -67,6 +68,18 @@ export default class PlayerNameSection {
         this.playerGreen = playerName;
         if (this.playerGreenText) {
             this.playerGreenText.innerText = this.playerGreen;
+        }
+    }
+
+    public setPlayerRedPic(pic: string) {
+        if (this.playerRedImage) {
+            this.playerRedImage.src = pic;
+        }
+    }
+
+    public setPlayerGreenPic(pic: string) {
+        if (this.playerGreenImage) {
+            this.playerGreenImage.src = pic;
         }
     }
 

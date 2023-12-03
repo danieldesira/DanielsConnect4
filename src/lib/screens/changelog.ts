@@ -16,6 +16,9 @@ export default function openChangelog() {
                         subPoints: [
                             'Removed indicators blue blackground',
                         ]
+                    },
+                    {
+                        text: 'Theme: Fixed bug causing the system theme to fail if settings fetch fails'
                     }
                 ]
             },

@@ -9,7 +9,7 @@
     "webpack-cli": "^5.0.1"
   },
   "dependencies": {
-    "@danieldesira/daniels-connect4-common": "^0.2.1"
+    "@danieldesira/daniels-connect4-common": "^0.2.2"
   },
   "scripts": {
     "start": "npx concurrently \"npx webpack -w\" \"npx serve -l 5000\" \"npx update-browserslist-db@latest\" \"npx tailwindcss -i ./src/main.css -o ./dist/bundle.css --watch --minify\"",
