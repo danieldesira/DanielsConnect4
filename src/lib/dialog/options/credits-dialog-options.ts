@@ -1,10 +1,10 @@
 import DialogOptions from "./dialog-options";
 
 export default interface CreditsDialogOptions extends DialogOptions {
-    sections: Array<CreditsSection>;
+  sections: Array<CreditsSection>;
 }
 
 interface CreditsSection {
-    title: string;
-    contributors: Array<string>;
+  title: string;
+  contributors: Array<string>;
 }

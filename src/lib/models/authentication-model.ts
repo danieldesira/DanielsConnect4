@@ -1,4 +1,4 @@
 export interface AuthenticationModel {
-    token: string;
-    service: string;
+  token: string;
+  service: string;
 }
