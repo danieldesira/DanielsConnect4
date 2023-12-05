@@ -1,4 +1,5 @@
 import Utils from "./utils";
+import {version} from "../../package.json";
 
 const connections = Utils.isLocal()
   ? {
@@ -11,7 +12,7 @@ const connections = Utils.isLocal()
     };
 
 const config = {
-  version: "0.3.10b",
+  version,
   connections,
 };
 

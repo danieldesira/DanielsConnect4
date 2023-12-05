@@ -1,4 +1,5 @@
 {
+  "version": "0.3.10b",
   "devDependencies": {
     "concurrently": "^8.2.1",
     "postcss": "^8.4.31",

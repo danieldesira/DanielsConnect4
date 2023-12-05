@@ -12,13 +12,23 @@ export default function openChangelog() {
         dateTime: "",
         points: [
           {
-            text: "UI:",
-            subPoints: ["Removed indicators blue blackground"],
+            text: "Gameplay UI:",
+            subPoints: [
+              "Removed indicators blue blackground",
+              "Added player avatars next to the names"
+            ],
           },
           {
             text:
               "Theme: Fixed bug causing the system theme to fail if settings fetch fails",
           },
+          {
+            text: "Internal:",
+            subPoints: [
+              "Code cleanup and adopting better standards",
+              "Loading version number from package.json"
+            ]
+          }
         ],
       },
       {
