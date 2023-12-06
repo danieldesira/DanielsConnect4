@@ -15,7 +15,7 @@ export default function openChangelog() {
             text: "Gameplay UI:",
             subPoints: [
               "Removed indicators blue blackground",
-              "Added player avatars next to the names"
+              "Added player avatars next to the names",
             ],
           },
           {
@@ -26,9 +26,16 @@ export default function openChangelog() {
             text: "Internal:",
             subPoints: [
               "Code cleanup and adopting better standards",
-              "Loading version number from package.json"
-            ]
-          }
+              "Loading version number from package.json",
+            ],
+          },
+          {
+            text: "Christmas Edition (temporary changes):",
+            subPoints: [
+              "Included a Dash the Halls edition",
+              "Added a simple greeting message",
+            ],
+          },
         ],
       },
       {
