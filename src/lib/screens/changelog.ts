@@ -9,7 +9,7 @@ export default function openChangelog() {
       {
         version: "0.3.10",
         status: "Beta",
-        dateTime: "",
+        dateTime: "06/12/2023 11PM Malta time",
         points: [
           {
             text: "Gameplay UI:",
@@ -35,6 +35,9 @@ export default function openChangelog() {
               "Included a Dash the Halls edition",
               "Added a simple greeting message",
             ],
+          },
+          {
+            text: "Removed automatic popup for Google signon",
           },
         ],
       },

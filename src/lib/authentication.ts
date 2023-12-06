@@ -69,7 +69,6 @@ export default class Authentication {
         callback();
       },
     });
-    window?.google?.accounts?.id?.prompt();
   }
 
   public static renderGoogleBtn(containerId: string) {
